@@ -1,11 +1,13 @@
-package model;
+package model.board;
 
 public enum Terrain {
     Hills("hills", Resource.Brick),
     Forest("forest", Resource.Lumber),
     Mountains("mountains", Resource.Ore),
     Fields("fields", Resource.Grain),
-    Pasture("pasture", Resource.Wool);
+    Pasture("pasture", Resource.Wool),
+    Desert("desert", null);
+
 
 
     private final String type;

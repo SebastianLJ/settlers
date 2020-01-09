@@ -1,4 +1,4 @@
-package model;
+package model.board;
 
 public enum Resource {
     Brick("brick"),

@@ -4,8 +4,11 @@ import org.jspace.FormalField;
 import org.jspace.Template;
 import org.jspace.TemplateField;
 
+import java.util.ArrayList;
+
 public enum Templates {
-    Player(new Template(new FormalField(String.class), new FormalField(Integer.class)))
+    Player(new Template(new FormalField(String.class), new FormalField(Integer.class),
+            new FormalField(PlayerState.class)))
     ;
 
     private final Template template;
