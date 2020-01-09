@@ -28,7 +28,7 @@ public class Lobby {
             repository.addGate(URI);
             repository.add("game", game);
 
-            playGame(game);
+            playGame(game, true);
 
         } else if (input.equals("JOIN")) {
             System.out.println("Enter game URI... Format: tcp://<IP>:<PORT>");
@@ -38,19 +38,25 @@ public class Lobby {
 
             RemoteSpace game = new RemoteSpace(hostUri);
 
-            playGame(game);
+            playGame(game, false);
 
         }
     }
 
-    private static void playGame(Space game) throws InterruptedException {
+    private static void playGame(Space game, boolean sender) throws InterruptedException {
         Scanner scanner = new Scanner(System.in);
-        while (true) {
-            System.out.println("Input data to be transmitted: ");
-            String data = scanner.next();
-            game.put(data);
-            String receivedData = (String) game.getp(new FormalField(String.class))[0];
-            System.out.println("Just received: " + receivedData);
+        if (sender) {
+            while (true) {
+                System.out.println("Input data to be transmitted: ");
+                String data = scanner.next();
+                game.put(data);
+            }
+        } else {
+            while (true) {
+                String receivedData = (String) game.getp(new FormalField(String.class))[0];
+                System.out.println("Just received: " + receivedData);
+            }
         }
+
     }
 }
