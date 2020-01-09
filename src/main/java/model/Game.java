@@ -4,12 +4,14 @@ import org.jspace.*;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Game {
     private final String hostURI;
     private final RemoteSpace players;
     private int playerCount;
-    private Random roll = new Random();
+    private Random dice = new Random();
+    private Scanner scanner = new Scanner(System.in);
 
     public Game(String hostURI) throws IOException {
         this.hostURI = hostURI;
@@ -24,20 +26,63 @@ public class Game {
 
     public void start() {
         boolean victory = false;
+        int roll;
 
         //roll for starting player
-        int turn = roll.nextInt(playerCount);
+        int turn = dice.nextInt(playerCount);
+        int turnId;
 
         while(!victory) {
-            turn = turn % playerCount;
-            
+            turnId = turn % playerCount;
+            roll = dice.nextInt(6) + dice.nextInt(6) + 2;
 
+            if (roll == 7) {
+                //todo add robber
+            } else {
+                //todo distribute Resource Cards
+            }
 
+            boolean endTurn = false;
+            String action;
+            while(!endTurn) {
+                action = scanner.next();
 
+                if (action.equals("trade")) {
+                    action = scanner.next();
+
+                    if (action.equals("player")) {
+
+                    } else if (action.equals("bank")) {
+
+                    } else if (action.equals("harbor")) {
+
+                    }
+
+                } else if (action.equals("build")) {
+                    action = scanner.next();
+
+                    if (action.equals("road")) {
+
+                    } else if (action.equals("settlement")) {
+
+                    } else if (action.equals("city")) {
+
+                    } else if (action.equals("DevCard")) {
+
+                    }
+                } else if (action.equals("playDevCard")) {
+
+                } else if (action.equals("endTurn")) {
+                    endTurn = true;
+                }
+            }
+
+            if (getVictoryPoints(turnId) >= 10) {
+                victory = true;
+            }
 
             turn++;
         }
-
     }
 
     private boolean isRoadValid() {
