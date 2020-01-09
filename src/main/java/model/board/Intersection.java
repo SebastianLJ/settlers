@@ -1,5 +1,7 @@
 package model.board;
 
+
+
 public class Intersection {
     private Hex[] adjHexes = new Hex[3];
     private Harbor harbor;
@@ -35,5 +37,17 @@ public class Intersection {
 
     public void setHarbor(Harbor harbor) {
         this.harbor = harbor;
+    }
+
+    public boolean equals(Hex[] adjHexes) {
+        int matches = 0;
+        for (int i = 0; i < this.adjHexes.length; i++) {
+            for (int j = 0; j < adjHexes.length; j++) {
+                if (this.adjHexes[i].equals(adjHexes[j])) {
+                    matches++;
+                }
+            }
+        }
+        return matches == 3;
     }
 }

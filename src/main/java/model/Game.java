@@ -1,5 +1,6 @@
 package model;
 
+import model.board.Board;
 import org.jspace.*;
 
 import java.io.IOException;
@@ -7,11 +8,12 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
-    private final String hostURI;
-    private final RemoteSpace players;
-    private int playerCount;
-    private Random dice = new Random();
     private Scanner scanner = new Scanner(System.in);
+    private Random dice = new Random();
+    private final RemoteSpace players;
+    private Board board;
+    private final String hostURI;
+    private int playerCount;
 
     public Game(String hostURI) throws IOException {
         this.hostURI = hostURI;
