@@ -25,6 +25,7 @@ public class Board {
             {6, 0, 1}, {7, 0, 3}, {11, 1, 2}, {12, 4, 5},
             {15, 2, 3}, {16, 3, 4}, {17, 2, 3}, {18, 1, 4}};
 
+
     Intersection[] intersections = new Intersection[100];
 
     public Board() {
