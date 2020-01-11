@@ -2,14 +2,14 @@ package model.board;
 
 
 
-public class Intersection {
+public class Vertex {
     private Hex[] adjHexes = new Hex[3];
     private Harbor harbor;
     private boolean settlement = false;
     private boolean city = false;
     private int id = -1;
 
-    public Intersection(Hex[] hexes) {
+    public Vertex(Hex[] hexes) {
         adjHexes[0] = hexes[0];
         adjHexes[1] = hexes[1];
         adjHexes[2] = hexes[2];
