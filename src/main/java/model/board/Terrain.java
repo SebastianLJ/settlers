@@ -6,7 +6,9 @@ public enum Terrain {
     Mountains("mountains", Resource.Ore),
     Fields("fields", Resource.Grain),
     Pasture("pasture", Resource.Wool),
-    Desert("desert", null);
+    Desert("desert", null),
+    None("none", null);
+    ;
 
 
 
