@@ -193,4 +193,8 @@ public class Game {
         ArrayList<PlayerState> players = new ArrayList<PlayerState>();
         return players;
     }
+
+    public Board getBoard() {
+        return board;
+    }
 }
