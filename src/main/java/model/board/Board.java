@@ -4,6 +4,7 @@ public class Board {
     private Hex[][] hexes = new Hex[5][5];
     private Edge[][] edges = new Edge[11][11];
     private Vertex[][] vertices = new Vertex[6][12];
+    private final int FX_HEX_SIZE = 30;
 
 
     public Board() {
@@ -71,9 +72,9 @@ public class Board {
                 res[1] = hexes[0][y];
                 res[2] = new Hex(-1, -1, Terrain.None, -1);;
             } else if (y == 0) {
-                res[1] = hexes[y][x/2];
-                res[0] = hexes[y][x/2 - 1];
-                res[0] = res[2] = new Hex(-1, -1, Terrain.None, -1);
+                res[0] = hexes[y][x/2];
+                res[1] = hexes[y][x/2 - 1];
+                res[2] = res[2] = new Hex(-1, -1, Terrain.None, -1);
             } else {
                 res[0] = hexes[y - 1][x/2];
                 res[1] = hexes[y][x/2];
@@ -93,6 +94,28 @@ public class Board {
         } else {
             res[0] = vertices[y][x-1];
             res[1] = vertices[y][x];
+        }
+        return res;
+    }
+
+    public Vertex[] getAdjacentVertices(Hex hex) {
+        int x = hex.getX();
+        int y = hex.getY();
+        Vertex[] res = new Vertex[6];
+        if (y == 0) {
+            res[0] = vertices[x*2+2][y+1];
+            res[1] = vertices[x*2+1][y+1];
+            res[2] = vertices[x*2][y+1];
+            res[3] = vertices[x*2][y];
+            res[4] = vertices[x*2+1][y];
+            res[5] = vertices[x*2+2][y];
+        } else {
+            res[0] = vertices[x*2+2][y+1];
+            res[1] = vertices[x*2+1][y+1];
+            res[2] = vertices[x*2][y+1];
+            res[3] = vertices[x*2+1][y];
+            res[4] = vertices[x*2+2][y];
+            res[5] = vertices[x*2+3][y];
         }
         return res;
     }
@@ -124,6 +147,40 @@ public class Board {
 
 
         }
+        return res;
+    }
+
+    public double[] getVertexTransformedCoordinates(Vertex vertex, int size, int centerX, int centerY,
+                                                    int centerXTransformed, int centerYTransformed) {
+        double[] res = new double[2];
+        int angle;
+        double angle_rad;
+        Hex hex = hexes[centerY][centerX];
+
+        Vertex[] temp = getAdjacentVertices(hex);
+
+        int c = 0;
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i].equals(vertex)) {
+                c = i;
+            }
+        }
+
+        angle = 60 * c * - 30;
+        angle_rad = Math.PI / 180 * angle;
+        res[0] = centerXTransformed + size * Math.cos(angle_rad);
+        res[1] = centerYTransformed + size + Math.sin(angle_rad);
+
+        return res;
+    }
+
+    public double[][] getEdgeTransformedCoordinates(Edge edge, int size, int centerX, int centerY,
+                                              int centerXTransformed, int centerYTransformed) {
+        double[][] res = new double[2][2];
+        Vertex[] temp = getAdjacentVertices(edge);
+        res[0] = getVertexTransformedCoordinates(temp[0], size, centerX, centerY, centerXTransformed, centerYTransformed);
+        res[0] = getVertexTransformedCoordinates(temp[1], size, centerX, centerY, centerXTransformed, centerYTransformed);
+
         return res;
     }
 
