@@ -83,6 +83,50 @@ public class Board {
         return res;
     }
 
+    public Vertex[] getAdjacentVertices(Edge edge) {
+        int x = edge.getX();
+        int y = edge.getY();
+        Vertex[] res = new Vertex[2];
+        if (edge.y % 2 == 0) {
+            res[0] = vertices[y-1][x];
+            res[1] = vertices[y][x];
+        } else {
+            res[0] = vertices[y][x-1];
+            res[1] = vertices[y][x];
+        }
+        return res;
+    }
+
+    public Edge[] getAdjacentEdges(Vertex vertex) {
+        int x = vertex.getX();
+        int y = vertex.getY();
+        Edge[] res = new Edge[3];
+        if (x % 2 == 0) {
+            if (y == 0) {
+                res[0] = edges[y][x];
+                res[1] = edges[y][x+1];
+                res[2] = edges[y+1][x];
+            } else {
+                res[0] = edges[y*2-1][x];
+                res[1] = edges[y*2][x-1];
+                res[2] = edges[y*2][x];
+            }
+        } else {
+            if (y == 0) {
+                res[0] = edges[y][x];
+                res[1] = edges[y][x+1];
+                res[2] = null;
+            } else {
+                res[1] = edges[y*2][x-1];
+                res[2] = edges[y*2][x];
+                res[0] = edges[y*2+1][x];
+            }
+
+
+        }
+        return res;
+    }
+
     public void printHexes() {
         for (int i = 0; i < hexes.length; i++) {
             for (int j = 0; j < hexes.length; j++) {
