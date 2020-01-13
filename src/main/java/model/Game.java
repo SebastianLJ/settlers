@@ -1,9 +1,10 @@
 package model;
 
-import model.board.Board;
+import model.board.*;
 import org.jspace.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -11,6 +12,7 @@ public class Game {
     private Scanner scanner = new Scanner(System.in);
     private Random dice = new Random();
     private final RemoteSpace players;
+    private int playerId;
     private Board board;
     private final String hostURI;
     private int playerCount;
@@ -87,12 +89,59 @@ public class Game {
         }
     }
 
-    private boolean isRoadValid() {
+    private boolean isRoadValid(Edge edge) {
+        Vertex[] vertices = board.getAdjacentVertices(edge);
+        for (Vertex vertex : vertices) {
+            if (vertex.getId() == playerId && vertex.isCity() || vertex.isSettlement()) {
+                return true;
+            }
+            for (Edge nextEdge : board.getAdjacentEdges(vertex)) {
+                if (nextEdge.getId() == playerId) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
-    private boolean isSettlementValid() {
+    private ArrayList<Edge> getValidRoads() {
+        Edge[][] edges = board.getEdges();
+        ArrayList<Edge> res = new ArrayList<Edge>();
+        for (Edge[] edgeList : edges) {
+            for (Edge edge : edgeList) {
+                if (isRoadValid(edge)) {
+                    res.add(edge);
+                }
+            }
+        }
+        return res;
+    }
+
+    private boolean isSettlementValidLength(Vertex vertex) {
+        Edge[] edges = board.getAdjacentEdges(vertex);
+        for (Edge edge : edges) {
+            Vertex[] possibleOccupations = board.getAdjacentVertices(edge);
+            for (Vertex possibleOccupation : possibleOccupations) {
+                if (possibleOccupation.isSettlement() || possibleOccupation.isCity() ) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean isSettlementConnected(Vertex vertex) {
+        Edge[] edges = board.getAdjacentEdges(vertex);
+        for (Edge edge : edges) {
+            if (edge.getId() == playerId) {
+                return true;
+            }
+        }
         return false;
+    }
+
+    private boolean isSettlementValid(Vertex vertex) {
+        return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
     }
 
     private boolean isCityValid() {
