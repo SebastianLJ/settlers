@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Game {
     private Scanner scanner = new Scanner(System.in);
     private Random dice = new Random();
-    private final RemoteSpace players;
+    private final RemoteSpace playerSpace;
     private int playerId;
     private Board board;
     private final String hostURI;
@@ -19,7 +19,7 @@ public class Game {
 
     public Game(String hostURI) throws IOException {
         this.hostURI = hostURI;
-        players = new RemoteSpace(hostURI);
+        playerSpace = new RemoteSpace(hostURI);
 
         try {
             playerCount = getPlayerCount();
@@ -41,7 +41,12 @@ public class Game {
             roll = dice.nextInt(6) + dice.nextInt(6) + 2;
 
             if (roll == 7) {
-                //todo add robber
+
+
+                //todo get new robber coords
+                int x = 0;
+                int y = 0;
+                board.updateRobber(x,y);
             } else {
                 //todo distribute Resource Cards
             }
@@ -144,27 +149,48 @@ public class Game {
         return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
     }
 
-    private boolean isCityValid() {
-        return false;
+    private boolean isCityValid(Vertex vertex) {
+        return vertex.isSettlement();
     }
 
     private int getPlayerCount() throws InterruptedException {
-        return players.getAll(Templates.Player.getTemplateFields()).size();
+        return playerSpace.getAll(Templates.Player.getTemplateFields()).size();
     }
 
     private int getVictoryPoints(int id) {
         return 0;
     }
 
-    private int getSettlements(int id) {
+    private ArrayList<Vertex> getSettlements(int id) {
+        ArrayList<Vertex> settlements = new ArrayList<Vertex>();
+        for (Vertex[] vertexList : board.getVertices()) {
+            for (Vertex vertex : vertexList) {
+                if (vertex.getId() == playerId && vertex.isSettlement()) {
+                    settlements.add(vertex);
+                }
+            }
+        }
+        return settlements;
+    }
+
+    private ArrayList<Vertex> getCities(int id) {
+        ArrayList<Vertex> cities = new ArrayList<Vertex>();
+        for (Vertex[] vertexList : board.getVertices()) {
+            for (Vertex vertex : vertexList) {
+                if (vertex.getId() == playerId && vertex.isCity()) {
+                    cities.add(vertex);
+                }
+            }
+        }
+        return cities;
+    }
+
+    private int getLongestRoad(int id, Edge edge) {
         return 0;
     }
 
-    private int getCities(int id) {
-        return 0;
-    }
-
-    private int getLongestRoad(int id) {
-        return 0;
+    private ArrayList<PlayerState> getPlayers() {
+        ArrayList<PlayerState> players = new ArrayList<PlayerState>();
+        return players;
     }
 }

@@ -4,6 +4,7 @@ public class Board {
     private Hex[][] hexes = new Hex[5][5];
     private Edge[][] edges = new Edge[11][11];
     private Vertex[][] vertices = new Vertex[6][12];
+    private int[] currentRobberPos = new int[2];
     private final int FX_HEX_SIZE = 30;
 
 
@@ -39,6 +40,15 @@ public class Board {
                     vertices[i][j] = null;
                 } else {
                     vertices[i][j] = new Vertex(j,i);
+                }
+            }
+        }
+
+        //place robber
+        for(Hex[] hexList : hexes) {
+            for(Hex hex : hexList) {
+                if (hex.getTerrain().equals(Terrain.Desert)) {
+                    updateRobber(hex.getX(), hex.getY());
                 }
             }
         }
@@ -199,5 +209,20 @@ public class Board {
 
     public Edge[][] getEdges() {
         return edges;
+    }
+
+    public Hex[][] getHexes() {
+        return hexes;
+    }
+
+    public Vertex[][] getVertices() {
+        return vertices;
+    }
+
+    public void updateRobber(int x, int y) {
+        hexes[currentRobberPos[1]][currentRobberPos[0]].setRobber(false);
+        hexes[y][x].setRobber(true);
+        currentRobberPos[0] = x;
+        currentRobberPos[1] = y;
     }
 }

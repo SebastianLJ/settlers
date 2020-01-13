@@ -4,6 +4,7 @@ public class Hex {
     private int x, y;
     private Terrain terrain;
     private int numberToken;
+    private boolean robber = false;
 
     public Hex(int x, int y, Terrain terrain, int numberToken) {
         this.x = x;
@@ -26,6 +27,14 @@ public class Hex {
 
     public int getY() {
         return y;
+    }
+
+    public boolean isRobber() {
+        return robber;
+    }
+
+    public void setRobber(boolean robber) {
+        this.robber = robber;
     }
 }
 
