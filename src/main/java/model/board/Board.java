@@ -113,19 +113,19 @@ public class Board {
         int y = hex.getY();
         Vertex[] res = new Vertex[6];
         if (y == 0) {
-            res[0] = vertices[x*2+2][y+1];
-            res[1] = vertices[x*2+1][y+1];
-            res[2] = vertices[x*2][y+1];
-            res[3] = vertices[x*2][y];
-            res[4] = vertices[x*2+1][y];
-            res[5] = vertices[x*2+2][y];
+            res[0] = vertices[y+1][x*2+2];
+            res[1] = vertices[y+1][x*2+1];
+            res[2] = vertices[y+1][x*2];
+            res[3] = vertices[y][x*2];
+            res[4] = vertices[y][x*2+1];
+            res[5] = vertices[y][x*2+2];
         } else {
-            res[0] = vertices[x*2+2][y+1];
-            res[1] = vertices[x*2+1][y+1];
-            res[2] = vertices[x*2][y+1];
-            res[3] = vertices[x*2+1][y];
-            res[4] = vertices[x*2+2][y];
-            res[5] = vertices[x*2+3][y];
+            res[0] = vertices[y+1][x*2+2];
+            res[1] = vertices[y+1][x*2+1];
+            res[2] = vertices[y+1][x*2];
+            res[3] = vertices[y][x*2+1];
+            res[4] = vertices[y][x*2+2];
+            res[5] = vertices[y][x*2+3];
         }
         return res;
     }
