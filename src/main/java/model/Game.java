@@ -48,11 +48,13 @@ public class Game {
 
             if (roll == 7) {
 
-
                 //todo get new robber coords from view
                 int x = 2;
                 int y = 2;
-                board.updateRobber(x,y);
+                int success = -1;
+                while (success != 1) {
+                    success = board.updateRobber(x,y);
+                }
             } else {
                 setResources(playerId, roll);
             }
@@ -124,13 +126,64 @@ public class Game {
                         }
                     }
                 } else if (action.equals("playDevCard")) {
+                    System.out.println("please select a development card to play: ");
+                    action = scanner.next();
+                    if (action.equals(DevelopmentCard.Knight.getType())) {
+                        //todo get new robber coords from view
+                        int x = 2;
+                        int y = 2;
+                        int succes = -1;
+                        while (succes != 1) {
+                            succes = board.updateRobber(x,y);
+                        }
+                    } else if (action.equals(DevelopmentCard.RoadBuilding)) {
+                        int roadsPlaced = 0;
+                        while (roadsPlaced < 2) {
+                            //todo get coordinates from view
+                            int x = 0, y = 0;
+                            if (isRoadValid(new Edge(x, y))) {
+                                board.getEdges()[y][x].setId(turnId);
+                                roadsPlaced++;
+                            } else {
+                                System.out.println("Invalid road location");
+                            }
+                        }
+                    } else if (action.equals(DevelopmentCard.YearOfPlenty.getType())) {
+                        int resourcesSelected = 0;
+                        while (resourcesSelected < 2) {
+                            System.out.println("Please selec a resource:_");
+                            String resourceType = scanner.next();
+                            switch (resourceType) {
+                                case "brick":
+                                    player.getResources().add(Resource.Brick);
+                                    break;
+                                case "lumber":
+                                    player.getResources().add(Resource.Lumber);
+                                    break;
+                                case "ore":
+                                    player.getResources().add(Resource.Ore);
+                                    break;
+                                case "grain":
+                                    player.getResources().add(Resource.Grain);
+                                    break;
+                                case "wool":
+                                    player.getResources().add(Resource.Wool);
+                                    break;
+                                default:
+                                    continue;
+                            }
+                            resourcesSelected++;
+                        }
+                    } else if (action.equals(DevelopmentCard.Monopoly)) {
+                        //todo
+                    }
 
                 } else if (action.equals("endTurn")) {
                     endTurn = true;
                 }
             }
 
-            if (getVictoryPoints(turnId) >= 10) {
+            if (getVictoryPoints(player) >= 10) {
                 victory = true;
             }
 
@@ -201,8 +254,18 @@ public class Game {
         return playerSpace.getAll(Templates.Player.getTemplateFields()).size();
     }*/
 
-    private int getVictoryPoints(int id) {
-        return 0;
+    private int getVictoryPoints(PlayerState player) {
+        int vp = getSettlements(player.getPlayerId()).size() + getCities(player.getPlayerId()).size();
+        for (DevelopmentCard developmentCard : player.getDevelopmentCards()) {
+            if (developmentCard.equals(DevelopmentCard.VictoryPoint)) {
+                vp++;
+            }
+        }
+        if (player.hasLargetArmy()) vp++;
+        if (player.hasLongestRoad()) vp++;
+
+        return vp;
+
     }
 
     private void setResources(int id, int roll) {
