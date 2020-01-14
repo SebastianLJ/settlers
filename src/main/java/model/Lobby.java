@@ -53,7 +53,7 @@ public class Lobby {
             }
         } else {
             while (true) {
-                String receivedData = (String) game.getp(new FormalField(String.class))[0];
+                String receivedData = (String) game.get(new FormalField(String.class))[0];
                 System.out.println("Just received: " + receivedData);
             }
         }

@@ -1,5 +1,7 @@
 package model.board;
 
+import java.util.ArrayList;
+
 public class Preset {
     private static int[][] adjacencyList = {{-1,1,4,3,-1,-1},{-1,2,5,4,0,-1}, {-1,-1,6,5,1,-1},
             {0,4,8,7,-1,-1}, {1,5,9,8,3,0}, {2,6,10,9,4,1}, {-1,-1,11,10,5,2},

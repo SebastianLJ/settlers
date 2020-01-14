@@ -20,4 +20,8 @@ public class Edge {
     public int getY() {
         return y;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

@@ -1,5 +1,6 @@
 package model;
 
+import model.board.DevelopmentCard;
 import model.board.Resource;
 
 import java.util.ArrayList;
@@ -41,17 +42,5 @@ public class PlayerState {
 
     public ArrayList<DevelopmentCard> getDevelopmentCards() {
         return developmentCards;
-    }
-
-    public void removeResources(ArrayList<Resource> usedResources) {
-        for (Resource resource : usedResources) {
-            resources.remove(resource);
-        }
-    }
-
-    public void removeDevelopmentCards(ArrayList<DevelopmentCard> usedDevCards) {
-        for (DevelopmentCard developmentCard : usedDevCards) {
-            developmentCards.remove(developmentCard);
-        }
     }
 }
