@@ -45,13 +45,13 @@ public class Board {
         }
 
         //place robber
-        for(Hex[] hexList : hexes) {
+        /*for(Hex[] hexList : hexes) {
             for(Hex hex : hexList) {
                 if (hex.getTerrain().equals(Terrain.Desert)) {
                     updateRobber(hex.getX(), hex.getY());
                 }
             }
-        }
+        }*/
     }
 
     public Hex[] getAdjacentHexes(Vertex v) {

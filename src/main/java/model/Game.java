@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Game {
     private Scanner scanner = new Scanner(System.in);
     private Random dice = new Random();
-    private final RemoteSpace playerSpace;
+    //private final RemoteSpace playerSpace;
     private int playerId;
     private Board board;
     private final String hostURI;
@@ -19,14 +19,16 @@ public class Game {
 
     public Game(String hostURI) throws IOException {
         this.hostURI = hostURI;
-        playerSpace = new RemoteSpace(hostURI);
+        board = new Board();
+        /*playerSpace = new RemoteSpace(hostURI);
 
         try {
             playerCount = getPlayerCount();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
     }
+
 
     public void start() {
         boolean victory = false;
@@ -153,9 +155,9 @@ public class Game {
         return vertex.isSettlement();
     }
 
-    private int getPlayerCount() throws InterruptedException {
+    /*private int getPlayerCount() throws InterruptedException {
         return playerSpace.getAll(Templates.Player.getTemplateFields()).size();
-    }
+    }*/
 
     private int getVictoryPoints(int id) {
         return 0;
