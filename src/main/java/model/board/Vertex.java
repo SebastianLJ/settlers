@@ -14,6 +14,18 @@ public class Vertex {
         this.y = y;
     }
 
+    public void buildSettlement(int id) {
+        this.id = id;
+        settlement = true;
+        city = false;
+    }
+
+    public void buildCity(int id) {
+        this.id = id;
+        settlement = false;
+        city = true;
+    }
+
     public Harbor getHarbor() {
         return harbor;
     }

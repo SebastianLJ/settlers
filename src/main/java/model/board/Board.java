@@ -1,9 +1,13 @@
 package model.board;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Board {
     private Hex[][] hexes = new Hex[5][5];
     private Edge[][] edges = new Edge[11][11];
     private Vertex[][] vertices = new Vertex[6][12];
+    private ArrayList<DevelopmentCard> developmentCards = new ArrayList<>();
     private int[] currentRobberPos = new int[2];
     private final int FX_HEX_SIZE = 30;
 
@@ -45,13 +49,15 @@ public class Board {
         }
 
         //place robber
-        /*for(Hex[] hexList : hexes) {
+        for(Hex[] hexList : hexes) {
             for(Hex hex : hexList) {
                 if (hex.getTerrain().equals(Terrain.Desert)) {
                     updateRobber(hex.getX(), hex.getY());
                 }
             }
-        }*/
+        }
+
+        initDevCards();
     }
 
     public Hex[] getAdjacentHexes(Vertex v) {
@@ -219,10 +225,33 @@ public class Board {
         return vertices;
     }
 
+    public DevelopmentCard buyDevelopmentCard() {
+        Random random = new Random();
+        return developmentCards.get(random.nextInt(developmentCards.size()));
+    }
+
+    public int[] getCurrentRobberPos() {
+        return currentRobberPos;
+    }
+
     public void updateRobber(int x, int y) {
         hexes[currentRobberPos[1]][currentRobberPos[0]].setRobber(false);
         hexes[y][x].setRobber(true);
         currentRobberPos[0] = x;
         currentRobberPos[1] = y;
+    }
+
+    private void initDevCards() {
+        for (int i = 0; i < 14; i++) {
+            developmentCards.add(DevelopmentCard.Knight);
+        }
+        for (int i = 0; i < 5; i++) {
+            developmentCards.add(DevelopmentCard.VictoryPoint);
+        }
+        for (int i = 0; i < 2; i++) {
+            developmentCards.add(DevelopmentCard.RoadBuilding);
+            developmentCards.add(DevelopmentCard.Monopoly);
+            developmentCards.add(DevelopmentCard.YearOfPlenty);
+        }
     }
 }

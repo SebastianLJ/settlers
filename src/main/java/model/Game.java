@@ -12,14 +12,16 @@ public class Game {
     private Scanner scanner = new Scanner(System.in);
     private Random dice = new Random();
     //private final RemoteSpace playerSpace;
-    private int playerId;
+    private int playerId = 1;
+    private PlayerState player;
     private Board board;
     private final String hostURI;
-    private int playerCount;
+    private int playerCount = 1;
 
     public Game(String hostURI) throws IOException {
         this.hostURI = hostURI;
         board = new Board();
+        player = new PlayerState(1);
         /*playerSpace = new RemoteSpace(hostURI);
 
         try {
@@ -35,22 +37,24 @@ public class Game {
         int roll;
 
         //roll for starting player
-        int turn = dice.nextInt(playerCount);
+        //int turn = dice.nextInt(playerCount);
+        int turn = 1;
         int turnId;
 
         while(!victory) {
             turnId = turn % playerCount;
             roll = dice.nextInt(6) + dice.nextInt(6) + 2;
+            System.out.println("Rolled " + roll);
 
             if (roll == 7) {
 
 
-                //todo get new robber coords
-                int x = 0;
-                int y = 0;
+                //todo get new robber coords from view
+                int x = 2;
+                int y = 2;
                 board.updateRobber(x,y);
             } else {
-                //todo distribute Resource Cards
+                setResources(playerId, roll);
             }
 
             boolean endTurn = false;
@@ -73,13 +77,51 @@ public class Game {
                     action = scanner.next();
 
                     if (action.equals("road")) {
-
+                        //todo get coordinates from view
+                        int x = 0, y = 0;
+                        if (isRoadValid(new Edge(x, y))) {
+                            if (player.getResources().containsAll(Price.Road.getPrice())) {
+                                player.getResources().removeAll(Price.Road.getPrice());
+                                board.getEdges()[y][x].setId(turnId);
+                            } else {
+                                System.out.println("Not enough resources");
+                            }
+                        } else {
+                            System.out.println("Invalid road location");
+                        }
                     } else if (action.equals("settlement")) {
-
+                        //todo get coordinates from view
+                        int x = 0, y = 0;
+                        if (isSettlementValid(new Vertex(x,y))) {
+                            if (player.getResources().containsAll(Price.Settlement.getPrice())) {
+                                player.getResources().removeAll(Price.Settlement.getPrice());
+                                board.getVertices()[y][x].buildSettlement(turnId);
+                            } else {
+                                System.out.println("Not enough resources");
+                            }
+                        } else {
+                            System.out.println("Invalid settlement location");
+                        }
                     } else if (action.equals("city")) {
-
+                        //todo get coordinates from view
+                        int x = 0, y = 0;
+                        if (isCityValid(new Vertex(x, y))) {
+                            if (player.getResources().containsAll(Price.City.getPrice())) {
+                                player.getResources().removeAll(Price.City.getPrice());
+                                board.getVertices()[y][x].buildCity(turnId);
+                            } else {
+                                System.out.println("Not enough resources");
+                            }
+                        } else {
+                            System.out.println("Invalid city location");
+                        }
                     } else if (action.equals("DevCard")) {
-
+                        if (player.getResources().containsAll(Price.DevelopmentCard.getPrice())) {
+                            player.getResources().removeAll(Price.DevelopmentCard.getPrice());
+                            DevelopmentCard devCard = board.buyDevelopmentCard();
+                            player.getDevelopmentCards().add(devCard);
+                            System.out.println("You received: " + devCard);
+                        }
                     }
                 } else if (action.equals("playDevCard")) {
 
@@ -161,6 +203,29 @@ public class Game {
 
     private int getVictoryPoints(int id) {
         return 0;
+    }
+
+    private void setResources(int id, int roll) {
+        ArrayList<Vertex> settlements = getSettlements(id);
+        ArrayList<Vertex> cities = getCities(id);
+
+        player.getResources().addAll(getResources(settlements,roll));
+        player.getResources().addAll(getResources(cities, roll));
+
+
+
+    }
+
+    private ArrayList<Resource> getResources(ArrayList<Vertex> vertices, int roll) {
+        ArrayList<Resource> res = new ArrayList<>();
+        for (Vertex vertex : vertices) {
+            for (Hex hex : board.getAdjacentHexes(vertex)) {
+                if (hex.getNumberToken() == roll) {
+                    res.add(hex.getTerrain().getProduct());
+                }
+            }
+        }
+        return res;
     }
 
     private ArrayList<Vertex> getSettlements(int id) {
