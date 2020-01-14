@@ -13,6 +13,11 @@ public class Hex {
         this.numberToken = numberToken;
     }
 
+    public Hex(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public Terrain getTerrain() {
         return terrain;
     }

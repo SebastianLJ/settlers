@@ -1,8 +1,6 @@
 import model.PlayerState;
-import model.board.Board;
-import model.board.Hex;
-import model.board.Resource;
-import model.board.Vertex;
+import model.board.*;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +11,6 @@ import org.jspace.*;
 
 public class test {
     public static void main(String[] args) {
-
 
     }
 }

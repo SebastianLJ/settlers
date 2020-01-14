@@ -28,7 +28,7 @@ public class Board {
         //setup edges
         for (int i = 0; i < edges.length; i++) {
             for (int j = 0; j < edges.length; j++) {
-                if ((i % 2 == 0 && j % 2 == 0 || j % 2 == 1) && j > i + edges.length/2 - 1 && j < edges.length + edges.length/2 - i) {
+                if ((i % 2 == 0 || j % 2 == 0) && j > edges.length/2 - 1 - i && j < edges.length + edges.length/2 - i) {
                     edges[i][j] = new Edge(j, i);
                 } else {
                     edges[i][j] = null;
@@ -51,7 +51,7 @@ public class Board {
         //place robber
         for(Hex[] hexList : hexes) {
             for(Hex hex : hexList) {
-                if (hex.getTerrain().equals(Terrain.Desert)) {
+                if (hex != null && hex.getTerrain().equals(Terrain.Desert)) {
                     updateRobber(hex.getX(), hex.getY());
                 }
             }
@@ -166,6 +166,19 @@ public class Board {
         return res;
     }
 
+    public Edge[] getAdjacentEdges(Hex hex) {
+        int x = hex.getX();
+        int y = hex.getY();
+        Edge[] res = new Edge[6];
+        res[0] = edges[y*2+1][x*2+2];
+        res[1] = edges[y*2+2][x*2+1];
+        res[2] = edges[y*2+2][x*2];
+        res[3] = edges[y*2+1][x*2];
+        res[4] = edges[y*2][x*2+1];
+        res[5] = edges[y*2][x*2+2];
+        return res;
+    }
+
     public double[] getVertexTransformedCoordinates(Vertex vertex, int size, int centerX, int centerY,
                                                     int centerXTransformed, int centerYTransformed) {
         double[] res = new double[2];
@@ -235,7 +248,11 @@ public class Board {
     }
 
     public void updateRobber(int x, int y) {
-        hexes[currentRobberPos[1]][currentRobberPos[0]].setRobber(false);
+        try {
+            hexes[currentRobberPos[1]][currentRobberPos[0]].setRobber(false);
+        } catch (NullPointerException e) {
+
+        }
         hexes[y][x].setRobber(true);
         currentRobberPos[0] = x;
         currentRobberPos[1] = y;
