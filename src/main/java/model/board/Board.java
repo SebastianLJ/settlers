@@ -7,8 +7,8 @@ public class Board {
     private Hex[][] hexes = new Hex[5][5];
     private Edge[][] edges = new Edge[11][11];
     private Vertex[][] vertices = new Vertex[6][12];
+    private int[] currentRobberPos = {-1,-1};
     private ArrayList<DevelopmentCard> developmentCards = new ArrayList<>();
-    private int[] currentRobberPos = new int[2];
     private final int FX_HEX_SIZE = 30;
 
 
@@ -248,10 +248,8 @@ public class Board {
     }
 
     public void updateRobber(int x, int y) {
-        try {
+        if (currentRobberPos[1] != -1 && currentRobberPos[0] != -1) {
             hexes[currentRobberPos[1]][currentRobberPos[0]].setRobber(false);
-        } catch (NullPointerException e) {
-
         }
         hexes[y][x].setRobber(true);
         currentRobberPos[0] = x;
