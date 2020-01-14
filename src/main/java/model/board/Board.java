@@ -48,6 +48,12 @@ public class Board {
             }
         }
 
+        //setup harbors
+        int[][] harborLocations = Preset.getHarbors();
+        for (int[] harbor : harborLocations) {
+            vertices[harbor[1]][harbor[0]].setHarbor(harbor[2]);
+        }
+
         //place robber
         for(Hex[] hexList : hexes) {
             for(Hex hex : hexList) {

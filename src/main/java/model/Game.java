@@ -68,11 +68,36 @@ public class Game {
                     action = scanner.next();
 
                     if (action.equals("player")) {
-
-                    } else if (action.equals("bank")) {
-
-                    } else if (action.equals("harbor")) {
-
+                        //todo
+                    } else if (action.equals("bank") ||action.equals("harbor")) {
+                        System.out.println("Please select a resource to trade ");
+                        String resource = scanner.next();
+                        if (harborTrades(player).contains(stringToResource(resource))
+                                && player.getResourceAmount(stringToResource(resource)) >= 2) {
+                            for (int i = 0; i < 2; i++) {
+                                player.getResources().remove(stringToResource(resource));
+                            }
+                            System.out.println("Please select a single resource to receive: ");
+                            resource = scanner.next();
+                            player.getResources().add(stringToResource(resource));
+                        } else if (hasGenericHarbor(player)
+                                && player.getResourceAmount(stringToResource(resource)) >= 3) {
+                            for (int i = 0; i < 3; i++) {
+                                player.getResources().remove(stringToResource(resource));
+                            }
+                            System.out.println("Please select a single resource to receive: ");
+                            resource = scanner.next();
+                            player.getResources().add(stringToResource(resource));
+                        } else if (player.getResourceAmount(stringToResource(resource)) >= 4) {
+                                for (int i = 0; i < 4; i++) {
+                                    player.getResources().remove(stringToResource(resource));
+                                }
+                                System.out.println("Please select a single resource to receive: ");
+                                resource = scanner.next();
+                                player.getResources().add(stringToResource(resource));
+                        } else {
+                                System.out.println("you don't have enough " + resource + " to trade");
+                        }
                     }
 
                 } else if (action.equals("build")) {
@@ -153,24 +178,8 @@ public class Game {
                         while (resourcesSelected < 2) {
                             System.out.println("Please selec a resource:_");
                             String resourceType = scanner.next();
-                            switch (resourceType) {
-                                case "brick":
-                                    player.getResources().add(Resource.Brick);
-                                    break;
-                                case "lumber":
-                                    player.getResources().add(Resource.Lumber);
-                                    break;
-                                case "ore":
-                                    player.getResources().add(Resource.Ore);
-                                    break;
-                                case "grain":
-                                    player.getResources().add(Resource.Grain);
-                                    break;
-                                case "wool":
-                                    player.getResources().add(Resource.Wool);
-                                    break;
-                                default:
-                                    continue;
+                            if (stringToResource(resourceType) != null) {
+                                player.getResources().add(stringToResource(resourceType));
                             }
                             resourcesSelected++;
                         }
@@ -316,6 +325,7 @@ public class Game {
     }
 
     private int getLongestRoad(int id, Edge edge) {
+        //todo
         return 0;
     }
 
@@ -326,5 +336,51 @@ public class Game {
 
     public Board getBoard() {
         return board;
+    }
+
+    private ArrayList<Resource> harborTrades(PlayerState player) {
+        ArrayList<Resource> res = new ArrayList<>();
+        for (Vertex settlement : getSettlements(player.getPlayerId())) {
+            if (settlement.getHarbor() != null) {
+                res.add(settlement.getHarbor().getResource());
+            }
+        }
+        for (Vertex city : getCities(player.getPlayerId())) {
+            if (city.getHarbor() != null) {
+                res.add(city.getHarbor().getResource());
+            }
+        }
+        return res;
+    }
+
+    private boolean hasGenericHarbor(PlayerState player) {
+        for (Vertex settlement : getSettlements(player.getPlayerId())) {
+            if (settlement.getHarbor() == Harbor.Generic) {
+                return true;
+            }
+        }
+        for (Vertex city : getCities(player.getPlayerId())) {
+            if (city.getHarbor() == Harbor.Generic) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Resource stringToResource(String resource) {
+        switch (resource) {
+            case "brick":
+                return Resource.Brick;
+            case "lumber":
+                return Resource.Lumber;
+            case "ore":
+                return Resource.Ore;
+            case "grain":
+                return Resource.Grain;
+            case "wool":
+                return Resource.Wool;
+            default:
+                return null;
+        }
     }
 }

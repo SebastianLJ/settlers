@@ -61,4 +61,12 @@ public class PlayerState {
     public void setHasLargetArmy(boolean hasLargetArmy) {
         this.hasLargetArmy = hasLargetArmy;
     }
+
+    public int getResourceAmount(Resource resourceMatch) {
+        int count = 0;
+        for (Resource resource : resources) {
+            if (resource == resourceMatch) count++;
+        }
+        return count;
+    }
 }

@@ -41,5 +41,6 @@ public class Hex {
     public void setRobber(boolean robber) {
         this.robber = robber;
     }
+
 }
 
