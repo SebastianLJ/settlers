@@ -1,6 +1,7 @@
 package model.board;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Board {
@@ -39,7 +40,7 @@ public class Board {
         //setup vertices
         for (int i = 0; i < vertices.length; i++) {
             for (int j = 0; j < vertices[0].length; j++) {
-                if (j > 10 || i == 0 && j < 4 || i == 1 && j < 3 || i == 2 && j < 1 || i == 3 && j > 9 ||
+                if (i == 0 && (j < 4 || j > 10) || i == 1 && j < 3 || i == 2 && j < 1 || i == 3 && j > 10 ||
                         i == 4 && j > 8 || i == 5 && j > 6) {
                     vertices[i][j] = null;
                 } else {

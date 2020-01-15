@@ -99,7 +99,6 @@ public class Game {
                                 System.out.println("you don't have enough " + resource + " to trade");
                         }
                     }
-
                 } else if (action.equals("build")) {
                     action = scanner.next();
 
