@@ -175,7 +175,7 @@ public class Board {
             } else {
                 res[1] = edges[y*2][x-1];
                 res[2] = edges[y*2][x];
-                res[0] = edges[y*2+1][x];
+                res[0] = edges[y*2+1][x-1];
             }
 
 
