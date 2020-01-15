@@ -7,11 +7,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import model.Game;
-import model.board.Hex;
-import model.board.Point;
-import model.board.Terrain;
-import model.board.Vertex;
+import model.board.*;
 
 public class NewView {
 
@@ -51,6 +49,7 @@ public class NewView {
                 hex = hexes[i][j];
                 if (hex != null) {
                     drawVertices(root, hex);
+                    drawPaths(root, hex);
 
 
                 }
@@ -64,16 +63,35 @@ public class NewView {
 
     }
 
+    private void drawPaths(Group root, Hex hex) {
+        Point[] points = getAdjacentVerticesLocation(hex);
+        Edge[] edges = game.getBoard().getAdjacentEdges(hex);
+
+        for (int k = 0; k < edges.length; k++) {
+            if (edges[k].getId() == -1) {
+                continue;
+            }
+            Line line = new Line(points[k].getX(), points[k].getY(), points[(k+1)%6].getX(), points[(k+1)%6].getY());
+            line.setStrokeWidth(HEX_SIZE/10.);
+            root.getChildren().add(line);
+
+            Paint paint = getColorFromPlayerID(edges[k].getId());
+            line.setStroke(paint);
+        }
+    }
+
     private void drawVertices(Group root, Hex hex) {
         Point[] points = getAdjacentVerticesLocation(hex);
         Vertex[] vertices = game.getBoard().getAdjacentVertices(hex);
 
         for (int k = 0; k < vertices.length; k++) {
-            if (!(vertices[k].isSettlement() && vertices[k].isCity())) {
+            if (vertices[k].getId() == -1) {
                 continue;
             }
-            Paint playerColor = getColorFromPlayerID(vertices[k].getId());
+
             Circle circle = new Circle(points[k].getX(), points[k].getY(), hex.getSize()/8.);
+
+            Paint playerColor = getColorFromPlayerID(vertices[k].getId());
             circle.setFill(playerColor);
 
             if (vertices[k].isCity()) {
@@ -84,7 +102,7 @@ public class NewView {
     }
 
     private Paint getColorFromPlayerID(int playerID) {
-        Paint paint = Color.BLACK;
+        Paint paint = Color.TRANSPARENT;
         switch (playerID) {
             case PLAYER_ONE:
                 paint = Color.RED;
