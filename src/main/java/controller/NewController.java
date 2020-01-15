@@ -1,6 +1,5 @@
-package view;
+package controller;
 
-import controller.Controller;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -9,13 +8,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
-import model.board.*;
+import model.Game;
+import model.board.Edge;
+import model.board.Hex;
+import model.board.Terrain;
+import model.board.Vertex;
+import view.NewView;
+import view.View;
 
-import java.io.IOException;
+import static java.lang.Math.atan2;
+import static java.lang.Math.floor;
 
-import static java.lang.Math.*;
-
-public class View extends Application {
+public class NewController extends Application {
 
     private final int screenSize = 1000;
 
@@ -31,36 +35,26 @@ public class View extends Application {
 
     private final double offsetX = screenSize/2.0 - centerCoordX, offsetY = screenSize/2.0 - centerCoordY;
 
-    private Controller controller;
 
-    private Edge clickedEdge;
-    private Vertex clickedVertex;
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+    private Game game;
+    private NewView view;
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Settlers of Catan");
-        controller = new Controller(this);
-
         Group root = new Group();
         Scene scene = new Scene(root,screenSize,screenSize, Color.DEEPSKYBLUE);
 
-        // TODO Make game depending on users choices in lobby UI
-        controller.createGame("");
+        // Opens Lobby first
 
-        Hex[][] hexes = controller.getGame().getBoard().getHexes();
+        // From Lobby create or join game TODO Implement
+
+        // TODO Game shouldn't have a reference to controller
+        game = new Game("");
+        view = new NewView(game);
+
+        Hex[][] hexes = game.getBoard().getHexes();
         setupHexUI(root, hexes);
-
-
-
-
-
-
-
-
 
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -98,45 +92,38 @@ public class View extends Application {
 
         double touchAngle = getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex));
 
-        clickedVertex = getChosenIntersection(i, j, touchAngle);
-        clickedEdge = getChosenEdge(i, j, touchAngle);
+
+        // TODO implements states
+
+
+        getChosenIntersection(i, j, touchAngle);
+        getChosenEdge(i, j, touchAngle);
 
         /*System.out.println("This is hex [" + getId(polygon)[0] + "][" + getId(polygon)[1] + "] " +
                 "at coordinates (" + getHexCenterX(hex) + ", " + getHexCenterY(hex) + "). The screen was touched in an angle of "
                 + getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex)));*/
     }
 
-    /**
-     * Get the path chosen by the user via a screen click
-     * @param i i index in hexes[i][j]
-     * @param j j index in hexes[i][j]
-     * @param angle angle calculated by @getAngleFromScreenClick
-     * @return // TODO TBD.
-     */
     public Edge getChosenEdge(int i, int j, double angle) {
         int edgeIndex = (int) (floor(angle) + 30) % 360 / 60;
-        Edge[] edges = controller.getGame().getBoard().getAdjacentEdges(new Hex(j, i, Terrain.None, -1));
+        Edge[] edges = game.getBoard().getAdjacentEdges(new Hex(j, i, Terrain.None, -1));
 
         Edge chosenEdge = edges[edgeIndex];
+        System.out.println("You clicked on hex at position: (" + i + ", " + j + ") in an angle of " + angle + " chosen edge index is: " + edgeIndex);
         return chosenEdge;
     }
 
-    /**
-     * Get the intersection chosen by the user via a screen click
-     * @param i i index in hexes[i][j]
-     * @param j j index in hexes[i][j]
-     * @param angle angle calculated by @getAngleFromScreenClick
-     * @return // TODO TBD.
-     */
     public Vertex getChosenIntersection(int i, int j, double angle) {
         int vertexIndex = (int) floor(angle)/60;
-        Vertex[] vertices = controller.getGame().getBoard().getAdjacentVertices(new Hex(j,i, Terrain.None, -1));
+        Vertex[] vertices = game.getBoard().getAdjacentVertices(new Hex(j,i, Terrain.None, -1));
 
         // Do some verification of chosen vertex..
         Vertex chosenVertex = vertices[vertexIndex];
+
+        System.out.println("You clicked on hex at position: (" + i + ", " + j + ") in an angle of " + angle + " chosen vertex index is: " + vertexIndex);
+
         return chosenVertex;
     }
-
 
     /**
      * Calculates and returns the angle from the center of the clicked hexagon to the actual mouse click.
@@ -160,7 +147,6 @@ public class View extends Application {
         }
     }
 
-
     /**
      * Creates a Shape.Polygon in the x,y-basis from hex-basis
      * @param hex input hex containing x,y-hex
@@ -172,7 +158,7 @@ public class View extends Application {
         double y = getHexCenterY(hex);
 
         Polygon polygon = new Polygon(x,y + HEX_HEIGHT/2, x + HEX_WIDTH/2, y + HEX_HEIGHT/4, x + HEX_WIDTH/2, y - HEX_HEIGHT/4,
-                                x, y - HEX_HEIGHT/2, x - HEX_WIDTH/2, y - HEX_HEIGHT/4, x - HEX_WIDTH/2, y + HEX_HEIGHT/4);
+                x, y - HEX_HEIGHT/2, x - HEX_WIDTH/2, y - HEX_HEIGHT/4, x - HEX_WIDTH/2, y + HEX_HEIGHT/4);
 
         polygon.setStroke(Color.BLACK);
 

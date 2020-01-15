@@ -18,11 +18,9 @@ public class Game {
     private Board board;
     private final String hostURI;
     private int playerCount = 1;
-    private Controller controller;
 
-    public Game(String hostURI, Controller controller) throws IOException {
+    public Game(String hostURI) throws IOException {
         this.hostURI = hostURI;
-        this.controller = controller;
         board = new Board();
         player = new PlayerState(1);
         /*playerSpace = new RemoteSpace(hostURI);
@@ -51,10 +49,11 @@ public class Game {
 
             if (roll == 7) {
                 boolean success = false;
-                while (!success) {
+                // TODO Fix with new controller
+                /*while (!success) {
                     int[] coords = controller.getHexCoordinates();
                     success = board.updateRobber(coords[0],coords[1]);
-                }
+                }*/
             } else {
                 setResources(playerId, roll);
             }
@@ -105,20 +104,21 @@ public class Game {
                     if (action.equals("road")) {
                         if (player.getResources().containsAll(Price.Road.getPrice())) {
                             boolean success = false;
-                            while(!success) {
-                                int[] coords = controller.getEdgeCoordinates();
+                            // TODO Fix with new controller
+                            /*while(!success) {
+                                /*Edge edge = controller.getEdgeCoordinates();
                                 //break if player cancels
-                                if (coords[0] == -1 && coords[1] == -1) {
+                                if (edge.getX() == -1 && edge.getY() == -1) {
                                     break;
                                 }
-                                if (isRoadValid(new Edge(coords[0], coords[1]))) {
+                                if (isRoadValid(edge)) {
                                     player.getResources().removeAll(Price.Road.getPrice());
-                                    board.getEdges()[coords[1]][coords[0]].setId(turnId);
+                                    edge.setId(turnId);
                                     success = true;
                                 } else {
                                     System.out.println("Invalid road location");
                                 }
-                            }
+                            }*/
                         } else {
                             System.out.println("Not enough resources");
                         }
@@ -127,40 +127,42 @@ public class Game {
 
                         if (player.getResources().containsAll(Price.Settlement.getPrice())) {
                             boolean success = false;
-                            while (!success) {
-                                int[] coords = controller.getVertexCoordinates();
+                            // TODO Fix with new controller
+                            /*while (!success) {
+                                Vertex vertex = controller.getVertexCoordinates();
                                 //break if player cancels
-                                if (coords[0] == -1 && coords[1] == -1) {
+                                if (vertex.getX() == -1 && vertex.getY() == -1) {
                                     break;
                                 }
-                                if (isSettlementValid(new Vertex(coords[0], coords[1]))) {
+                                if (isSettlementValid(vertex)) {
                                     player.getResources().removeAll(Price.Settlement.getPrice());
-                                    board.getVertices()[coords[1]][coords[0]].buildSettlement(turnId);
+                                    vertex.buildSettlement(turnId);
                                     success = true;
                                 } else {
                                     System.out.println("Invalid settlement location");
                                 }
-                            }
+                            }*/
                         } else {
                             System.out.println("Not enough resources");
                         }
                     } else if (action.equals("city")) {
                         if (player.getResources().containsAll(Price.City.getPrice())) {
                             boolean success = false;
-                            while (!success) {
-                                int[] coords = controller.getVertexCoordinates();
+                            // TODO Fix with new controller
+                            /*while (!success) {
+                                Vertex vertex = controller.getVertexCoordinates();
                                 //break if player cancels
-                                if (coords[0] == -1 && coords[1] == -1) {
+                                if (vertex.getX() == -1 && vertex.getY() == -1) {
                                     break;
                                 }
-                                if (isCityValid(new Vertex(coords[0], coords[1]))) {
+                                if (isCityValid(vertex)) {
                                     player.getResources().removeAll(Price.City.getPrice());
-                                    board.getVertices()[coords[1]][coords[0]].buildCity(turnId);
+                                    vertex.buildCity(turnId);
                                     success = true;
                                 } else {
                                     System.out.println("Invalid city location");
                                 }
-                            }
+                            }*/
                         } else {
                             System.out.println("Not enough resources");
                         }
@@ -179,25 +181,27 @@ public class Game {
                     action = scanner.next();
                     if (action.equals(DevelopmentCard.Knight.getType())) {
                         boolean success = false;
-                        while (!success) {
+                        // TODO Fix with new controller
+                        /*while (!success) {
                             int[] coords = controller.getHexCoordinates();
                             success = board.updateRobber(coords[0],coords[1]);
-                        }
+                        }*/
                     } else if (action.equals(DevelopmentCard.RoadBuilding.getType())) {
                         int roadsPlaced = 0;
-                        while (roadsPlaced < 2) {
+                        // TODO Fix with new controller
+                        /*while (roadsPlaced < 2) {
                             boolean success = false;
                             while(!success) {
-                                int[] coords = controller.getEdgeCoordinates();
-                                if (isRoadValid(new Edge(coords[0], coords[1]))) {
-                                    board.getEdges()[coords[1]][coords[0]].setId(turnId);
+                                Edge edge = controller.getEdgeCoordinates();
+                                if (isRoadValid(edge)) {
+                                    edge.setId(turnId);
                                     roadsPlaced++;
                                     success = true;
                                 } else {
                                     System.out.println("Invalid road location");
                                 }
                             }
-                        }
+                        }*/
                     } else if (action.equals(DevelopmentCard.YearOfPlenty.getType())) {
                         int resourcesSelected = 0;
                         while (resourcesSelected < 2) {
@@ -226,6 +230,9 @@ public class Game {
     }
 
     private boolean isRoadValid(Edge edge) {
+        if (edge == null) {
+            return false;
+        }
         Vertex[] vertices = board.getAdjacentVertices(edge);
         for (Vertex vertex : vertices) {
             if (vertex.getId() == playerId && vertex.isCity() || vertex.isSettlement()) {

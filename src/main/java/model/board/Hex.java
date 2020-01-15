@@ -5,6 +5,7 @@ public class Hex {
     private Terrain terrain;
     private int numberToken;
     private boolean robber = false;
+    private double sqrt3 = Math.sqrt(3);
 
     public Hex(int x, int y, Terrain terrain, int numberToken) {
         this.x = x;
@@ -40,6 +41,14 @@ public class Hex {
 
     public void setRobber(boolean robber) {
         this.robber = robber;
+    }
+
+    public double getRealX() {
+        return sqrt3*x + 0.5*sqrt3*y;
+    }
+
+    public double getRealY() {
+        return 6.0/4*y;
     }
 
 }
