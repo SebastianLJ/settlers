@@ -46,7 +46,7 @@ public class NewController extends Application {
 
 
     private newGame game;
-    private GameState gameState = GameState.None;
+    private GameState gameState = GameState.BuildSettlement;
     private NewView view;
 
     private Group root;
