@@ -19,6 +19,21 @@ public class Controller {
         game = new Game(URIforGame);
     }
 
+    public int[] getEdgeCoordinates() {
+        int[] res = new int[2];
+        return res;
+    }
+
+    public int[] getVertexCoordinates() {
+        int[] res = new int[2];
+        return res;
+    }
+
+    public int[] getHexCoordinates() {
+        int res[] = new int[2];
+        return res;
+    }
+
     public Game getGame() {
         return game;
     }
