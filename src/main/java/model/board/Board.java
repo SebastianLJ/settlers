@@ -10,7 +10,6 @@ public class Board {
     private Vertex[][] vertices = new Vertex[6][12];
     private int[] currentRobberPos = {-1,-1};
     private ArrayList<DevelopmentCard> developmentCards = new ArrayList<>();
-    private final int FX_HEX_SIZE = 30;
 
 
     public Board() {
