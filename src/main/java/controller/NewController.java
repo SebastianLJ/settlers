@@ -9,15 +9,18 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import model.Game;
+import model.GameState;
 import model.board.Edge;
 import model.board.Hex;
 import model.board.Terrain;
 import model.board.Vertex;
+import model.newGame;
 import view.NewView;
 import view.View;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.floor;
+import static model.GameState.*;
 
 public class NewController extends Application {
 
@@ -37,7 +40,8 @@ public class NewController extends Application {
     private final double offsetX = screenSize/2.0 - centerCoordX, offsetY = screenSize/2.0 - centerCoordY;
 
 
-    private Game game;
+    private newGame game;
+    private GameState gameState = GameState.None;
     private NewView view;
 
     @Override
@@ -51,7 +55,7 @@ public class NewController extends Application {
         // From Lobby create or join game TODO Implement
 
         // TODO Game shouldn't have a reference to controller
-        game = new Game("");
+        game = new newGame("");
         view = new NewView(game);
 
         Hex[][] hexes = game.getBoard().getHexes();
@@ -95,11 +99,43 @@ public class NewController extends Application {
 
 
         // TODO implements states
+        int success = 0;
+        switch (gameState) {
+            case Trade:
+                //todo
+                break;
+            case BuildRoad:
+                success = game.buildRoad(getChosenEdge(i,j,touchAngle), false);
+                break;
+            case BuildSettlement:
+                success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
+                break;
+            case BuildCity:
+                success = game.buildCity(getChosenIntersection(i, j, touchAngle));
+                break;
+            case BuyDevelopmentCard:
+                success = game.buyDevelopmentCard();
+                break;
+            case PlayDevelopmentCard:
+                //todo
+                break;
+            case None:
+                System.out.println("No action selected");
+        }
+
+        //todo notify user according to return value
+        if (success == 1) {
+
+        } else if (success == -1) {
+
+        } else if (success == -2) {
+
+        }
 
 
-        getChosenIntersection(i, j, touchAngle);
-        getChosenEdge(i, j, touchAngle);
 
+        //getChosenIntersection(i, j, touchAngle);
+        //getChosenEdge(i, j, touchAngle);
         /*System.out.println("This is hex [" + getId(polygon)[0] + "][" + getId(polygon)[1] + "] " +
                 "at coordinates (" + getHexCenterX(hex) + ", " + getHexCenterY(hex) + "). The screen was touched in an angle of "
                 + getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex)));*/

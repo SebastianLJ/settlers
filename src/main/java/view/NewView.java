@@ -6,6 +6,7 @@ import javafx.scene.shape.Polygon;
 import model.Game;
 import model.board.Hex;
 import model.board.Terrain;
+import model.newGame;
 
 public class NewView {
 
@@ -24,10 +25,10 @@ public class NewView {
     private final double offsetX = screenSize/2.0 - centerCoordX, offsetY = screenSize/2.0 - centerCoordY;
 
 
-    private Game game;
+    private newGame game;
     private Hex[][] hexes;
 
-    public NewView(Game game) {
+    public NewView(newGame game) {
         this.game = game;
         hexes = game.getBoard().getHexes();
 
