@@ -254,17 +254,17 @@ public class Board {
         return currentRobberPos;
     }
 
-    public int updateRobber(int x, int y) {
+    public boolean updateRobber(int x, int y) {
         if (currentRobberPos[1] != -1 && currentRobberPos[0] != -1) {
             hexes[currentRobberPos[1]][currentRobberPos[0]].setRobber(false);
         }
         if (currentRobberPos[0] == x && currentRobberPos[1] == y) {
-            return -1;
+            return false;
         }
         hexes[y][x].setRobber(true);
         currentRobberPos[0] = x;
         currentRobberPos[1] = y;
-        return 1;
+        return true;
     }
 
     private void initDevCards() {
