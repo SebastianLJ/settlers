@@ -18,4 +18,5 @@ public enum Resource {
     public String getType() {
         return type;
     }
+
 }

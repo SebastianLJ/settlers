@@ -22,7 +22,7 @@ public class Lobby {
             int port = 9001;
 
             String URI = "tcp://" + ip + ":" + port + "?keep";
-            System.out.println("A game is hosted on URI: " + URI);
+            System.out.println("A game is hosted on IP:Port: " + ip + ":" + port);
 
             // Opening gate at given URI
             repository.addGate(URI);
@@ -31,10 +31,10 @@ public class Lobby {
             playGame(game, true);
 
         } else if (input.equals("JOIN")) {
-            System.out.println("Enter game URI... Format: tcp://<IP>:<PORT>");
+            System.out.println("Enter game ip and port... Format: ip:port");
             input = scanner.next();
 
-            String hostUri = input + "/game?keep";
+            String hostUri = "tcp://" + input + "/game?keep";
 
             RemoteSpace game = new RemoteSpace(hostUri);
 

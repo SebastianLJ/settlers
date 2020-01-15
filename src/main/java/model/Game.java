@@ -48,11 +48,13 @@ public class Game {
 
             if (roll == 7) {
 
-
                 //todo get new robber coords from view
                 int x = 2;
                 int y = 2;
-                board.updateRobber(x,y);
+                int success = -1;
+                while (success != 1) {
+                    success = board.updateRobber(x,y);
+                }
             } else {
                 setResources(playerId, roll);
             }
@@ -66,13 +68,37 @@ public class Game {
                     action = scanner.next();
 
                     if (action.equals("player")) {
-
-                    } else if (action.equals("bank")) {
-
-                    } else if (action.equals("harbor")) {
-
+                        //todo
+                    } else if (action.equals("bank") ||action.equals("harbor")) {
+                        System.out.println("Please select a resource to trade ");
+                        String resource = scanner.next();
+                        if (harborTrades(player).contains(stringToResource(resource))
+                                && player.getResourceAmount(stringToResource(resource)) >= 2) {
+                            for (int i = 0; i < 2; i++) {
+                                player.getResources().remove(stringToResource(resource));
+                            }
+                            System.out.println("Please select a single resource to receive: ");
+                            resource = scanner.next();
+                            player.getResources().add(stringToResource(resource));
+                        } else if (hasGenericHarbor(player)
+                                && player.getResourceAmount(stringToResource(resource)) >= 3) {
+                            for (int i = 0; i < 3; i++) {
+                                player.getResources().remove(stringToResource(resource));
+                            }
+                            System.out.println("Please select a single resource to receive: ");
+                            resource = scanner.next();
+                            player.getResources().add(stringToResource(resource));
+                        } else if (player.getResourceAmount(stringToResource(resource)) >= 4) {
+                                for (int i = 0; i < 4; i++) {
+                                    player.getResources().remove(stringToResource(resource));
+                                }
+                                System.out.println("Please select a single resource to receive: ");
+                                resource = scanner.next();
+                                player.getResources().add(stringToResource(resource));
+                        } else {
+                                System.out.println("you don't have enough " + resource + " to trade");
+                        }
                     }
-
                 } else if (action.equals("build")) {
                     action = scanner.next();
 
@@ -124,13 +150,48 @@ public class Game {
                         }
                     }
                 } else if (action.equals("playDevCard")) {
+                    System.out.println("please select a development card to play: ");
+                    action = scanner.next();
+                    if (action.equals(DevelopmentCard.Knight.getType())) {
+                        //todo get new robber coords from view
+                        int x = 2;
+                        int y = 2;
+                        int succes = -1;
+                        while (succes != 1) {
+                            succes = board.updateRobber(x,y);
+                        }
+                    } else if (action.equals(DevelopmentCard.RoadBuilding)) {
+                        int roadsPlaced = 0;
+                        while (roadsPlaced < 2) {
+                            //todo get coordinates from view
+                            int x = 0, y = 0;
+                            if (isRoadValid(new Edge(x, y))) {
+                                board.getEdges()[y][x].setId(turnId);
+                                roadsPlaced++;
+                            } else {
+                                System.out.println("Invalid road location");
+                            }
+                        }
+                    } else if (action.equals(DevelopmentCard.YearOfPlenty.getType())) {
+                        int resourcesSelected = 0;
+                        while (resourcesSelected < 2) {
+                            System.out.println("Please selec a resource:_");
+                            String resourceType = scanner.next();
+                            if (stringToResource(resourceType) != null) {
+                                player.getResources().add(stringToResource(resourceType));
+                            }
+                            resourcesSelected++;
+                        }
+                    } else if (action.equals(DevelopmentCard.Monopoly)) {
+                        //todo
+                    }
 
                 } else if (action.equals("endTurn")) {
                     endTurn = true;
                 }
             }
 
-            if (getVictoryPoints(turnId) >= 10) {
+            if (getVictoryPoints(player) >= 10) {
                 victory = true;
             }
 
@@ -201,8 +262,18 @@ public class Game {
         return playerSpace.getAll(Templates.Player.getTemplateFields()).size();
     }*/
 
-    private int getVictoryPoints(int id) {
-        return 0;
+    private int getVictoryPoints(PlayerState player) {
+        int vp = getSettlements(player.getPlayerId()).size() + getCities(player.getPlayerId()).size();
+        for (DevelopmentCard developmentCard : player.getDevelopmentCards()) {
+            if (developmentCard.equals(DevelopmentCard.VictoryPoint)) {
+                vp++;
+            }
+        }
+        if (player.hasLargetArmy()) vp++;
+        if (player.hasLongestRoad()) vp++;
+
+        return vp;
+
     }
 
     private void setResources(int id, int roll) {
@@ -253,6 +324,7 @@ public class Game {
     }
 
     private int getLongestRoad(int id, Edge edge) {
+        //todo
         return 0;
     }
 
@@ -263,5 +335,51 @@ public class Game {
 
     public Board getBoard() {
         return board;
+    }
+
+    private ArrayList<Resource> harborTrades(PlayerState player) {
+        ArrayList<Resource> res = new ArrayList<>();
+        for (Vertex settlement : getSettlements(player.getPlayerId())) {
+            if (settlement.getHarbor() != null) {
+                res.add(settlement.getHarbor().getResource());
+            }
+        }
+        for (Vertex city : getCities(player.getPlayerId())) {
+            if (city.getHarbor() != null) {
+                res.add(city.getHarbor().getResource());
+            }
+        }
+        return res;
+    }
+
+    private boolean hasGenericHarbor(PlayerState player) {
+        for (Vertex settlement : getSettlements(player.getPlayerId())) {
+            if (settlement.getHarbor() == Harbor.Generic) {
+                return true;
+            }
+        }
+        for (Vertex city : getCities(player.getPlayerId())) {
+            if (city.getHarbor() == Harbor.Generic) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Resource stringToResource(String resource) {
+        switch (resource) {
+            case "brick":
+                return Resource.Brick;
+            case "lumber":
+                return Resource.Lumber;
+            case "ore":
+                return Resource.Ore;
+            case "grain":
+                return Resource.Grain;
+            case "wool":
+                return Resource.Wool;
+            default:
+                return null;
+        }
     }
 }

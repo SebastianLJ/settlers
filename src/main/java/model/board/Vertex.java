@@ -42,8 +42,25 @@ public class Vertex {
         return id;
     }
 
-    public void setHarbor(Harbor harbor) {
-        this.harbor = harbor;
+    public void setHarbor(int harborType) {
+        switch (harborType) {
+            case 0:
+                harbor = Harbor.Brick;
+                break;
+            case 1:
+                harbor = Harbor.Lumber;
+                break;
+            case 2:
+                harbor = Harbor.Ore;
+                break;
+            case 3:
+                harbor = Harbor.Grain;
+                break;
+            case 4:
+                harbor = Harbor.Wool;
+            case 5:
+                harbor = Harbor.Generic;
+        }
     }
 
     public int getX() {

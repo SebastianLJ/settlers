@@ -17,7 +17,7 @@ import static java.lang.Math.*;
 
 public class View extends Application {
 
-    private final int screenSize = 400;
+    private final int screenSize = 1000;
 
     private final int HEX_SIZE = screenSize/10;
     private final double HEX_WIDTH = Math.sqrt(3)*HEX_SIZE;

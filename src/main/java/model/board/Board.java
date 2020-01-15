@@ -1,6 +1,7 @@
 package model.board;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Board {
@@ -28,7 +29,7 @@ public class Board {
         //setup edges
         for (int i = 0; i < edges.length; i++) {
             for (int j = 0; j < edges.length; j++) {
-                if ((i % 2 == 0 && j % 2 == 0 || j % 2 == 1) && j > i + edges.length/2 - 1 && j < edges.length + edges.length/2 - i) {
+                if ((i % 2 == 0 || j % 2 == 0) && j > edges.length/2 - 1 - i && j < edges.length + edges.length/2 - i) {
                     edges[i][j] = new Edge(j, i);
                 } else {
                     edges[i][j] = null;
@@ -39,13 +40,19 @@ public class Board {
         //setup vertices
         for (int i = 0; i < vertices.length; i++) {
             for (int j = 0; j < vertices[0].length; j++) {
-                if (j > 10 || i == 0 && j < 4 || i == 1 && j < 3 || i == 2 && j < 1 || i == 3 && j > 9 ||
+                if (i == 0 && (j < 4 || j > 10) || i == 1 && j < 3 || i == 2 && j < 1 || i == 3 && j > 10 ||
                         i == 4 && j > 8 || i == 5 && j > 6) {
                     vertices[i][j] = null;
                 } else {
                     vertices[i][j] = new Vertex(j,i);
                 }
             }
+        }
+
+        //setup harbors
+        int[][] harborLocations = Preset.getHarbors();
+        for (int[] harbor : harborLocations) {
+            vertices[harbor[1]][harbor[0]].setHarbor(harbor[2]);
         }
 
         //place robber
@@ -166,6 +173,19 @@ public class Board {
         return res;
     }
 
+    public Edge[] getAdjacentEdges(Hex hex) {
+        int x = hex.getX();
+        int y = hex.getY();
+        Edge[] res = new Edge[6];
+        res[0] = edges[y*2+1][x*2+2];
+        res[1] = edges[y*2+2][x*2+1];
+        res[2] = edges[y*2+2][x*2];
+        res[3] = edges[y*2+1][x*2];
+        res[4] = edges[y*2][x*2+1];
+        res[5] = edges[y*2][x*2+2];
+        return res;
+    }
+
     public double[] getVertexTransformedCoordinates(Vertex vertex, int size, int centerX, int centerY,
                                                     int centerXTransformed, int centerYTransformed) {
         double[] res = new double[2];
@@ -234,13 +254,17 @@ public class Board {
         return currentRobberPos;
     }
 
-    public void updateRobber(int x, int y) {
+    public int updateRobber(int x, int y) {
         if (currentRobberPos[1] != -1 && currentRobberPos[0] != -1) {
             hexes[currentRobberPos[1]][currentRobberPos[0]].setRobber(false);
+        }
+        if (currentRobberPos[0] == x && currentRobberPos[1] == y) {
+            return -1;
         }
         hexes[y][x].setRobber(true);
         currentRobberPos[0] = x;
         currentRobberPos[1] = y;
+        return 1;
     }
 
     private void initDevCards() {

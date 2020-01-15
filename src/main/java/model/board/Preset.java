@@ -22,9 +22,10 @@ public class Preset {
             5, 6, 11};
 
     //[tile, intersection, intersection]
-    private static int[][] harbors = {{0, 0, 5}, {1, 0, 1}, {2, 3, 5}, {3, 4, 5},
-            {6, 0, 1}, {7, 0, 3}, {11, 1, 2}, {12, 4, 5},
-            {15, 2, 3}, {16, 3, 4}, {17, 2, 3}, {18, 1, 4}};
+    private static int[][] harbors = {{4, 0, 5}, {5, 0, 5}, {7, 0, 3}, {8, 0, 3},
+            {3, 1, 1}, {2, 2, 1}, {10, 1, 2}, {10, 2, 2},
+            {1, 3, 0}, {0, 4, 0}, {11, 2, 5}, {10, 3, 5}, {0, 5, 5}, {1, 5, 5},
+            {3, 5, 5}, {4, 5, 5}, {7, 4, 4}, {8, 4, 4}};
 
     public static int[][] getAdjacencyList() {
         return adjacencyList;
