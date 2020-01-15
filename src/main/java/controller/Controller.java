@@ -3,7 +3,6 @@ package controller;
 import model.Game;
 import view.View;
 
-import javax.naming.ldap.Control;
 import java.io.IOException;
 
 public class Controller {
@@ -15,8 +14,8 @@ public class Controller {
         this.view = view;
     }
 
-    public void createGame(String URIforGame) throws IOException {
-        game = new Game(URIforGame);
+    public void createGame(String URIForGame) throws IOException {
+        game = new Game(URIForGame);
     }
 
     public Game getGame() {

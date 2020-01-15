@@ -4,13 +4,10 @@ import controller.Controller;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.board.*;
 
@@ -42,10 +39,11 @@ public class View extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        primaryStage.setTitle("Settlers of Catan");
         controller = new Controller(this);
 
         Group root = new Group();
-        primaryStage.setTitle("Settlers of Catan");
+        Scene scene = new Scene(root,screenSize,screenSize, Color.DEEPSKYBLUE);
 
         // TODO Make game depending on users choices in lobby UI
         controller.createGame("");
@@ -61,9 +59,9 @@ public class View extends Application {
 
 
 
-        Scene scene = new Scene(root,screenSize,screenSize, Color.DEEPSKYBLUE);
         primaryStage.setScene(scene);
         primaryStage.show();
+        System.out.println("HELLO");
     }
 
     private void setupHexUI(Group root, Hex[][] hexes) {
@@ -81,10 +79,6 @@ public class View extends Application {
                     polygon.setOnMouseClicked(mouseEvent ->
                             handleMouseEvent(mouseEvent, finalHex));
 
-                    StackPane stack = new StackPane();
-                    stack.getChildren().add(polygon);
-                    Label label = new Label("NUM");
-                    stack.getChildren().add(label);
                     root.getChildren().add(polygon);
                 }
             }
