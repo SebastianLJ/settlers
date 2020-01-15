@@ -151,8 +151,16 @@ public class Board {
         Edge[] res = new Edge[3];
         if (x % 2 == 0) {
             if (y == 0) {
-                res[0] = edges[y][x];
-                res[1] = edges[y][x+1];
+                if (x != 0) {
+                    res[0] = edges[y][x];
+                } else {
+                    res[0] = null;
+                }
+                if (x < 10) {
+                    res[1] = edges[y][x + 1];
+                } else {
+                    res[1] = null;
+                }
                 res[2] = edges[y+1][x];
             } else {
                 res[0] = edges[y*2-1][x];
