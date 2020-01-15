@@ -1,11 +1,16 @@
 package model.board;
 
+
 public class Hex {
     private int x, y;
     private Terrain terrain;
     private int numberToken;
     private boolean robber = false;
-    private double sqrt3 = Math.sqrt(3);
+    private int size = 1;
+    private double HEX_HEIGHT = 2 * size;
+    private double HEX_WIDTH = Math.sqrt(3) * size;
+    private double offsetX;
+    private double offsetY;
 
     public Hex(int x, int y, Terrain terrain, int numberToken) {
         this.x = x;
@@ -44,12 +49,43 @@ public class Hex {
     }
 
     public double getRealX() {
-        return sqrt3*x + 0.5*sqrt3*y;
+        return HEX_WIDTH*x + 0.5*HEX_WIDTH*y + offsetX;
     }
 
     public double getRealY() {
-        return 6.0/4*y;
+        return 3*HEX_HEIGHT/4.0*y + offsetY;
     }
 
+    public Point[] getAdjacentVerticesLocation() {
+        return new Point[]{new Point(getRealX(),getRealY() + HEX_HEIGHT/2), new Point(getRealX() + HEX_WIDTH/2, getRealY() + HEX_HEIGHT/4),
+        new Point(getRealX() + HEX_WIDTH/2, getRealY() - HEX_HEIGHT/4), new Point(getRealX(), getRealY() - HEX_HEIGHT/2),
+        new Point(getRealX() - HEX_WIDTH/2, getRealY() - HEX_HEIGHT/4), new Point(getRealX() - HEX_WIDTH/2, getRealY() + HEX_HEIGHT/4)};
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+        HEX_HEIGHT = 2 * size;
+        HEX_WIDTH = Math.sqrt(3) * size;
+    }
+
+    public void setOffsetX(double offsetX) {
+        this.offsetX = offsetX;
+    }
+
+    public void setOffsetY(double offsetY) {
+        this.offsetY = offsetY;
+    }
+
+    public double getOffsetX() {
+        return offsetX;
+    }
+
+    public double getOffsetY() {
+        return offsetY;
+    }
 }
 
