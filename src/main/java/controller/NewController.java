@@ -36,7 +36,8 @@ public class NewController extends Application {
     private final int centerTileX = 2, centerTileY = 2;
 
     // Offset calculated from the center tile
-    private final double centerCoordX = HEX_WIDTH*centerTileX + 0.5*HEX_WIDTH*centerTileY, centerCoordY = 3*HEX_HEIGHT/4*centerTileY;
+    private final double centerCoordX = HEX_WIDTH*centerTileX + 0.5*HEX_WIDTH*centerTileY,
+            centerCoordY = 3*HEX_HEIGHT/4*centerTileY;
 
     private final double offsetX = screenSize/2.0 - centerCoordX, offsetY = screenSize/2.0 - centerCoordY;
 
