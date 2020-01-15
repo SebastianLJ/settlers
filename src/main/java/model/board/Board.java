@@ -145,14 +145,6 @@ public class Board {
         return res;
     }
 
-    public Vertex[] getAdjacentVertices(Vertex vertex) {
-        int x = vertex.getX();
-        int y = vertex.getY();
-        Vertex[] res = new Vertex[3];
-
-        return res;
-    }
-
     public Edge[] getAdjacentEdges(Vertex vertex) {
         int x = vertex.getX();
         int y = vertex.getY();
