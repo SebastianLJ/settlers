@@ -110,7 +110,10 @@ public class Board {
         int x = edge.getX();
         int y = edge.getY();
         Vertex[] res = new Vertex[2];
-        if (edge.y % 2 == 0) {
+        if (y == 0) {
+            res[0] = vertices[y][x-1];
+            res[1] = vertices[y][x];
+        } else if (edge.y % 2 == 0) {
             res[0] = vertices[y-1][x];
             res[1] = vertices[y][x];
         } else {

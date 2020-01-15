@@ -6,6 +6,7 @@ import org.jspace.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -263,10 +264,12 @@ public class newGame {
     private boolean isSettlementValidLength(Vertex vertex) {
         Edge[] edges = board.getAdjacentEdges(vertex);
         for (Edge edge : edges) {
-            Vertex[] possibleOccupations = board.getAdjacentVertices(edge);
-            for (Vertex possibleOccupation : possibleOccupations) {
-                if (possibleOccupation.isSettlement() || possibleOccupation.isCity() ) {
-                    return false;
+            if (edge != null) {
+                Vertex[] possibleOccupations = board.getAdjacentVertices(edge);
+                for (Vertex possibleOccupation : possibleOccupations) {
+                    if (possibleOccupation.isSettlement() || possibleOccupation.isCity()) {
+                        return false;
+                    }
                 }
             }
         }
