@@ -114,11 +114,11 @@ public class Board {
             res[0] = vertices[y][x-1];
             res[1] = vertices[y][x];
         } else if (edge.y % 2 == 0) {
-            res[0] = vertices[y-1][x];
-            res[1] = vertices[y][x];
+            res[0] = vertices[y/2][x];
+            res[1] = vertices[y/2][x+1];
         } else {
-            res[0] = vertices[y][x-1];
-            res[1] = vertices[y][x];
+            res[0] = vertices[y/2][x+1];
+            res[1] = vertices[y/2+1][x];
         }
         return res;
     }
