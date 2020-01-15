@@ -73,7 +73,7 @@ public class NewView {
             }
 
             Circle circle = new Circle(points[k].getX(), points[k].getY(), hex.getSize()/8.);
-            
+
 
             Paint playerColor = getColorFromPlayerID(vertices[k].getId());
             circle.setFill(playerColor);

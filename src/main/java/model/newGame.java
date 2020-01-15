@@ -122,9 +122,9 @@ public class newGame {
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
     public int buildSettlement(Vertex vertex) {
-        if (player.getResources().containsAll(Price.Settlement.getPrice()) || true) {
+        if (player.getResources().containsAll(Price.Settlement.getPrice())) {
             if (isSettlementValid(vertex)) {
-                //player.getResources().removeAll(Price.Settlement.getPrice());
+                player.getResources().removeAll(Price.Settlement.getPrice());
                 vertex.buildSettlement(turnId);
                 return 1;
             } else {
@@ -287,8 +287,7 @@ public class newGame {
     }
 
     private boolean isSettlementValid(Vertex vertex) {
-        //return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
-        return isSettlementValidLength(vertex);
+        return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
     }
 
     private boolean isCityValid(Vertex vertex) {
