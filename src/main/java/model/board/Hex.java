@@ -57,9 +57,9 @@ public class Hex {
     }
 
     public Point[] getAdjacentVerticesLocation() {
-        return new Point[]{new Point(getRealX() + HEX_WIDTH/2, getRealY() - HEX_HEIGHT/4), new Point(getRealX(), getRealY() - HEX_HEIGHT/2),
-                new Point(getRealX() - HEX_WIDTH/2, getRealY() - HEX_HEIGHT/4), new Point(getRealX() - HEX_WIDTH/2, getRealY() + HEX_HEIGHT/4),
-                new Point(getRealX(),getRealY() + HEX_HEIGHT/2), new Point(getRealX() + HEX_WIDTH/2, getRealY() + HEX_HEIGHT/4)};
+        return new Point[]{new Point(getRealX() + HEX_WIDTH/2, getRealY() - HEX_HEIGHT/4), new Point(getRealX(), getRealY() + HEX_HEIGHT/2),
+                new Point(getRealX() - HEX_WIDTH/2, getRealY() + HEX_HEIGHT/4), new Point(getRealX() - HEX_WIDTH/2, getRealY() - HEX_HEIGHT/4),
+                new Point(getRealX(),getRealY() - HEX_HEIGHT/2), new Point(getRealX() + HEX_WIDTH/2, getRealY() - HEX_HEIGHT/4)};
     }
 
     public int getSize() {
