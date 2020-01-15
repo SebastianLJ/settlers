@@ -15,7 +15,7 @@ public class Controller {
     }
 
     public void createGame(String URIForGame) throws IOException {
-        game = new Game(URIForGame);
+        game = new Game(URIForGame, this);
     }
 
     public int[] getEdgeCoordinates() {
