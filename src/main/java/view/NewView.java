@@ -1,14 +1,24 @@
 package view;
 
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Circle;
 import model.Game;
 import model.board.Hex;
+import model.board.Point;
 import model.board.Terrain;
+import model.board.Vertex;
 
 public class NewView {
 
+    public static final int PLAYER_ONE = 0;
+    public static final int PLAYER_TWO = 1;
+    public static final int PLAYER_THREE = 2;
+    public static final int PLAYER_FOUR = 3;
     private final int screenSize = 1000;
 
     private final int HEX_SIZE = screenSize/10;
@@ -33,43 +43,77 @@ public class NewView {
 
     }
 
-    public void update() {
-        // TODO Find out if needed
-        /*Polygon polygon;
+    public void update(Group root) {
+        // Draw vertices
         Hex hex;
         for (int i = 0; i < hexes.length; i++) {
             for (int j = 0; j < hexes.length; j++) {
                 hex = hexes[i][j];
                 if (hex != null) {
+                    drawVertices(root, hex);
 
 
-                    double x = getHexCenterX(hex);
-                    double y = getHexCenterY(hex);
-
-                    polygon = new Polygon(x, y + HEX_HEIGHT / 2, x + HEX_WIDTH / 2, y + HEX_HEIGHT / 4, x + HEX_WIDTH / 2, y - HEX_HEIGHT / 4,
-                            x, y - HEX_HEIGHT / 2, x - HEX_WIDTH / 2, y - HEX_HEIGHT / 4, x - HEX_WIDTH / 2, y + HEX_HEIGHT / 4);
-
-                    polygon.setId(i + " " + j);
-
-                    polygon.setStroke(Color.BLACK);
-
-                    // Get the color for the given hex depending on which terrain/resource type it contains
-                    Paint color = getColorFromTerrain(hex.getTerrain());
-
-                    polygon.setFill(color);
                 }
+
+
             }
-        }*/
+        }
+
+
+
+
+    }
+
+    private void drawVertices(Group root, Hex hex) {
+        Point[] points = getAdjacentVerticesLocation(hex);
+        Vertex[] vertices = game.getBoard().getAdjacentVertices(hex);
+
+        for (int k = 0; k < vertices.length; k++) {
+            if (!(vertices[k].isSettlement() && vertices[k].isCity())) {
+                continue;
+            }
+            Paint playerColor = getColorFromPlayerID(vertices[k].getId());
+            Circle circle = new Circle(points[k].getX(), points[k].getY(), hex.getSize()/8.);
+            circle.setFill(playerColor);
+
+            if (vertices[k].isCity()) {
+                circle.setRadius(hex.getSize()/4.);
+            }
+            root.getChildren().add(circle);
+        }
+    }
+
+    private Paint getColorFromPlayerID(int playerID) {
+        Paint paint = Color.BLACK;
+        switch (playerID) {
+            case PLAYER_ONE:
+                paint = Color.RED;
+                break;
+            case PLAYER_TWO:
+                paint = Color.BLUE;
+                break;
+            case PLAYER_THREE:
+                paint = Color.GREEN;
+                break;
+            case PLAYER_FOUR:
+                paint = Color.YELLOW;
+                break;
+        }
+        return paint;
+    }
+
+    private Point[] getAdjacentVerticesLocation(Hex hex) {
+        return hex.getAdjacentVerticesLocation();
     }
 
     // Shifts y-coordinate in hex to x,y-basis
     private double getHexCenterY(Hex hex) {
-        return 3*HEX_HEIGHT/4*hex.getY() + offsetY;
+        return hex.getRealY();
     }
 
     // Shifts x-coordinate in hex to x,y-basis
     private double getHexCenterX(Hex hex) {
-        return HEX_WIDTH*hex.getX() + 0.5*HEX_WIDTH*hex.getY() + offsetX;
+        return hex.getRealX();
     }
 
     // Finds the correct color depending on the terrain
