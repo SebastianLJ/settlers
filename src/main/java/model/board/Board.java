@@ -253,6 +253,10 @@ public class Board {
         return currentRobberPos;
     }
 
+    public Hex getCurrentRobberPosHex() {
+        return hexes[currentRobberPos[1]][currentRobberPos[0]];
+    }
+
     public int updateRobber(int x, int y) {
         if (currentRobberPos[1] != -1 && currentRobberPos[0] != -1) {
             hexes[currentRobberPos[1]][currentRobberPos[0]].setRobber(false);

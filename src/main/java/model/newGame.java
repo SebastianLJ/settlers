@@ -18,7 +18,7 @@ public class newGame {
     private Board board;
     private final String hostURI;
     private int playerCount = 1;
-    private int turn = 0;
+    private int turn = 1;
     private int turnId = turn % playerCount;
 
     public newGame(String hostURI) throws IOException {
@@ -121,9 +121,9 @@ public class newGame {
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
     public int buildSettlement(Vertex vertex) {
-        if (player.getResources().containsAll(Price.Settlement.getPrice())) {
+        if (player.getResources().containsAll(Price.Settlement.getPrice()) || true) {
             if (isSettlementValid(vertex)) {
-                player.getResources().removeAll(Price.Settlement.getPrice());
+                //player.getResources().removeAll(Price.Settlement.getPrice());
                 vertex.buildSettlement(turnId);
                 return 1;
             } else {
@@ -284,7 +284,8 @@ public class newGame {
     }
 
     private boolean isSettlementValid(Vertex vertex) {
-        return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
+        //return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
+        return isSettlementValidLength(vertex);
     }
 
     private boolean isCityValid(Vertex vertex) {

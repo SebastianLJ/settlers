@@ -46,7 +46,7 @@ public class NewController extends Application {
 
 
     private newGame game;
-    private GameState gameState = GameState.None;
+    private GameState gameState = GameState.BuildSettlement;
     private NewView view;
 
     @Override
@@ -183,7 +183,7 @@ public class NewController extends Application {
         Vertex chosenVertex = vertices[vertexIndex];
 
         System.out.println("You clicked on hex at position: (" + i + ", " + j + ") in an angle of " + angle + " chosen vertex index is: " + vertexIndex);
-
+        System.out.println("x: " + chosenVertex.getX() + ", y: " + chosenVertex.getY());
         return chosenVertex;
     }
 
