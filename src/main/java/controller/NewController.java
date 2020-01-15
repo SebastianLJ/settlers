@@ -49,10 +49,12 @@ public class NewController extends Application {
     private GameState gameState = GameState.BuildSettlement;
     private NewView view;
 
+    private Group root;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Settlers of Catan");
-        Group root = new Group();
+        root = new Group();
         Scene scene = new Scene(root,screenSize,screenSize, Color.DEEPSKYBLUE);
 
         // Opens Lobby first
@@ -81,7 +83,6 @@ public class NewController extends Application {
                     hex.setSize(HEX_SIZE);
                     hex.setOffsetX(offsetX);
                     hex.setOffsetY(offsetY);
-
 
                     polygon = createPolygonFromHex(hex);
                     polygon.setId(i + " " + j);
@@ -156,6 +157,8 @@ public class NewController extends Application {
         } else if (success == -2) {
 
         }
+
+        view.update(root);
 
 
 
