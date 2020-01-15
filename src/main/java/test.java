@@ -1,3 +1,4 @@
+import model.GameState;
 import model.PlayerState;
 import model.board.*;
 
@@ -11,5 +12,6 @@ import org.jspace.*;
 
 public class test {
     public static void main(String[] args) {
+
     }
 }
