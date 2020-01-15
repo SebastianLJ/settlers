@@ -6,7 +6,10 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.Game;
 import model.GameState;
@@ -17,6 +20,8 @@ import model.board.Vertex;
 import model.newGame;
 import view.NewView;
 import view.View;
+
+import java.util.Arrays;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.floor;
@@ -54,7 +59,6 @@ public class NewController extends Application {
 
         // From Lobby create or join game TODO Implement
 
-        // TODO Game shouldn't have a reference to controller
         game = new newGame("");
         view = new NewView(game);
 
@@ -63,6 +67,8 @@ public class NewController extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        view.update(root);
     }
 
     private void setupHexUI(Group root, Hex[][] hexes) {
@@ -72,6 +78,11 @@ public class NewController extends Application {
             for (int j = 0; j < hexes.length; j++) {
                 hex = hexes[i][j];
                 if (hex != null) {
+                    hex.setSize(HEX_SIZE);
+                    hex.setOffsetX(offsetX);
+                    hex.setOffsetY(offsetY);
+
+
                     polygon = createPolygonFromHex(hex);
                     polygon.setId(i + " " + j);
 
@@ -80,7 +91,21 @@ public class NewController extends Application {
                     polygon.setOnMouseClicked(mouseEvent ->
                             handleMouseEvent(mouseEvent, finalHex));
 
-                    root.getChildren().add(polygon);
+                    // Add number token
+                    Text label = new Text(hex.getNumberToken() + "");
+
+                    // Text size
+                    label.setFont(Font.font(HEX_SIZE/4.));
+
+                    // Center text
+                    double halfLabelHeight = label.getLayoutBounds().getHeight() / 2;
+                    double halfLabelWidth = label.getLayoutBounds().getWidth() / 2;
+                    label.relocate(hex.getRealX() - halfLabelWidth, hex.getRealY() - halfLabelHeight);
+
+                    // White circle around text
+                    Circle circle = new Circle(hex.getRealX(),hex.getRealY(), halfLabelHeight*1.5);
+                    circle.setFill(Color.WHITE);
+                    root.getChildren().addAll(polygon, circle, label);
                 }
             }
         }
@@ -209,12 +234,12 @@ public class NewController extends Application {
 
     // Shifts y-coordinate in hex to x,y-basis
     private double getHexCenterY(Hex hex) {
-        return 3*HEX_HEIGHT/4*hex.getY() + offsetY;
+        return hex.getRealY();
     }
 
     // Shifts x-coordinate in hex to x,y-basis
     private double getHexCenterX(Hex hex) {
-        return HEX_WIDTH*hex.getX() + 0.5*HEX_WIDTH*hex.getY() + offsetX;
+        return hex.getRealX();
     }
 
     // Finds the correct color depending on the terrain
