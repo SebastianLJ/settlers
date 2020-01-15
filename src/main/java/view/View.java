@@ -97,7 +97,7 @@ public class View extends Application {
         double touchAngle = getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex));
 
         System.out.println(getChosenIntersection(i, j, touchAngle));
-        System.out.println(getChosenPath(i, j, touchAngle));
+        System.out.println(getChosenEdge(i, j, touchAngle));
 
         /*System.out.println("This is hex [" + getId(polygon)[0] + "][" + getId(polygon)[1] + "] " +
                 "at coordinates (" + getHexCenterX(hex) + ", " + getHexCenterY(hex) + "). The screen was touched in an angle of "
@@ -111,12 +111,12 @@ public class View extends Application {
      * @param angle angle calculated by @getAngleFromScreenClick
      * @return // TODO TBD.
      */
-    private String getChosenPath(int i, int j, double angle) {
+    public Edge getChosenEdge(int i, int j, double angle) {
         int edgeIndex = (int) (floor(angle) + 30) % 360 / 60;
-        //Edge[] edges = controller.getGame().getBoard().getAdjacentEdges(new Hex(j, i, Terrain.None, -1));
+        Edge[] edges = controller.getGame().getBoard().getAdjacentEdges(new Hex(j, i, Terrain.None, -1));
 
-        //Edge chosenEdge = edges[edgeIndex];
-        return "EDGE INFO: i-value: " + i + " j-value: " + j + " angle: " + angle + " index: " + edgeIndex;
+        Edge chosenEdge = edges[edgeIndex];
+        return chosenEdge;
     }
 
     /**
@@ -126,13 +126,13 @@ public class View extends Application {
      * @param angle angle calculated by @getAngleFromScreenClick
      * @return // TODO TBD.
      */
-    private String getChosenIntersection(int i, int j, double angle) {
+    public Vertex getChosenIntersection(int i, int j, double angle) {
         int vertexIndex = (int) floor(angle)/60;
         Vertex[] vertices = controller.getGame().getBoard().getAdjacentVertices(new Hex(j,i, Terrain.None, -1));
 
         // Do some verification of chosen vertex..
         Vertex chosenVertex = vertices[vertexIndex];
-        return "VERTEX INFO: i-value: " + i + " j-value: " + j + " angle: " + angle + " index: " + vertexIndex;
+        return chosenVertex;
     }
 
 
