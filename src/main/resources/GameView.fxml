@@ -74,12 +74,12 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
                         </Label>
-                        <Button fx:id="PlayDevCard" mnemonicParsing="false" onAction="#PlayDevCard" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="135.0" text="Play Dev. Card">
+                        <Button fx:id="PlayDevCard" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="135.0" text="Play Dev. Card">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
                         </Button>
-                        <Button fx:id="ViewDevCard" mnemonicParsing="false" onAction="#ViewDevCard" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="130.0" text="View Dev. Card">
+                        <Button fx:id="ViewDevCard" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="130.0" text="View Dev. Card">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
