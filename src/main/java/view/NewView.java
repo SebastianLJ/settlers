@@ -8,6 +8,8 @@ import javafx.scene.shape.Line;
 import model.board.*;
 import model.newGame;
 
+import java.util.Arrays;
+
 public class NewView {
 
     private static final int PLAYER_ONE = 0;
@@ -47,7 +49,7 @@ public class NewView {
     }
 
     private void drawPaths(Group root, Hex hex) {
-        Point[] points = getAdjacentVerticesLocation(hex);
+        Point[] points = hex.getAdjacentVerticesLocation();
         Edge[] edges = game.getBoard().getAdjacentEdges(hex);
 
         for (int k = 0; k < edges.length; k++) {
@@ -64,7 +66,7 @@ public class NewView {
     }
 
     private void drawVertices(Group root, Hex hex) {
-        Point[] points = getAdjacentVerticesLocation(hex);
+        Point[] points = hex.getAdjacentVerticesLocation();
         Vertex[] vertices = game.getBoard().getAdjacentVertices(hex);
 
         for (int k = 0; k < vertices.length; k++) {
@@ -72,7 +74,7 @@ public class NewView {
                 continue;
             }
 
-            Circle circle = new Circle(points[k].getX(), points[k].getY(), hex.getSize()/8.);
+            Circle circle = new Circle(points[k].getX(), points[k].getY(), hex.getSize() / 8.);
 
 
             Paint playerColor = getColorFromPlayerID(vertices[k].getId());
@@ -102,9 +104,5 @@ public class NewView {
                 break;
         }
         return paint;
-    }
-
-    private Point[] getAdjacentVerticesLocation(Hex hex) {
-        return hex.getAdjacentVerticesLocation();
     }
 }
