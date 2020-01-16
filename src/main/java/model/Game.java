@@ -139,7 +139,7 @@ public class Game {
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
     public int buildSettlement(Vertex vertex) {
-        if (player.getResources().containsAll(Price.Settlement.getPrice())) {
+        if (player.getResources().containsAll(Price.Settlement.getPrice()) || true) {
             if (isSettlementValid(vertex)) {
                 player.getResources().removeAll(Price.Settlement.getPrice());
                 vertex.buildSettlement(turnId);

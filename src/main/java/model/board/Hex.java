@@ -6,7 +6,7 @@ public class Hex {
     private Terrain terrain;
     private int numberToken;
     private boolean robber = false;
-    private int size = 1;
+    private double size = 1;
     private double HEX_HEIGHT = 2 * size;
     private double HEX_WIDTH = Math.sqrt(3) * size;
     private double offsetX;
@@ -62,11 +62,11 @@ public class Hex {
                 new Point(getRealX(),getRealY() - HEX_HEIGHT/2), new Point(getRealX() + HEX_WIDTH/2, getRealY() - HEX_HEIGHT/4)};
     }
 
-    public int getSize() {
+    public double getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(double size) {
         this.size = size;
         HEX_HEIGHT = 2 * size;
         HEX_WIDTH = Math.sqrt(3) * size;

@@ -1,14 +1,13 @@
 package controller;
 
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -32,22 +31,10 @@ import static model.GameState.*;
 
 public class NewController extends Application {
 
-    private final int gameSize = (int) Screen.getPrimary().getVisualBounds().getHeight();
-    private final int screenWidth = (int) Screen.getPrimary().getVisualBounds().getWidth();
-
-    private final int HEX_SIZE = gameSize /10;
-    private final double HEX_WIDTH = Math.sqrt(3)*HEX_SIZE;
-    private final double HEX_HEIGHT = 2*HEX_SIZE;
-
-    // Coordinates for center tiles
-    private final int centerTileX = 2, centerTileY = 2;
-
-    // Offset calculated from the center tile
-    private final double centerCoordX = HEX_WIDTH*centerTileX + 0.5*HEX_WIDTH*centerTileY,
-            centerCoordY = 3*HEX_HEIGHT/4*centerTileY;
-
-    private final double offsetX = gameSize /2.0 - centerCoordX, offsetY = gameSize /2.0 - centerCoordY;
-
+    private double offsetX, offsetY;
+    private double HEX_SIZE;
+    private double HEX_HEIGHT;
+    private double HEX_WIDTH;
 
     private Game game;
     private NewView view;
@@ -63,28 +50,52 @@ public class NewController extends Application {
         FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("GameView.fxml"));
         VBox root = loader.load();
 
-        HBox hbox = (HBox) root.getChildren().get(0);
         map = new Group();
-        hbox.getChildren().set(0, map);
+        AnchorPane pane = (AnchorPane) root.getChildren().get(0);
+        pane.getChildren().remove(0);
+        pane.getChildren().add(map);
 
-        Scene scene = new Scene(root, gameSize, gameSize, Color.DEEPSKYBLUE);
-        //primaryStage.setMaximized(true);
+        Scene scene = new Scene(root, Color.DEEPSKYBLUE);
+
+        primaryStage.setMaximized(true);
         primaryStage.setResizable(false);
+
+        game = new Game("");
+        view = new NewView(game);
+        Hex[][] hexes = game.getBoard().getHexes();
 
         // Opens Lobby first
 
         // From Lobby create or join game TODO Implement
 
-        game = new Game("");
-        view = new NewView(game);
+        // Hardcoded atm
+        double mapSize = 800.;
+        initializeOffsets(mapSize, hexes);
 
-        Hex[][] hexes = game.getBoard().getHexes();
         setupHexUI(map, hexes);
 
         primaryStage.setScene(scene);
         primaryStage.show();
 
         view.update(map);
+    }
+
+    private void initializeOffsets(double mapSize, Hex[][] hexes) {
+        HEX_SIZE = mapSize /10;
+        HEX_WIDTH = Math.sqrt(3)*HEX_SIZE;
+        HEX_HEIGHT = 2*HEX_SIZE;
+
+        // Coordinates for center tiles
+        int centerTileX = hexes.length/2;
+        int centerTileY = hexes.length/2;
+
+        // Offset calculated from the center tile
+        double centerCoordX = HEX_WIDTH*centerTileX + 0.5*HEX_WIDTH*centerTileY;
+        double centerCoordY = 3*HEX_HEIGHT/4*centerTileY;
+
+        // offset for xy coordinates
+        offsetX = mapSize /2.0 - centerCoordX;
+        offsetY = mapSize /2.0 - centerCoordY;
     }
 
     private void setupHexUI(Group root, Hex[][] hexes) {
@@ -97,6 +108,8 @@ public class NewController extends Application {
                     hex.setSize(HEX_SIZE);
                     hex.setOffsetX(offsetX);
                     hex.setOffsetY(offsetY);
+
+                    //System.out.println("Creating hex at (" + hex.getRealX() + ", " + hex.getRealY() + ")");
 
                     polygon = createPolygonFromHex(hex);
                     polygon.setId(i + " " + j);
@@ -134,6 +147,8 @@ public class NewController extends Application {
     private void handleMouseEvent(MouseEvent mouseEvent, Hex hex) {
         int i = hex.getY();
         int j = hex.getX();
+
+        //double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), getHexCenterX(hex), getHexCenterY(hex));
 
         double touchAngle = getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex));
 
@@ -326,10 +341,14 @@ public class NewController extends Application {
     }
 
     public void onMouseEntered(MouseEvent mouseEvent) {
+        Button button = (Button) mouseEvent.getSource();
+        button.setEffect(new DropShadow());
 
     }
 
     public void onMouseExited(MouseEvent mouseEvent) {
+        Button button = (Button) mouseEvent.getSource();
+        button.setEffect(null);
 
     }
 }
