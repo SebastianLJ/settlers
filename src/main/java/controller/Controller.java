@@ -1,8 +1,6 @@
 package controller;
 
 import model.Game;
-import model.board.Edge;
-import model.board.Vertex;
 import view.View;
 
 import java.io.IOException;
@@ -24,7 +22,4 @@ public class Controller {
         return game;
     }
 
-    public void startGame() {
-        game.start();
-    }
 }

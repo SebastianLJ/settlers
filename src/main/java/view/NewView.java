@@ -5,8 +5,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import model.Game;
 import model.board.*;
-import model.newGame;
 
 import java.util.Arrays;
 
@@ -17,10 +17,10 @@ public class NewView {
     private static final int PLAYER_THREE = 2;
     private static final int PLAYER_FOUR = 3;
 
-    private newGame game;
+    private Game game;
     private Hex[][] hexes;
 
-    public NewView(newGame game) {
+    public NewView(Game game) {
         this.game = game;
         hexes = game.getBoard().getHexes();
     }
