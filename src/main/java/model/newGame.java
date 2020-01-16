@@ -98,13 +98,12 @@ public class newGame {
      * @param edge
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
-    public int buildRoad(Edge edge, boolean free) {
-        if (player.getResources().containsAll(Price.Road.getPrice()) || free) {
+    public int buildRoad(Edge edge) {
+        if (player.getResources().containsAll(Price.Road.getPrice())) {
             if (isRoadValid(edge)) {
-                if (!free) {
-                    player.getResources().removeAll(Price.Road.getPrice());
-                }
+                player.getResources().removeAll(Price.Road.getPrice());
                 edge.setId(turnId);
+                System.out.println("Successfully built road");
                 return 1;
             } else {
                 System.out.println("Invalid road location");
@@ -116,16 +115,28 @@ public class newGame {
         }
     }
 
+    public int buildStartingRoad(Edge edge) {
+        if (isRoadValid(edge)) {
+            edge.setId(turnId);
+            System.out.println("Successfully built road");
+            return 1;
+        } else {
+            System.out.println("Invalid road location");
+            return -2;
+        }
+    }
+
     /**
      * Adds player id to vertex and boolean hasSettlement, and checks if location is valid
      * @param vertex
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
     public int buildSettlement(Vertex vertex) {
-        if (player.getResources().containsAll(Price.Settlement.getPrice()) || true) {
+        if (player.getResources().containsAll(Price.Settlement.getPrice())) {
             if (isSettlementValid(vertex)) {
-                //player.getResources().removeAll(Price.Settlement.getPrice());
+                player.getResources().removeAll(Price.Settlement.getPrice());
                 vertex.buildSettlement(turnId);
+                System.out.println("Successfully built settlement");
                 return 1;
             } else {
                 System.out.println("Invalid settlement location");
@@ -134,6 +145,22 @@ public class newGame {
         } else {
             System.out.println("Not enough resources");
             return -1;
+        }
+    }
+
+    /**
+     * Initial placement of settlement
+     * @param vertex
+     * @return -2 invalid location, 1 successfully built
+     */
+    public int buildStartingSettlement(Vertex vertex) {
+        if (isSettlementValidLength(vertex)) {
+            vertex.buildSettlement(turnId);
+            System.out.println("Successfully built settlement");
+            return 1;
+        } else {
+            System.out.println("Invalid settlement location");
+            return -2;
         }
     }
 
@@ -147,6 +174,7 @@ public class newGame {
             if (isCityValid(vertex)) {
                 player.getResources().removeAll(Price.City.getPrice());
                 vertex.buildCity(turnId);
+                System.out.println("Successfully built city");
                 return 1;
             } else {
                 System.out.println("Invalid city location");
@@ -217,10 +245,22 @@ public class newGame {
         return -1;
     }
 
-    public void endTurn() {
+    public int endTurn() {
         turn++;
         turnId = turn % playerCount;
         player = getPlayer(turnId);
+        return turn;
+    }
+
+    public int endInitTurn() {
+        if (turn == playerCount) {
+            //dont update turnId
+        } else if (turn > playerCount) {
+            turnId--;
+        } else {
+            turnId++;
+        }
+        return turn++;
     }
 
     private PlayerState getPlayer(int turnId) {
@@ -372,6 +412,10 @@ public class newGame {
 
     public Board getBoard() {
         return board;
+    }
+
+    public int getPlayerCount() {
+        return playerCount;
     }
 
     private ArrayList<Resource> harborTrades(PlayerState player) {

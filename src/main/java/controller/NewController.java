@@ -29,7 +29,7 @@ import static model.GameState.*;
 
 public class NewController extends Application {
 
-    private final int screenSize = 1000;
+    private final int screenSize = 800;
 
     private final int HEX_SIZE = screenSize/10;
     private final double HEX_WIDTH = Math.sqrt(3)*HEX_SIZE;
@@ -46,8 +46,9 @@ public class NewController extends Application {
 
 
     private newGame game;
-    private GameState gameState = GameState.BuildSettlement;
     private NewView view;
+    private GameState gameState = GameState.BuildSettlement;
+    private boolean initialState = true;
 
     private Group root;
 
@@ -131,10 +132,18 @@ public class NewController extends Application {
                 //todo
                 break;
             case BuildRoad:
-                success = game.buildRoad(getChosenEdge(i,j,touchAngle), false);
+                if (initialState) {
+                    success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
+                } else {
+                    success = game.buildRoad(getChosenEdge(i, j, touchAngle));
+                }
                 break;
             case BuildSettlement:
-                success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
+                if (initialState) {
+                    success = game.buildStartingSettlement(getChosenIntersection(i, j, touchAngle));
+                } else {
+                    success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
+                }
                 break;
             case BuildCity:
                 success = game.buildCity(getChosenIntersection(i, j, touchAngle));
@@ -167,6 +176,18 @@ public class NewController extends Application {
         /*System.out.println("This is hex [" + getId(polygon)[0] + "][" + getId(polygon)[1] + "] " +
                 "at coordinates (" + getHexCenterX(hex) + ", " + getHexCenterY(hex) + "). The screen was touched in an angle of "
                 + getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex)));*/
+    }
+
+    public void endTurn() {
+        int turn;
+        if (initialState) {
+            turn = game.endInitTurn();
+            if (turn == game.getPlayerCount() * 2) {
+                initialState = false;
+            }
+        } else {
+            game.endTurn();
+        }
     }
 
     public Edge getChosenEdge(int i, int j, double angle) {
