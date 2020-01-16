@@ -346,7 +346,7 @@ public class newGame {
                 vp++;
             }
         }
-        if (player.hasLargetArmy()) vp++;
+        if (player.hasLargestArmy()) vp++;
         if (player.hasLongestRoad()) vp++;
 
         return vp;

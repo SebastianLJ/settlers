@@ -10,7 +10,7 @@ public class PlayerState {
     private ArrayList<DevelopmentCard> developmentCards = new ArrayList<DevelopmentCard>();
     private int playerId;
     private boolean hasLongestRoad = false;
-    private boolean hasLargetArmy = false;
+    private boolean hasLargestArmy = false;
     private int longestRoad= 1;
     private int armySize = 0;
 
@@ -54,12 +54,12 @@ public class PlayerState {
         this.hasLongestRoad = hasLongestRoad;
     }
 
-    public boolean hasLargetArmy() {
-        return hasLargetArmy;
+    public boolean hasLargestArmy() {
+        return hasLargestArmy;
     }
 
-    public void setHasLargetArmy(boolean hasLargetArmy) {
-        this.hasLargetArmy = hasLargetArmy;
+    public void setHasLargestArmy(boolean hasLargestArmy) {
+        this.hasLargestArmy = hasLargestArmy;
     }
 
     public int getResourceAmount(Resource resourceMatch) {
