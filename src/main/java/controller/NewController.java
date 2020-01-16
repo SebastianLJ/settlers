@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -312,7 +313,23 @@ public class NewController extends Application {
         return color;
     }
 
-    public void BuildRoad(MouseEvent mouseEvent) {
+    public void onButtonClick(MouseEvent mouseEvent) {
+        Button button = (Button) mouseEvent.getSource();
+        String buttonSource = button.getId();
+
+        // TODO
+        switch (buttonSource) {
+            case "BuildRoad":
+                break;
+        }
+
+    }
+
+    public void onMouseEntered(MouseEvent mouseEvent) {
+
+    }
+
+    public void onMouseExited(MouseEvent mouseEvent) {
 
     }
 }

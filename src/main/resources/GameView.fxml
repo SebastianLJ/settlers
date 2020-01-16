@@ -22,12 +22,12 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
                         </Label>
-                        <Button fx:id="BuildRoad" mnemonicParsing="false" onMouseClicked="#BuildRoad" prefHeight="25.0" prefWidth="90.0" text="Road">
+                        <Button fx:id="BuildRoad" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="Road">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Settlement">
+                        <Button fx:id="BuildSettlement" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="Settlement">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
@@ -36,12 +36,12 @@
                 </VBox>
                 <VBox alignment="BOTTOM_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="75.0" prefWidth="100.0">
                     <children>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="City">
+                        <Button fx:id="BuildCty" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="City">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="Dev. Card">
+                        <Button fx:id="BuildDevCard" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="Dev. Card">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
@@ -55,12 +55,12 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
                         </Label>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="With Bank">
+                        <Button fx:id="TradeWithBank" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="With Bank">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="With Player">
+                        <Button fx:id="TradeWithPlayer" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="With Player">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
@@ -74,12 +74,12 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
                         </Label>
-                        <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="135.0" text="Play Dev. Card">
+                        <Button fx:id="PlayDevCard" mnemonicParsing="false" onAction="#PlayDevCard" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="135.0" text="Play Dev. Card">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="130.0" text="View Dev. Card">
+                        <Button fx:id="ViewDevCard" mnemonicParsing="false" onAction="#ViewDevCard" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="130.0" text="View Dev. Card">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
@@ -88,7 +88,7 @@
                 </VBox>
                 <VBox alignment="CENTER" prefHeight="75.0" prefWidth="100.0">
                     <children>
-                        <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="90.0" text="End Turn">
+                        <Button fx:id="EndTurn" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="End Turn">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
