@@ -5,190 +5,221 @@ import model.board.*;
 import org.jspace.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game {
     private Scanner scanner = new Scanner(System.in);
     private Random dice = new Random();
-    //private final RemoteSpace playerSpace;
+    private RemoteSpace gameSpace;
+    private RemoteSpace chat;
     private int playerId = 1;
-    private PlayerState player;
     private Board board;
-    private final String hostURI;
+    private String hostURI;
+    private PlayerState player;
     private int playerCount = 1;
+    private int turn = 1;
+    private int turnId = turn % playerCount;
 
     public Game(String hostURI) throws IOException {
         this.hostURI = hostURI;
         board = new Board();
         player = new PlayerState(1);
-        /*playerSpace = new RemoteSpace(hostURI);
-
-        try {
-            playerCount = getPlayerCount();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
     }
 
+    public Game(RemoteSpace gameSpace, RemoteSpace chat) {
+        this.gameSpace = gameSpace;
+        this.chat = chat;
 
-    public void start() {
-        boolean victory = false;
-        int roll;
+        try {
+            playerCount = getPlayers().size();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        //roll for starting player
-        //int turn = dice.nextInt(playerCount);
-        int turn = 1;
-        int turnId;
 
-        while(!victory) {
-            turnId = turn % playerCount;
-            roll = dice.nextInt(6) + dice.nextInt(6) + 2;
-            System.out.println("Rolled " + roll);
+    }
 
-            if (roll == 7) {
-                boolean success = false;
-                // TODO Fix with new controller
+    public int roll() {
+        int roll = dice.nextInt(6) + dice.nextInt(6) + 2;
+        System.out.println("Rolled " + roll);
+
+        if (roll == 7) {
+            boolean success = false;
+            // TODO Fix with new controller
                 /*while (!success) {
                     int[] coords = controller.getHexCoordinates();
                     success = board.updateRobber(coords[0],coords[1]);
                 }*/
-            } else {
-                setResources(playerId, roll);
+        } else {
+            setResources(playerId, roll);
+        }
+        return roll;
+    }
+
+    public void trade() {
+        String action = scanner.next();
+
+        if (action.equals("trade")) {
+            action = scanner.next();
+
+            if (action.equals("player")) {
+                //todo
+            } else if (action.equals("bank") ||action.equals("harbor")) {
+                System.out.println("Please select a resource to trade ");
+                String resource = scanner.next();
+                if (harborTrades(player).contains(stringToResource(resource))
+                        && player.getResourceAmount(stringToResource(resource)) >= 2) {
+                    for (int i = 0; i < 2; i++) {
+                        player.getResources().remove(stringToResource(resource));
+                    }
+                    System.out.println("Please select a single resource to receive: ");
+                    resource = scanner.next();
+                    player.getResources().add(stringToResource(resource));
+                } else if (hasGenericHarbor(player)
+                        && player.getResourceAmount(stringToResource(resource)) >= 3) {
+                    for (int i = 0; i < 3; i++) {
+                        player.getResources().remove(stringToResource(resource));
+                    }
+                    System.out.println("Please select a single resource to receive: ");
+                    resource = scanner.next();
+                    player.getResources().add(stringToResource(resource));
+                } else if (player.getResourceAmount(stringToResource(resource)) >= 4) {
+                    for (int i = 0; i < 4; i++) {
+                        player.getResources().remove(stringToResource(resource));
+                    }
+                    System.out.println("Please select a single resource to receive: ");
+                    resource = scanner.next();
+                    player.getResources().add(stringToResource(resource));
+                } else {
+                    System.out.println("you don't have enough " + resource + " to trade");
+                }
             }
+        }
+    }
 
-            boolean endTurn = false;
-            String action;
-            while(!endTurn) {
-                action = scanner.next();
+    /**
+     * Adds player id to edge, and checks if location is valid
+     * @param edge
+     * @return -2 invalid location, -1 insufficient resources, 1 successfully built
+     */
+    public int buildRoad(Edge edge) {
+        if (player.getResources().containsAll(Price.Road.getPrice())) {
+            if (isRoadValid(edge)) {
+                player.getResources().removeAll(Price.Road.getPrice());
+                edge.setId(turnId);
+                System.out.println("Successfully built road");
+                return 1;
+            } else {
+                System.out.println("Invalid road location");
+                return -2;
+            }
+        } else {
+            System.out.println("Not enough resources");
+            return -1;
+        }
+    }
 
-                if (action.equals("trade")) {
-                    action = scanner.next();
+    public int buildStartingRoad(Edge edge) {
+        if (isRoadValid(edge)) {
+            edge.setId(turnId);
+            System.out.println("Successfully built road");
+            return 1;
+        } else {
+            System.out.println("Invalid road location");
+            return -2;
+        }
+    }
 
-                    if (action.equals("player")) {
-                        //todo
-                    } else if (action.equals("bank") ||action.equals("harbor")) {
-                        System.out.println("Please select a resource to trade ");
-                        String resource = scanner.next();
-                        if (harborTrades(player).contains(stringToResource(resource))
-                                && player.getResourceAmount(stringToResource(resource)) >= 2) {
-                            for (int i = 0; i < 2; i++) {
-                                player.getResources().remove(stringToResource(resource));
-                            }
-                            System.out.println("Please select a single resource to receive: ");
-                            resource = scanner.next();
-                            player.getResources().add(stringToResource(resource));
-                        } else if (hasGenericHarbor(player)
-                                && player.getResourceAmount(stringToResource(resource)) >= 3) {
-                            for (int i = 0; i < 3; i++) {
-                                player.getResources().remove(stringToResource(resource));
-                            }
-                            System.out.println("Please select a single resource to receive: ");
-                            resource = scanner.next();
-                            player.getResources().add(stringToResource(resource));
-                        } else if (player.getResourceAmount(stringToResource(resource)) >= 4) {
-                                for (int i = 0; i < 4; i++) {
-                                    player.getResources().remove(stringToResource(resource));
-                                }
-                                System.out.println("Please select a single resource to receive: ");
-                                resource = scanner.next();
-                                player.getResources().add(stringToResource(resource));
-                        } else {
-                                System.out.println("you don't have enough " + resource + " to trade");
-                        }
-                    }
-                } else if (action.equals("build")) {
-                    action = scanner.next();
+    /**
+     * Adds player id to vertex and boolean hasSettlement, and checks if location is valid
+     * @param vertex
+     * @return -2 invalid location, -1 insufficient resources, 1 successfully built
+     */
+    public int buildSettlement(Vertex vertex) {
+        if (player.getResources().containsAll(Price.Settlement.getPrice())) {
+            if (isSettlementValid(vertex)) {
+                player.getResources().removeAll(Price.Settlement.getPrice());
+                vertex.buildSettlement(turnId);
+                System.out.println("Successfully built settlement");
+                return 1;
+            } else {
+                System.out.println("Invalid settlement location");
+                return -2;
+            }
+        } else {
+            System.out.println("Not enough resources");
+            return -1;
+        }
+    }
 
-                    if (action.equals("road")) {
-                        if (player.getResources().containsAll(Price.Road.getPrice())) {
-                            boolean success = false;
-                            // TODO Fix with new controller
-                            /*while(!success) {
-                                /*Edge edge = controller.getEdgeCoordinates();
-                                //break if player cancels
-                                if (edge.getX() == -1 && edge.getY() == -1) {
-                                    break;
-                                }
-                                if (isRoadValid(edge)) {
-                                    player.getResources().removeAll(Price.Road.getPrice());
-                                    edge.setId(turnId);
-                                    success = true;
-                                } else {
-                                    System.out.println("Invalid road location");
-                                }
-                            }*/
-                        } else {
-                            System.out.println("Not enough resources");
-                        }
+    /**
+     * Initial placement of settlement
+     * @param vertex
+     * @return -2 invalid location, 1 successfully built
+     */
+    public int buildStartingSettlement(Vertex vertex) {
+        if (isSettlementValidLength(vertex)) {
+            vertex.buildSettlement(turnId);
+            System.out.println("Successfully built settlement");
+            return 1;
+        } else {
+            System.out.println("Invalid settlement location");
+            return -2;
+        }
+    }
 
-                    } else if (action.equals("settlement")) {
+    /**
+     * Adds player id to vertex and boolean hasSettlement, and checks if location is valid
+     * @param vertex
+     * @return -2 invalid location, -1 insufficient resources, 1 successfully built
+     */
+    public int buildCity(Vertex vertex) {
+        if (player.getResources().containsAll(Price.City.getPrice())) {
+            if (isCityValid(vertex)) {
+                player.getResources().removeAll(Price.City.getPrice());
+                vertex.buildCity(turnId);
+                System.out.println("Successfully built city");
+                return 1;
+            } else {
+                System.out.println("Invalid city location");
+                return -2;
+            }
+        } else {
+            System.out.println("Not enough resources");
+            return -1;
+        }
+    }
 
-                        if (player.getResources().containsAll(Price.Settlement.getPrice())) {
-                            boolean success = false;
-                            // TODO Fix with new controller
-                            /*while (!success) {
-                                Vertex vertex = controller.getVertexCoordinates();
-                                //break if player cancels
-                                if (vertex.getX() == -1 && vertex.getY() == -1) {
-                                    break;
-                                }
-                                if (isSettlementValid(vertex)) {
-                                    player.getResources().removeAll(Price.Settlement.getPrice());
-                                    vertex.buildSettlement(turnId);
-                                    success = true;
-                                } else {
-                                    System.out.println("Invalid settlement location");
-                                }
-                            }*/
-                        } else {
-                            System.out.println("Not enough resources");
-                        }
-                    } else if (action.equals("city")) {
-                        if (player.getResources().containsAll(Price.City.getPrice())) {
-                            boolean success = false;
-                            // TODO Fix with new controller
-                            /*while (!success) {
-                                Vertex vertex = controller.getVertexCoordinates();
-                                //break if player cancels
-                                if (vertex.getX() == -1 && vertex.getY() == -1) {
-                                    break;
-                                }
-                                if (isCityValid(vertex)) {
-                                    player.getResources().removeAll(Price.City.getPrice());
-                                    vertex.buildCity(turnId);
-                                    success = true;
-                                } else {
-                                    System.out.println("Invalid city location");
-                                }
-                            }*/
-                        } else {
-                            System.out.println("Not enough resources");
-                        }
-                    } else if (action.equals("DevCard")) {
-                        if (player.getResources().containsAll(Price.DevelopmentCard.getPrice())) {
-                            player.getResources().removeAll(Price.DevelopmentCard.getPrice());
-                            DevelopmentCard devCard = board.buyDevelopmentCard();
-                            player.getDevelopmentCards().add(devCard);
-                            System.out.println("You received: " + devCard);
-                        } else {
-                            System.out.println("Not enough resources");
-                        }
-                    }
-                } else if (action.equals("playDevCard")) {
-                    System.out.println("please select a development card to play: ");
-                    action = scanner.next();
-                    if (action.equals(DevelopmentCard.Knight.getType())) {
-                        boolean success = false;
-                        // TODO Fix with new controller
-                        /*while (!success) {
-                            int[] coords = controller.getHexCoordinates();
-                            success = board.updateRobber(coords[0],coords[1]);
-                        }*/
-                    } else if (action.equals(DevelopmentCard.RoadBuilding.getType())) {
-                        int roadsPlaced = 0;
-                        // TODO Fix with new controller
+    /**
+     *
+     * @return -1 insufficient resources, 1 successfully bought
+     */
+    public int buyDevelopmentCard() {
+        if (player.getResources().containsAll(Price.DevelopmentCard.getPrice())) {
+            player.getResources().removeAll(Price.DevelopmentCard.getPrice());
+            DevelopmentCard devCard = board.buyDevelopmentCard();
+            player.getDevelopmentCards().add(devCard);
+            System.out.println("You received: " + devCard);
+            return 1;
+        } else {
+            System.out.println("Not enough resources");
+            return -1;
+        }
+    }
+
+    /**
+     *
+     * @param developmentCard
+     * @param hex
+     * @return -1 invalid location, 1 successfully played development card
+     */
+    public int playDevelopmentCard(DevelopmentCard developmentCard, Hex hex) {
+        if (developmentCard == DevelopmentCard.Knight) {
+            return board.updateRobber(hex.getX(), hex.getY());
+
+        } else if (developmentCard == DevelopmentCard.RoadBuilding) {
+            int roadsPlaced = 0;
+            // TODO Fix with new controller
                         /*while (roadsPlaced < 2) {
                             boolean success = false;
                             while(!success) {
@@ -202,32 +233,46 @@ public class Game {
                                 }
                             }
                         }*/
-                    } else if (action.equals(DevelopmentCard.YearOfPlenty.getType())) {
-                        int resourcesSelected = 0;
-                        while (resourcesSelected < 2) {
-                            System.out.println("Please select a resource: ");
-                            String resourceType = scanner.next();
-                            if (stringToResource(resourceType) != null) {
-                                player.getResources().add(stringToResource(resourceType));
-                            }
-                            resourcesSelected++;
-                        }
-                    } else if (action.equals(DevelopmentCard.Monopoly.getType())) {
-                        //todo
-                    }
-
-                } else if (action.equals("endTurn")) {
-                    endTurn = true;
+        } else if (developmentCard == DevelopmentCard.YearOfPlenty) {
+            int resourcesSelected = 0;
+            while (resourcesSelected < 2) {
+                System.out.println("Please select a resource: ");
+                String resourceType = scanner.next();
+                if (stringToResource(resourceType) != null) {
+                    player.getResources().add(stringToResource(resourceType));
                 }
+                resourcesSelected++;
             }
-
-            if (getVictoryPoints(player) >= 10) {
-                victory = true;
-            }
-
-            turn++;
+        } else if (developmentCard == DevelopmentCard.Monopoly) {
+            //todo
         }
+        return -1;
     }
+
+    public int endTurn() {
+        turn++;
+        turnId = turn % playerCount;
+        player = getPlayer(turnId);
+        return turn;
+    }
+
+    public int endInitTurn() {
+        if (turn == playerCount) {
+            //dont update turnId
+        } else if (turn > playerCount) {
+            turnId--;
+        } else {
+            turnId++;
+        }
+        return turn++;
+    }
+
+    private PlayerState getPlayer(int turnId) {
+        //todo
+        return player;
+    }
+
+    //todo check victory points
 
     private boolean isRoadValid(Edge edge) {
         if (edge == null) {
@@ -263,10 +308,12 @@ public class Game {
     private boolean isSettlementValidLength(Vertex vertex) {
         Edge[] edges = board.getAdjacentEdges(vertex);
         for (Edge edge : edges) {
-            Vertex[] possibleOccupations = board.getAdjacentVertices(edge);
-            for (Vertex possibleOccupation : possibleOccupations) {
-                if (possibleOccupation.isSettlement() || possibleOccupation.isCity() ) {
-                    return false;
+            if (edge != null) {
+                Vertex[] possibleOccupations = board.getAdjacentVertices(edge);
+                for (Vertex possibleOccupation : possibleOccupations) {
+                    if (possibleOccupation.isSettlement() || possibleOccupation.isCity()) {
+                        return false;
+                    }
                 }
             }
         }
@@ -284,7 +331,8 @@ public class Game {
     }
 
     private boolean isSettlementValid(Vertex vertex) {
-        return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
+        //return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
+        return isSettlementValidLength(vertex);
     }
 
     private boolean isCityValid(Vertex vertex) {
@@ -295,6 +343,10 @@ public class Game {
         return playerSpace.getAll(Templates.Player.getTemplateFields()).size();
     }*/
 
+    public boolean yourTurn() {
+        return player.getPlayerId() == turnId;
+    }
+
     private int getVictoryPoints(PlayerState player) {
         int vp = getSettlements(player.getPlayerId()).size() + getCities(player.getPlayerId()).size();
         for (DevelopmentCard developmentCard : player.getDevelopmentCards()) {
@@ -302,7 +354,7 @@ public class Game {
                 vp++;
             }
         }
-        if (player.hasLargetArmy()) vp++;
+        if (player.hasLargestArmy()) vp++;
         if (player.hasLongestRoad()) vp++;
 
         return vp;
@@ -361,14 +413,18 @@ public class Game {
         return 0;
     }
 
-    private ArrayList<PlayerState> getPlayers() {
-        ArrayList<PlayerState> players = new ArrayList<PlayerState>();
-        return players;
+    private List<Object[]> getPlayers() throws InterruptedException {
+        return gameSpace.getAll(Templates.Player.getTemplateFields());
     }
 
     public Board getBoard() {
         return board;
     }
+
+    public int getPlayerCount() {
+        return playerCount;
+    }
+
 
     private ArrayList<Resource> harborTrades(PlayerState player) {
         ArrayList<Resource> res = new ArrayList<>();

@@ -14,6 +14,7 @@ public class Lobby {
         String input = scanner.next();
         if (input.equals("HOST")) {
             SequentialSpace game = new SequentialSpace();
+            SequentialSpace chat = new SequentialSpace();
             SpaceRepository repository = new SpaceRepository();
 
             // Setting up URI
@@ -27,6 +28,7 @@ public class Lobby {
             // Opening gate at given URI
             repository.addGate(URI);
             repository.add("game", game);
+            repository.add("chat", chat);
 
             playGame(game, true);
 
@@ -34,9 +36,10 @@ public class Lobby {
             System.out.println("Enter game ip and port... Format: ip:port");
             input = scanner.next();
 
-            String hostUri = "tcp://" + input + "/game?keep";
+            String hostUri = "tcp://" + input;
 
-            RemoteSpace game = new RemoteSpace(hostUri);
+            RemoteSpace game = new RemoteSpace(hostUri + "/game?keep");
+            RemoteSpace chat = new RemoteSpace(hostUri + "/game?keep");
 
             playGame(game, false);
 

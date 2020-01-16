@@ -17,11 +17,7 @@ import model.board.Edge;
 import model.board.Hex;
 import model.board.Terrain;
 import model.board.Vertex;
-import model.newGame;
 import view.NewView;
-import view.View;
-
-import java.util.Arrays;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.floor;
@@ -45,7 +41,7 @@ public class NewController extends Application {
     private final double offsetX = screenSize/2.0 - centerCoordX, offsetY = screenSize/2.0 - centerCoordY;
 
 
-    private newGame game;
+    private Game game;
     private NewView view;
     private GameState gameState = GameState.BuildSettlement;
     private boolean initialState = true;
@@ -62,7 +58,7 @@ public class NewController extends Application {
 
         // From Lobby create or join game TODO Implement
 
-        game = new newGame("");
+        game = new Game("");
         view = new NewView(game);
 
         Hex[][] hexes = game.getBoard().getHexes();
@@ -126,45 +122,47 @@ public class NewController extends Application {
 
 
         // TODO implements states
-        int success = 0;
-        switch (gameState) {
-            case Trade:
-                //todo
-                break;
-            case BuildRoad:
-                if (initialState) {
-                    success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
-                } else {
-                    success = game.buildRoad(getChosenEdge(i, j, touchAngle));
-                }
-                break;
-            case BuildSettlement:
-                if (initialState) {
-                    success = game.buildStartingSettlement(getChosenIntersection(i, j, touchAngle));
-                } else {
-                    success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
-                }
-                break;
-            case BuildCity:
-                success = game.buildCity(getChosenIntersection(i, j, touchAngle));
-                break;
-            case BuyDevelopmentCard:
-                success = game.buyDevelopmentCard();
-                break;
-            case PlayDevelopmentCard:
-                //todo
-                break;
-            case None:
-                System.out.println("No action selected");
-        }
 
-        //todo notify user according to return value
-        if (success == 1) {
+        if (game.yourTurn()) {
+            int success = 0;
+            switch (gameState) {
+                case Trade:
+                    //todo
+                    break;
+                case BuildRoad:
+                    if (initialState) {
+                        success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
+                    } else {
+                        success = game.buildRoad(getChosenEdge(i, j, touchAngle));
+                    }
+                    break;
+                case BuildSettlement:
+                    if (initialState) {
+                        success = game.buildStartingSettlement(getChosenIntersection(i, j, touchAngle));
+                    } else {
+                        success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
+                    }
+                    break;
+                case BuildCity:
+                    success = game.buildCity(getChosenIntersection(i, j, touchAngle));
+                    break;
+                case BuyDevelopmentCard:
+                    success = game.buyDevelopmentCard();
+                    break;
+                case PlayDevelopmentCard:
+                    //todo
+                    break;
+                case None:
+                    System.out.println("No action selected");
+            }
+            //todo notify user according to return value
+            if (success == 1) {
 
-        } else if (success == -1) {
+            } else if (success == -1) {
 
-        } else if (success == -2) {
+            } else if (success == -2) {
 
+            }
         }
 
         view.update(root);
@@ -179,6 +177,7 @@ public class NewController extends Application {
     }
 
     public void endTurn() {
+        gameState = None;
         int turn;
         if (initialState) {
             turn = game.endInitTurn();
