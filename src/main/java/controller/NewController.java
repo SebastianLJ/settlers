@@ -1,15 +1,21 @@
 package controller;
 
 import javafx.application.Application;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.Game;
 import model.GameState;
@@ -25,9 +31,10 @@ import static model.GameState.*;
 
 public class NewController extends Application {
 
-    private final int screenSize = 800;
+    private final int gameSize = (int) Screen.getPrimary().getVisualBounds().getHeight();
+    private final int screenWidth = (int) Screen.getPrimary().getVisualBounds().getWidth();
 
-    private final int HEX_SIZE = screenSize/10;
+    private final int HEX_SIZE = gameSize /10;
     private final double HEX_WIDTH = Math.sqrt(3)*HEX_SIZE;
     private final double HEX_HEIGHT = 2*HEX_SIZE;
 
@@ -38,7 +45,7 @@ public class NewController extends Application {
     private final double centerCoordX = HEX_WIDTH*centerTileX + 0.5*HEX_WIDTH*centerTileY,
             centerCoordY = 3*HEX_HEIGHT/4*centerTileY;
 
-    private final double offsetX = screenSize/2.0 - centerCoordX, offsetY = screenSize/2.0 - centerCoordY;
+    private final double offsetX = gameSize /2.0 - centerCoordX, offsetY = gameSize /2.0 - centerCoordY;
 
 
     private Game game;
@@ -46,13 +53,22 @@ public class NewController extends Application {
     private GameState gameState = GameState.BuildSettlement;
     private boolean initialState = true;
 
-    private Group root;
+    private Group map;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Settlers of Catan");
-        root = new Group();
-        Scene scene = new Scene(root,screenSize,screenSize, Color.DEEPSKYBLUE);
+
+        FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("GameView.fxml"));
+        VBox root = loader.load();
+
+        HBox hbox = (HBox) root.getChildren().get(0);
+        map = new Group();
+        hbox.getChildren().set(0, map);
+
+        Scene scene = new Scene(root, gameSize, gameSize, Color.DEEPSKYBLUE);
+        //primaryStage.setMaximized(true);
+        primaryStage.setResizable(false);
 
         // Opens Lobby first
 
@@ -62,12 +78,12 @@ public class NewController extends Application {
         view = new NewView(game);
 
         Hex[][] hexes = game.getBoard().getHexes();
-        setupHexUI(root, hexes);
+        setupHexUI(map, hexes);
 
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        view.update(root);
+        view.update(map);
     }
 
     private void setupHexUI(Group root, Hex[][] hexes) {
@@ -167,7 +183,7 @@ public class NewController extends Application {
             }
         }
 
-        view.update(root);
+        view.update(map);
 
 
 
@@ -294,5 +310,9 @@ public class NewController extends Application {
                 color = Color.BLACK;
         }
         return color;
+    }
+
+    public void BuildRoad(MouseEvent mouseEvent) {
+
     }
 }
