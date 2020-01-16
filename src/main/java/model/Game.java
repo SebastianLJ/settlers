@@ -12,18 +12,20 @@ public class Game {
     private Random dice = new Random();
     private RemoteSpace gameSpace;
     private RemoteSpace chat;
-    private int playerId = 1;
+    private int playerId = 0;
     private Board board;
     private String hostURI;
     private PlayerState player;
     private int playerCount = 1;
     private int turn = 1;
     private int turnId = turn % playerCount;
+    private int startingSettlementsBuiltThisTurn = 0;
+    private int startingRoadsBuiltThisTurn = 0;
 
     public Game(String hostURI) throws IOException {
         this.hostURI = hostURI;
         board = new Board();
-        player = new PlayerState(1);
+        player = new PlayerState(0);
     }
 
     public Game(RemoteSpace gameSpace, RemoteSpace chat) {
@@ -123,6 +125,7 @@ public class Game {
         if (isRoadValid(edge)) {
             edge.setId(turnId);
             System.out.println("Successfully built road");
+            startingRoadsBuiltThisTurn++;
             return 1;
         } else {
             System.out.println("Invalid road location");
@@ -161,6 +164,7 @@ public class Game {
         if (isSettlementValidLength(vertex)) {
             vertex.buildSettlement(turnId);
             System.out.println("Successfully built settlement");
+            startingSettlementsBuiltThisTurn++;
             return 1;
         } else {
             System.out.println("Invalid settlement location");
@@ -264,6 +268,8 @@ public class Game {
         } else {
             turnId++;
         }
+        startingSettlementsBuiltThisTurn = 0;
+        startingRoadsBuiltThisTurn = 0;
         return turn++;
     }
 
@@ -470,5 +476,13 @@ public class Game {
             default:
                 return null;
         }
+    }
+
+    public int getStartingSettlementsBuiltThisTurn() {
+        return startingSettlementsBuiltThisTurn;
+    }
+
+    public int getStartingRoadsBuiltThisTurn() {
+        return startingRoadsBuiltThisTurn;
     }
 }

@@ -7,7 +7,11 @@ import org.jspace.TemplateField;
 import java.util.ArrayList;
 
 public enum Templates {
-    Player(new Template(new FormalField(Integer.class), new FormalField(PlayerState.class)))
+    //player id, player state
+    Player(new Template(new FormalField(Integer.class), new FormalField(PlayerState.class))),
+
+    //turn, game
+    Turn(new Template(new FormalField(Integer.class), new FormalField(Game.class)))
     ;
 
     private final Template template;

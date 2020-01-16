@@ -123,6 +123,7 @@ public class NewController extends Application {
 
         // TODO implements states
 
+        System.out.println(game.yourTurn());
         if (game.yourTurn()) {
             int success = 0;
             switch (gameState) {
@@ -130,14 +131,15 @@ public class NewController extends Application {
                     //todo
                     break;
                 case BuildRoad:
-                    if (initialState) {
+                    if (initialState && game.getStartingRoadsBuiltThisTurn() == 0) {
                         success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
+                        endTurn();
                     } else {
                         success = game.buildRoad(getChosenEdge(i, j, touchAngle));
                     }
                     break;
                 case BuildSettlement:
-                    if (initialState) {
+                    if (initialState &&game.getStartingSettlementsBuiltThisTurn() == 0) {
                         success = game.buildStartingSettlement(getChosenIntersection(i, j, touchAngle));
                     } else {
                         success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
