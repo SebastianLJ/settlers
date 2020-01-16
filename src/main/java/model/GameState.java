@@ -1,7 +1,8 @@
 package model;
 
 public enum GameState {
-    Trade("trade"),
+    TradeBank("tradeBank"),
+    TradePlayer("tradePlayer"),
     BuildRoad("buildRoad"),
     BuildSettlement("buildSettlement"),
     BuildCity("buildCity"),

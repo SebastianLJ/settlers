@@ -36,7 +36,7 @@
                 </VBox>
                 <VBox alignment="BOTTOM_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="75.0" prefWidth="100.0">
                     <children>
-                        <Button fx:id="BuildCty" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="City">
+                        <Button fx:id="BuildCity" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="City">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
@@ -86,9 +86,19 @@
                         </Button>
                     </children>
                 </VBox>
-                <VBox alignment="CENTER" prefHeight="75.0" prefWidth="100.0">
+                <VBox alignment="BOTTOM_LEFT" prefHeight="83.0" prefWidth="134.0">
                     <children>
-                        <Button fx:id="EndTurn" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0" prefWidth="90.0" text="End Turn">
+                        <Label prefHeight="18.0" prefWidth="87.0" text="Dev. Cards">
+                            <VBox.margin>
+                                <Insets bottom="5.0" left="5.0" right="5.0" />
+                            </VBox.margin>
+                        </Label>
+                        <Button fx:id="RollDices" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="135.0" text="Roll Dices">
+                            <VBox.margin>
+                                <Insets bottom="5.0" left="5.0" right="5.0" />
+                            </VBox.margin>
+                        </Button>
+                        <Button fx:id="EndTurn" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="130.0" text="End Turn">
                             <VBox.margin>
                                 <Insets bottom="5.0" left="5.0" right="5.0" />
                             </VBox.margin>
