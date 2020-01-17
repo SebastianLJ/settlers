@@ -1,9 +1,6 @@
 package controller;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -18,7 +15,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.Game;
 import model.GameState;
@@ -27,6 +23,8 @@ import model.board.Hex;
 import model.board.Terrain;
 import model.board.Vertex;
 import view.NewView;
+
+import java.io.IOException;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.floor;
@@ -47,23 +45,42 @@ public class NewController extends Application {
             tradeWithBank, tradeWithPlayer, playDevCard, viewDevCard,
             rollDices, endTurnButton;
 
+    private Button joinGameButton;
+    private Button createGameButton;
+
     private Group map;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        double mapSize = initializeScene(primaryStage);
+        primaryStage.setTitle("Settlers of Catan - Lobby");
+        FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("LobbyView.fxml"));
+        AnchorPane lobby = loader.load();
 
-        game = new Game("");
-        view = new NewView(game);
-        Hex[][] hexes = game.getBoard().getHexes();
+        joinGameButton = (Button) loader.getNamespace().get("JoinGameButton");
+        joinGameButton.setOnMouseClicked(mouseEvent -> {
+            try {
+                showJoinGameDialog(primaryStage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
-        // Opens Lobby first
+        createGameButton = (Button) loader.getNamespace().get("CreateGameButton");
+        createGameButton.setOnMouseClicked(mouseEvent -> {
+            try {
+                createGame(primaryStage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
-        // From Lobby create or join game TODO Implement
+        Scene scene = new Scene(lobby);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 
-        initializeOffsets(mapSize, hexes);
-        setupHexUI(map, hexes);
-        view.update(map);
+    public void initialize() {
+
     }
 
     private double initializeScene(Stage primaryStage) throws java.io.IOException {
@@ -125,10 +142,6 @@ public class NewController extends Application {
         double mapSize = pane.getHeight();
         pane.setMaxWidth(mapSize);
         return mapSize;
-        view.update(map);
-
-
-
     }
 
     private void setButtonsDisable(boolean bool) {
@@ -421,5 +434,36 @@ public class NewController extends Application {
     public void onMouseExited(MouseEvent mouseEvent) {
         Button button = (Button) mouseEvent.getSource();
         button.setEffect(null);
+    }
+
+    public void createGame(Stage primaryStage) throws IOException {
+        double mapSize = initializeScene(primaryStage);
+        game = new Game("");
+        view = new NewView(game);
+        Hex[][] hexes = game.getBoard().getHexes();
+
+        // Opens Lobby first
+
+        // From Lobby create or join game TODO Implement
+
+        initializeOffsets(mapSize, hexes);
+        setupHexUI(map, hexes);
+    }
+
+    public void showJoinGameDialog(Stage primaryStage) throws IOException {
+        FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("LobbyViewWithIPPortInput.fxml"));
+        Scene scene = new Scene(loader.load());
+
+        createGameButton = (Button) loader.getNamespace().get("CreateGameButton");
+        createGameButton.setOnMouseClicked(mouseEvent -> {
+            try {
+                createGame(primaryStage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 }
