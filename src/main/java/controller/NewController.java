@@ -108,15 +108,15 @@ public class NewController extends Application {
         rollDices.setOnAction(actionEvent -> {
             if (game.yourTurn()) {
                 game.roll();
-                setButtonsDisable(false);
-                rollDices.setDisable(true);
+                //setButtonsDisable(false);
+                //rollDices.setDisable(true);
             }
         });
 
         endTurnButton = (Button) loader.getNamespace().get("EndTurn");
         endTurnButton.setOnAction(actionEvent -> {
-            endTurnButton.setDisable(true);
-            setButtonsDisable(true);
+            //endTurnButton.setDisable(true);
+            //setButtonsDisable(true);
             endTurn();
         });
 
