@@ -465,11 +465,13 @@ public class NewController extends Application {
 
         TextField ipTextField = (TextField) loader.getNamespace().get("ipText");
         TextField portTextField = (TextField) loader.getNamespace().get("portText");
-        String uri = "tcp://" + ipTextField.getText() + ":" + portTextField.getText();
+
 
         Button joinButton = (Button) loader.getNamespace().get("join");
         joinButton.setOnMouseClicked(mouseEvent -> {
             try {
+                String uri = "tcp://" + ipTextField.getText() + ":" + portTextField.getText();
+                System.out.println("uri: " + uri);
                 createGame(primaryStage, false, uri);
             } catch (IOException e) {
                 e.printStackTrace();

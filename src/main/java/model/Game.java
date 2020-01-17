@@ -37,10 +37,10 @@ public class Game {
 
             System.out.println("A game is hosted on IP:Port: " + ip + ":" + port);
 
-            String URI = "tcp://" + ip + ":" + port + "?keep";
+            String URI = "tcp://" + ip + ":" + port;
 
             // Opening gate at given URI
-            repository.addGate(URI);
+            repository.addGate(URI + "?keep");
             repository.add("game", gameTemp);
             repository.add("chat", chatTemp);
 
@@ -418,7 +418,7 @@ public class Game {
                 System.out.println(tPlayer.getName() + " received " + resources.toString());
             }
             try {
-                gameSpace.put(player.getName(), player.getPlayerId(), player);
+                gameSpace.put(tPlayer.getName(), tPlayer.getPlayerId(), tPlayer);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
