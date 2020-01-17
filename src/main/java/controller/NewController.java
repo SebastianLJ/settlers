@@ -45,20 +45,7 @@ public class NewController extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Settlers of Catan");
-
-        FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("GameView.fxml"));
-        VBox root = loader.load();
-
-        map = new Group();
-        AnchorPane pane = (AnchorPane) root.getChildren().get(0);
-        pane.getChildren().remove(0);
-        pane.getChildren().add(map);
-
-        Scene scene = new Scene(root, Color.DEEPSKYBLUE);
-
-        primaryStage.setMaximized(true);
-        primaryStage.setResizable(false);
+        double mapSize = initializeScene(primaryStage);
 
         game = new Game("");
         view = new NewView(game);
@@ -68,16 +55,30 @@ public class NewController extends Application {
 
         // From Lobby create or join game TODO Implement
 
-        // Hardcoded atm
-        double mapSize = 800.;
         initializeOffsets(mapSize, hexes);
-
         setupHexUI(map, hexes);
+        view.update(map);
+    }
+
+    private double initializeScene(Stage primaryStage) throws java.io.IOException {
+        primaryStage.setTitle("Settlers of Catan");
+        primaryStage.setMaximized(true);
+        primaryStage.setResizable(false);
+
+        FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("GameView.fxml"));
+        VBox root = loader.load();
+
+        map = new Group();
+        AnchorPane pane = (AnchorPane) root.getChildren().get(0);
+        pane.getChildren().add(map);
+        Scene scene = new Scene(root);
 
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        view.update(map);
+        double mapSize = pane.getHeight();
+        pane.setMaxWidth(mapSize);
+        return mapSize;
     }
 
     private void initializeOffsets(double mapSize, Hex[][] hexes) {
@@ -343,12 +344,10 @@ public class NewController extends Application {
     public void onMouseEntered(MouseEvent mouseEvent) {
         Button button = (Button) mouseEvent.getSource();
         button.setEffect(new DropShadow());
-
     }
 
     public void onMouseExited(MouseEvent mouseEvent) {
         Button button = (Button) mouseEvent.getSource();
         button.setEffect(null);
-
     }
 }
