@@ -44,6 +44,7 @@ public class NewController extends Application {
     private NewView view;
     private GameState gameState = GameState.BuildRoad;
     private boolean initialState = true;
+
     @FXML
     private Button buildRoad, buildSettlement, buildCity, buildDevCard,
             tradeWithBank, tradeWithPlayer, playDevCard, viewDevCard,
@@ -106,7 +107,6 @@ public class NewController extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         primaryStage.setMaximized(true);
-        primaryStage.setResizable(false);
 
         double mapSize = gameView.getHeight();
         gameView.setMaxWidth(mapSize);
