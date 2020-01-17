@@ -1,6 +1,9 @@
 package controller;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -38,8 +41,11 @@ public class NewController extends Application {
 
     private Game game;
     private NewView view;
-    private GameState gameState = GameState.BuildSettlement;
+    private GameState gameState = GameState.BuildRoad;
     private boolean initialState = true;
+    private Button buildRoad, buildSettlement, buildCity, buildDevCard,
+            tradeWithBank, tradeWithPlayer, playDevCard, viewDevCard,
+            rollDices, endTurnButton;
 
     private Group map;
 
@@ -73,12 +79,67 @@ public class NewController extends Application {
         pane.getChildren().add(map);
         Scene scene = new Scene(root);
 
+        buildRoad = (Button) loader.getNamespace().get("BuildRoad");
+        buildRoad.setOnAction(actionEvent -> gameState = GameState.BuildRoad);
+
+        buildSettlement = (Button) loader.getNamespace().get("BuildSettlement");
+        buildSettlement.setOnAction(actionEvent -> gameState = GameState.BuildSettlement);
+
+        buildCity = (Button) loader.getNamespace().get("BuildCity");
+        buildCity.setOnAction(actionEvent -> gameState = GameState.BuildCity);
+
+        buildDevCard = (Button) loader.getNamespace().get("BuildDevCard");
+        buildDevCard.setOnAction(actionEvent -> gameState = GameState.BuyDevelopmentCard);
+
+        tradeWithBank = (Button) loader.getNamespace().get("TradeWithBank");
+        tradeWithBank.setOnAction(actionEvent -> gameState = GameState.TradeBank);
+
+        tradeWithPlayer = (Button) loader.getNamespace().get("TradeWithPlayer");
+        tradeWithPlayer.setOnAction(actionEvent -> gameState = GameState.TradePlayer);
+
+        playDevCard = (Button) loader.getNamespace().get("PlayDevCard");
+        //todo play dev card
+
+        viewDevCard = (Button) loader.getNamespace().get("ViewDevCard");
+        //todo
+
+        rollDices = (Button) loader.getNamespace().get("RollDices");
+        rollDices.setOnAction(actionEvent -> {
+            if (game.yourTurn()) {
+                game.roll();
+                //setButtonsDisable(false);
+                //rollDices.setDisable(true);
+            }
+        });
+
+        endTurnButton = (Button) loader.getNamespace().get("EndTurn");
+        endTurnButton.setOnAction(actionEvent -> {
+            //endTurnButton.setDisable(true);
+            //setButtonsDisable(true);
+            endTurn();
+        });
+
         primaryStage.setScene(scene);
         primaryStage.show();
 
         double mapSize = pane.getHeight();
         pane.setMaxWidth(mapSize);
         return mapSize;
+        view.update(map);
+
+
+
+    }
+
+    private void setButtonsDisable(boolean bool) {
+        buildRoad.setDisable(bool);
+        buildSettlement.setDisable(bool);
+        buildCity.setDisable(bool);
+        buildDevCard.setDisable(bool);
+        tradeWithBank.setDisable(bool);
+        tradeWithPlayer.setDisable(bool);
+        playDevCard.setDisable(bool);
+        endTurnButton.setDisable(bool);
     }
 
     private void initializeOffsets(double mapSize, Hex[][] hexes) {
@@ -156,17 +217,20 @@ public class NewController extends Application {
 
         // TODO implements states
 
+        System.out.println("Game state: " + gameState.toString());
         System.out.println(game.yourTurn());
         if (game.yourTurn()) {
             int success = 0;
             switch (gameState) {
-                case Trade:
+                case TradeBank:
                     //todo
                     break;
                 case BuildRoad:
                     if (initialState && game.getStartingRoadsBuiltThisTurn() == 0) {
                         success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
-                        endTurn();
+                        if (success == 1) {
+                            endTurn();
+                        }
                     } else {
                         success = game.buildRoad(getChosenEdge(i, j, touchAngle));
                     }
@@ -212,6 +276,7 @@ public class NewController extends Application {
     }
 
     public void endTurn() {
+        System.out.println("End of turn");
         gameState = None;
         int turn;
         if (initialState) {
@@ -336,6 +401,13 @@ public class NewController extends Application {
         // TODO
         switch (buttonSource) {
             case "BuildRoad":
+                System.out.println("Selected Build Road");
+                gameState = GameState.BuildRoad;
+                break;
+            case "BuildSettlement":
+                System.out.println("Selected Build Settlement");
+                gameState = GameState.BuildSettlement;
+                System.out.println(gameState.toString());
                 break;
         }
 

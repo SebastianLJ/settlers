@@ -56,7 +56,7 @@ public class NewView {
             if (edges[k].getId() == -1) {
                 continue;
             }
-            Line line = new Line(points[k].getX(), points[k].getY(), points[(k+1)%6].getX(), points[(k+1)%6].getY());
+            Line line = new Line(points[k].getX(), points[k].getY(), points[(k+5)%6].getX(), points[(k+5)%6].getY());
             line.setStrokeWidth(hex.getSize() / 10.);
             root.getChildren().add(line);
 

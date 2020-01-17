@@ -69,4 +69,12 @@ public class PlayerState {
         }
         return count;
     }
+
+    public String resourcesToString() {
+        StringBuilder res = new StringBuilder();
+        for (Resource resource : resources) {
+            res.append(resource.getType()).append(", ");
+        }
+        return res.toString();
+    }
 }

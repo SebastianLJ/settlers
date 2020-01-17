@@ -285,6 +285,7 @@ public class Game {
             return false;
         }
         Vertex[] vertices = board.getAdjacentVertices(edge);
+        System.out.println(Arrays.toString(vertices));
         for (Vertex vertex : vertices) {
             if (vertex.getId() == playerId && vertex.isCity() || vertex.isSettlement()) {
                 return true;
@@ -374,8 +375,7 @@ public class Game {
         player.getResources().addAll(getResources(settlements,roll));
         player.getResources().addAll(getResources(cities, roll));
 
-
-
+        System.out.println(player.resourcesToString());
     }
 
     private ArrayList<Resource> getResources(ArrayList<Vertex> vertices, int roll) {
@@ -394,7 +394,7 @@ public class Game {
         ArrayList<Vertex> settlements = new ArrayList<Vertex>();
         for (Vertex[] vertexList : board.getVertices()) {
             for (Vertex vertex : vertexList) {
-                if (vertex.getId() == playerId && vertex.isSettlement()) {
+                if (vertex != null && vertex.getId() == playerId && vertex.isSettlement()) {
                     settlements.add(vertex);
                 }
             }
@@ -406,7 +406,7 @@ public class Game {
         ArrayList<Vertex> cities = new ArrayList<Vertex>();
         for (Vertex[] vertexList : board.getVertices()) {
             for (Vertex vertex : vertexList) {
-                if (vertex.getId() == playerId && vertex.isCity()) {
+                if (vertex != null && vertex.getId() == playerId && vertex.isCity()) {
                     cities.add(vertex);
                 }
             }
