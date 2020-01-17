@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.SplitPane;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -43,11 +44,11 @@ public class NewController extends Application {
     private NewView view;
     private GameState gameState = GameState.BuildRoad;
     private boolean initialState = true;
+    @FXML
     private Button buildRoad, buildSettlement, buildCity, buildDevCard,
             tradeWithBank, tradeWithPlayer, playDevCard, viewDevCard,
             rollDices, endTurnButton;
 
-    private Button joinGameButton;
     private Button createGameButton;
     private TextField textField;
 
@@ -59,7 +60,7 @@ public class NewController extends Application {
         FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("LobbyView.fxml"));
         AnchorPane lobby = loader.load();
 
-        joinGameButton = (Button) loader.getNamespace().get("JoinGameButton");
+        Button joinGameButton = (Button) loader.getNamespace().get("JoinGameButton");
         joinGameButton.setOnMouseClicked(mouseEvent -> {
             try {
                 showJoinGameDialog(primaryStage);
@@ -91,42 +92,53 @@ public class NewController extends Application {
 
     private double initializeScene(Stage primaryStage) throws java.io.IOException {
         primaryStage.setTitle("Settlers of Catan");
+        FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("AdvancedGameView.fxml"));
+        SplitPane root = loader.load();
+
+        map = new Group();
+
+        AnchorPane gameView = (AnchorPane) root.getItems().get(0);
+        gameView.getChildren().add(map);
+        Scene scene = new Scene(root);
+
+        initiateButtonListeners(loader);
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
         primaryStage.setMaximized(true);
         primaryStage.setResizable(false);
 
-        FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("GameView.fxml"));
-        VBox root = loader.load();
+        double mapSize = gameView.getHeight();
+        gameView.setMaxWidth(mapSize);
+        return mapSize;
+    }
 
-        map = new Group();
-        AnchorPane pane = (AnchorPane) root.getChildren().get(0);
-        pane.getChildren().add(map);
-        Scene scene = new Scene(root);
-
-        buildRoad = (Button) loader.getNamespace().get("BuildRoad");
+    private void initiateButtonListeners(FXMLLoader loader) {
+        buildRoad = (Button) loader.getNamespace().get("buildRoad");
         buildRoad.setOnAction(actionEvent -> gameState = GameState.BuildRoad);
 
-        buildSettlement = (Button) loader.getNamespace().get("BuildSettlement");
+        buildSettlement = (Button) loader.getNamespace().get("buildSettlement");
         buildSettlement.setOnAction(actionEvent -> gameState = GameState.BuildSettlement);
 
-        buildCity = (Button) loader.getNamespace().get("BuildCity");
+        buildCity = (Button) loader.getNamespace().get("buildCity");
         buildCity.setOnAction(actionEvent -> gameState = GameState.BuildCity);
 
-        buildDevCard = (Button) loader.getNamespace().get("BuildDevCard");
+        buildDevCard = (Button) loader.getNamespace().get("buildDevCard");
         buildDevCard.setOnAction(actionEvent -> gameState = GameState.BuyDevelopmentCard);
 
-        tradeWithBank = (Button) loader.getNamespace().get("TradeWithBank");
+        tradeWithBank = (Button) loader.getNamespace().get("tradeWithBank");
         tradeWithBank.setOnAction(actionEvent -> gameState = GameState.TradeBank);
 
-        tradeWithPlayer = (Button) loader.getNamespace().get("TradeWithPlayer");
+        tradeWithPlayer = (Button) loader.getNamespace().get("tradeWithPlayer");
         tradeWithPlayer.setOnAction(actionEvent -> gameState = GameState.TradePlayer);
 
-        playDevCard = (Button) loader.getNamespace().get("PlayDevCard");
+        playDevCard = (Button) loader.getNamespace().get("playDevCard");
         //todo play dev card
 
-        viewDevCard = (Button) loader.getNamespace().get("ViewDevCard");
+        viewDevCard = (Button) loader.getNamespace().get("viewDevCard");
         //todo
 
-        rollDices = (Button) loader.getNamespace().get("RollDices");
+        rollDices = (Button) loader.getNamespace().get("rollDices");
         rollDices.setOnAction(actionEvent -> {
             if (game.yourTurn()) {
                 game.roll();
@@ -135,19 +147,12 @@ public class NewController extends Application {
             }
         });
 
-        endTurnButton = (Button) loader.getNamespace().get("EndTurn");
+        endTurnButton = (Button) loader.getNamespace().get("endTurn");
         endTurnButton.setOnAction(actionEvent -> {
             //endTurnButton.setDisable(true);
             //setButtonsDisable(true);
             endTurn();
         });
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        double mapSize = pane.getHeight();
-        pane.setMaxWidth(mapSize);
-        return mapSize;
     }
 
     private void setButtonsDisable(boolean bool) {
@@ -449,12 +454,9 @@ public class NewController extends Application {
         view = new NewView(game);
         Hex[][] hexes = game.getBoard().getHexes();
 
-        // Opens Lobby first
-
-        // From Lobby create or join game TODO Implement
-
         initializeOffsets(mapSize, hexes);
         setupHexUI(map, hexes);
+        view.update(map);
     }
 
     public void showJoinGameDialog(Stage primaryStage) throws IOException {
