@@ -35,8 +35,6 @@ public class NewView {
                     drawVertices(root, hex);
                     drawPaths(root, hex);
                     drawRobber(root);
-
-
                 }
             }
         }
