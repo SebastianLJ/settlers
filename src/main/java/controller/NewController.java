@@ -1,10 +1,12 @@
 package controller;
 
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -47,6 +49,7 @@ public class NewController extends Application {
 
     private Button joinGameButton;
     private Button createGameButton;
+    private TextField textField;
 
     private Group map;
 
@@ -68,15 +71,18 @@ public class NewController extends Application {
         createGameButton = (Button) loader.getNamespace().get("CreateGameButton");
         createGameButton.setOnMouseClicked(mouseEvent -> {
             try {
-                createGame(primaryStage);
+                createGame(primaryStage, true, "");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
 
+
         Scene scene = new Scene(lobby);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        textField = (TextField) loader.getNamespace().get("nameField");
     }
 
     public void initialize() {
@@ -436,9 +442,10 @@ public class NewController extends Application {
         button.setEffect(null);
     }
 
-    public void createGame(Stage primaryStage) throws IOException {
+    public void createGame(Stage primaryStage, boolean isHost, String hostUri) throws IOException {
         double mapSize = initializeScene(primaryStage);
-        game = new Game("");
+        String name = textField.getText();
+        game = new Game(hostUri, isHost, name);
         view = new NewView(game);
         Hex[][] hexes = game.getBoard().getHexes();
 
@@ -454,10 +461,14 @@ public class NewController extends Application {
         FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("LobbyViewWithIPPortInput.fxml"));
         Scene scene = new Scene(loader.load());
 
-        createGameButton = (Button) loader.getNamespace().get("CreateGameButton");
-        createGameButton.setOnMouseClicked(mouseEvent -> {
+        TextField ipTextField = (TextField) loader.getNamespace().get("ipText");
+        TextField portTextField = (TextField) loader.getNamespace().get("portText");
+        String uri = "tcp://" + ipTextField.getText() + ":" + portTextField.getText();
+
+        Button joinButton = (Button) loader.getNamespace().get("join");
+        joinButton.setOnMouseClicked(mouseEvent -> {
             try {
-                createGame(primaryStage);
+                createGame(primaryStage, false, uri);
             } catch (IOException e) {
                 e.printStackTrace();
             }

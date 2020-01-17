@@ -44,8 +44,8 @@ public class Game {
             repository.add("game", gameTemp);
             repository.add("chat", chatTemp);
 
-            gameSpace = new RemoteSpace(this.hostURI + "/game?keep");
-            chat = new RemoteSpace(this.hostURI + "/chat?keep");
+            gameSpace = new RemoteSpace(URI + "/game?keep");
+            chat = new RemoteSpace(URI + "/chat?keep");
 
             playerId = 0;
             this.player = new PlayerState(playerId, playerName);
@@ -534,7 +534,7 @@ public class Game {
         return startingRoadsBuiltThisTurn;
     }
 
-    public int getPlayerCunt() {
+    public int getPlayerCount() {
         return playerCount;
     }
 

@@ -58,19 +58,19 @@
                      <children>
                         <Label text="IP:" />
                         <Label text="Port:" GridPane.rowIndex="1" />
-                        <TextField promptText="Enter IP address" GridPane.columnIndex="1">
+                        <TextField fx:id = "ipText" promptText="Enter IP address" GridPane.columnIndex="1">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
-                        <TextField promptText="Enter port" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <TextField fx:id = "portText" promptText="Enter port" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets />
                            </GridPane.margin>
                         </TextField>
                      </children>
                   </GridPane>
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="26.0" prefWidth="133.0" text="Join!" GridPane.rowIndex="1" />
+                  <Button fx:id = "join" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="26.0" prefWidth="133.0" text="Join!" GridPane.rowIndex="1" />
                </children>
             </GridPane>
             </children>
