@@ -66,7 +66,7 @@ public class NewController extends Application {
         primaryStage.setMaximized(true);
         primaryStage.setResizable(false);
 
-        game = new Game("");
+        game = new Game("tcp://82.211.204.89:9001", true, "Seb");
         view = new NewView(game);
         Hex[][] hexes = game.getBoard().getHexes();
 
@@ -279,7 +279,7 @@ public class NewController extends Application {
         int turn;
         if (initialState) {
             turn = game.endInitTurn();
-            if (turn == game.getPlayerCount() * 2) {
+            if (turn == game.getPlayerCunt() * 2) {
                 initialState = false;
             }
         } else {

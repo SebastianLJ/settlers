@@ -15,7 +15,7 @@ public class Controller {
     }
 
     public void createGame(String URIForGame) throws IOException {
-        game = new Game(URIForGame);
+
     }
 
     public Game getGame() {

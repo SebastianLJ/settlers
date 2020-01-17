@@ -1,10 +1,10 @@
 package model;
 
-import controller.Controller;
 import model.board.*;
 import org.jspace.*;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.*;
 
 public class Game {
@@ -22,28 +22,57 @@ public class Game {
     private int startingSettlementsBuiltThisTurn = 0;
     private int startingRoadsBuiltThisTurn = 0;
 
-    public Game(String hostURI) throws IOException {
+    public Game(String hostURI, boolean isHost, String playerName) throws IOException {
         this.hostURI = hostURI;
-        board = new Board();
-        player = new PlayerState(0);
-    }
 
-    public Game(RemoteSpace gameSpace, RemoteSpace chat) {
-        this.gameSpace = gameSpace;
-        this.chat = chat;
+        if (isHost) {
+            SequentialSpace gameTemp = new SequentialSpace();
+            SequentialSpace chatTemp = new SequentialSpace();
+            SpaceRepository repository = new SpaceRepository();
 
-        try {
-            playerCount = getPlayers().size();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            // Setting up URI
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            String ip = inetAddress.getHostAddress();
+            int port = 9001;
+
+            System.out.println("A game is hosted on IP:Port: " + ip + ":" + port);
+
+            String URI = "tcp://" + ip + ":" + port + "?keep";
+
+            // Opening gate at given URI
+            repository.addGate(URI);
+            repository.add("game", gameTemp);
+            repository.add("chat", chatTemp);
+
+            gameSpace = new RemoteSpace(this.hostURI + "/game?keep");
+            chat = new RemoteSpace(this.hostURI + "/chat?keep");
+
+            playerId = 0;
+            this.player = new PlayerState(playerId, playerName);
+            try {
+                gameSpace.put(playerName, playerId, player);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            gameSpace = new RemoteSpace(this.hostURI + "/game?keep");
+            chat = new RemoteSpace(this.hostURI + "/chat?keep");
+
+            playerId = getPlayers().size();
+            this.player = new PlayerState(playerId, playerName);
+            try {
+                gameSpace.put(playerName, playerId, player);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
-
+        board = new Board();
     }
 
     public int roll() {
         int roll = dice.nextInt(6) + dice.nextInt(6) + 2;
-        System.out.println("Rolled " + roll);
+        System.out.println(player.getName() + " rolled " + roll);
 
         if (roll == 7) {
             boolean success = false;
@@ -53,7 +82,7 @@ public class Game {
                     success = board.updateRobber(coords[0],coords[1]);
                 }*/
         } else {
-            setResources(playerId, roll);
+            distributeResources(roll);
         }
         return roll;
     }
@@ -256,7 +285,6 @@ public class Game {
     public int endTurn() {
         turn++;
         turnId = turn % playerCount;
-        player = getPlayer(turnId);
         return turn;
     }
 
@@ -271,11 +299,6 @@ public class Game {
         startingSettlementsBuiltThisTurn = 0;
         startingRoadsBuiltThisTurn = 0;
         return turn++;
-    }
-
-    private PlayerState getPlayer(int turnId) {
-        //todo
-        return player;
     }
 
     //todo check victory points
@@ -368,14 +391,38 @@ public class Game {
 
     }
 
-    private void setResources(int id, int roll) {
-        ArrayList<Vertex> settlements = getSettlements(id);
-        ArrayList<Vertex> cities = getCities(id);
+    private void distributeResources(int roll) {
+        List<Object[]> players = new ArrayList<>();
+        try {
+            players = gameSpace.getAll(new FormalField(String.class), new FormalField(Integer.class),
+                    new FormalField(PlayerState.class));
+            System.out.println(players.size());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        player.getResources().addAll(getResources(settlements,roll));
-        player.getResources().addAll(getResources(cities, roll));
+        System.out.println("SetResources players: " + players.size());
 
-        System.out.println(player.resourcesToString());
+        for (Object[] playerTuple : players) {
+            PlayerState tPlayer = (PlayerState) playerTuple[2];
+            ArrayList<Vertex> settlements = getSettlements(tPlayer.getPlayerId());
+            ArrayList<Vertex> cities = getCities(tPlayer.getPlayerId());
+
+            ArrayList<Resource> resources = new ArrayList<>();
+            resources.addAll(getResources(settlements, roll));
+            resources.addAll(getResources(cities, roll));
+
+            tPlayer.getResources().addAll(resources);
+
+            if (!resources.isEmpty()) {
+                System.out.println(tPlayer.getName() + " received " + resources.toString());
+            }
+            try {
+                gameSpace.put(player.getName(), player.getPlayerId(), player);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private ArrayList<Resource> getResources(ArrayList<Vertex> vertices, int roll) {
@@ -419,16 +466,17 @@ public class Game {
         return 0;
     }
 
-    private List<Object[]> getPlayers() throws InterruptedException {
-        return gameSpace.getAll(Templates.Player.getTemplateFields());
+    private List<Object[]> getPlayers() {
+        try {
+            return gameSpace.queryAll(Templates.player());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     public Board getBoard() {
         return board;
-    }
-
-    public int getPlayerCount() {
-        return playerCount;
     }
 
 
@@ -484,5 +532,29 @@ public class Game {
 
     public int getStartingRoadsBuiltThisTurn() {
         return startingRoadsBuiltThisTurn;
+    }
+
+    public int getPlayerCunt() {
+        return playerCount;
+    }
+
+    public void setPlayerCount(int playerCount) {
+        this.playerCount = playerCount;
+    }
+
+    public void setPlayer(int id) {
+        try {
+            player = (PlayerState) gameSpace.get(Templates.player(id))[2];
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updatePlayer() {
+        try {
+            gameSpace.put(player.getName(), player.getPlayerId(), player);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

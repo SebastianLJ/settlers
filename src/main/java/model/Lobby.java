@@ -1,5 +1,8 @@
 package model;
 
+import controller.NewController;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import org.jspace.*;
 
 import java.io.IOException;
@@ -39,7 +42,7 @@ public class Lobby {
             String hostUri = "tcp://" + input;
 
             RemoteSpace game = new RemoteSpace(hostUri + "/game?keep");
-            RemoteSpace chat = new RemoteSpace(hostUri + "/game?keep");
+            RemoteSpace chat = new RemoteSpace(hostUri + "/chat?keep");
 
             playGame(game, false);
 
@@ -47,19 +50,10 @@ public class Lobby {
     }
 
     private static void playGame(Space game, boolean sender) throws InterruptedException {
-        Scanner scanner = new Scanner(System.in);
         if (sender) {
-            while (true) {
-                System.out.println("Input data to be transmitted: ");
-                String data = scanner.next();
-                game.put(data);
-            }
-        } else {
-            while (true) {
-                String receivedData = (String) game.get(new FormalField(String.class))[0];
-                System.out.println("Just received: " + receivedData);
-            }
-        }
 
+        } else {
+
+        }
     }
 }

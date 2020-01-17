@@ -2,6 +2,7 @@ package model;
 
 import model.board.DevelopmentCard;
 import model.board.Resource;
+import org.jspace.Tuple;
 
 import java.util.ArrayList;
 
@@ -13,9 +14,11 @@ public class PlayerState {
     private boolean hasLargestArmy = false;
     private int longestRoad= 1;
     private int armySize = 0;
+    private String name;
 
-    public PlayerState(int playerId) {
+    public PlayerState(int playerId, String name) {
         this.playerId = playerId;
+        this.name = name;
     }
 
     public int getPlayerId() {
@@ -76,5 +79,9 @@ public class PlayerState {
             res.append(resource.getType()).append(", ");
         }
         return res.toString();
+    }
+
+    public String getName() {
+        return name;
     }
 }
