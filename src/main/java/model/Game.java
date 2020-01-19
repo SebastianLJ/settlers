@@ -434,17 +434,26 @@ public class Game {
         return player.getId() == getTurnId();
     }
 
-    private int getVictoryPoints(PlayerState player) {
-        int vp = getSettlements(player.getId()).size() + getCities(player.getId()).size();
-        for (DevelopmentCard developmentCard : player.getDevelopmentCards()) {
-            if (developmentCard.equals(DevelopmentCard.VictoryPoint)) {
-                vp++;
-            }
+    private int getVictoryPoints(int playerId) {
+        PlayerState player = null;
+        try {
+            player = (PlayerState) gameSpace.query(Templates.player(playerId))[2];
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        if (player.hasLargestArmy()) vp++;
-        if (player.hasLongestRoad()) vp++;
+        if (player != null) {
+            int vp = getSettlements(player.getId()).size() + getCities(player.getId()).size();
+            for (DevelopmentCard developmentCard : player.getDevelopmentCards()) {
+                if (developmentCard.equals(DevelopmentCard.VictoryPoint)) {
+                    vp++;
+                }
+            }
+            if (player.hasLargestArmy()) vp++;
+            if (player.hasLongestRoad()) vp++;
 
-        return vp;
+            return vp;
+        }
+        return 0;
 
     }
 
