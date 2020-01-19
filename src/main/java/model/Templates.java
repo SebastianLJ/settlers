@@ -1,5 +1,6 @@
 package model;
 
+import model.board.Board;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
 import org.jspace.Template;
@@ -36,4 +37,21 @@ public class Templates {
                 new FormalField(PlayerState.class));
         return template.getFields();
     }
+
+    public static TemplateField[] turn() {
+        Template template = new Template(new ActualField("turn_count"), new FormalField(Integer.class));
+        return template.getFields();
+    }
+
+    public static TemplateField[] board() {
+        Template template = new Template(new ActualField("board"), new FormalField(Board.class));
+        return template.getFields();
+    }
+
+    public static TemplateField[] lock() {
+        Template template = new Template(new ActualField("lock"));
+        return template.getFields();
+    }
+
+
 }

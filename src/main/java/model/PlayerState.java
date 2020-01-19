@@ -21,7 +21,7 @@ public class PlayerState {
         this.name = name;
     }
 
-    public int getPlayerId() {
+    public int getId() {
         return playerId;
     }
 

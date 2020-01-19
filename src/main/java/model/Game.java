@@ -12,13 +12,9 @@ public class Game {
     private Random dice = new Random();
     private RemoteSpace gameSpace;
     private RemoteSpace chat;
-    private int playerId = 0;
     private Board board;
     private String hostURI;
     private PlayerState player;
-    private int playerCount = 1;
-    private int turn = 1;
-    private int turnId = turn % playerCount;
     private int startingSettlementsBuiltThisTurn = 0;
     private int startingRoadsBuiltThisTurn = 0;
 
@@ -47,10 +43,13 @@ public class Game {
             gameSpace = new RemoteSpace(URI + "/game?keep");
             chat = new RemoteSpace(URI + "/chat?keep");
 
-            playerId = 0;
-            this.player = new PlayerState(playerId, playerName);
+
+            board = new Board();
+            this.player = new PlayerState(0, playerName);
             try {
-                gameSpace.put(playerName, playerId, player);
+                gameSpace.put(playerName, player.getId(), player);
+                gameSpace.put("turn_count", 0);
+                gameSpace.put("board", board);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -58,16 +57,17 @@ public class Game {
             gameSpace = new RemoteSpace(this.hostURI + "/game?keep");
             chat = new RemoteSpace(this.hostURI + "/chat?keep");
 
-            playerId = getPlayers().size();
-            this.player = new PlayerState(playerId, playerName);
+            this.player = new PlayerState(getPlayers().size(), playerName);
             try {
-                gameSpace.put(playerName, playerId, player);
+                gameSpace.put(playerName, player.getId(), player);
+                board = (Board) gameSpace.query(Templates.board())[1];
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
-        board = new Board();
+        new Thread(new boardUpdater(board,gameSpace)).start();
+
     }
 
     public int roll() {
@@ -137,7 +137,7 @@ public class Game {
         if (player.getResources().containsAll(Price.Road.getPrice())) {
             if (isRoadValid(edge)) {
                 player.getResources().removeAll(Price.Road.getPrice());
-                edge.setId(turnId);
+                edge.setId(player.getId());
                 System.out.println("Successfully built road");
                 return 1;
             } else {
@@ -151,8 +151,12 @@ public class Game {
     }
 
     public int buildStartingRoad(Edge edge) {
+        if (startingRoadsBuiltThisTurn > 0) {
+            System.out.println("Can't build anymore roads this turn");
+            return -1;
+        }
         if (isRoadValid(edge)) {
-            edge.setId(turnId);
+            edge.setId(player.getId());
             System.out.println("Successfully built road");
             startingRoadsBuiltThisTurn++;
             return 1;
@@ -168,10 +172,10 @@ public class Game {
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
     public int buildSettlement(Vertex vertex) {
-        if (player.getResources().containsAll(Price.Settlement.getPrice()) || true) {
+        if (player.getResources().containsAll(Price.Settlement.getPrice())) {
             if (isSettlementValid(vertex)) {
                 player.getResources().removeAll(Price.Settlement.getPrice());
-                vertex.buildSettlement(turnId);
+                vertex.buildSettlement(player.getId());
                 System.out.println("Successfully built settlement");
                 return 1;
             } else {
@@ -187,11 +191,14 @@ public class Game {
     /**
      * Initial placement of settlement
      * @param vertex
-     * @return -2 invalid location, 1 successfully built
+     * @return -2 invalid location, -1 already built starting settlement this turn, 1 successfully built
      */
     public int buildStartingSettlement(Vertex vertex) {
-        if (isSettlementValidLength(vertex)) {
-            vertex.buildSettlement(turnId);
+        if (startingSettlementsBuiltThisTurn > 0) {
+            System.out.println("Can't build anymore settlements this turn");
+            return -1;
+        } else if (isSettlementValidLength(vertex)) {
+            vertex.buildSettlement(player.getId());
             System.out.println("Successfully built settlement");
             startingSettlementsBuiltThisTurn++;
             return 1;
@@ -210,7 +217,7 @@ public class Game {
         if (player.getResources().containsAll(Price.City.getPrice())) {
             if (isCityValid(vertex)) {
                 player.getResources().removeAll(Price.City.getPrice());
-                vertex.buildCity(turnId);
+                vertex.buildCity(player.getId());
                 System.out.println("Successfully built city");
                 return 1;
             } else {
@@ -283,22 +290,66 @@ public class Game {
     }
 
     public int endTurn() {
-        turn++;
-        turnId = turn % playerCount;
-        return turn;
+        int turn = -1;
+        try {
+            turn = (int) gameSpace.get(Templates.turn())[1];
+            gameSpace.put("turn_count", turn + 1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return turn + 1;
     }
 
     public int endInitTurn() {
+        int playerCount = getPlayerCount();
+        System.out.println("entered end init turn");
+        int turn = 0;
+        try {
+            turn = (int) gameSpace.get(Templates.turn())[1];
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         if (turn == playerCount) {
-            //dont update turnId
-        } else if (turn > playerCount) {
-            turnId--;
+            setInitStageOne(true);
+            turn--;
+        } else if (getInitStageOne()) {
+            turn--;
         } else {
-            turnId++;
+            turn++;
+        }
+
+        try {
+            gameSpace.put("turn_count", turn);
+            System.out.println("put turn");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         startingSettlementsBuiltThisTurn = 0;
         startingRoadsBuiltThisTurn = 0;
-        return turn++;
+        return turn;
+    }
+
+    public void setInitStageOne(boolean b) {
+        try {
+            gameSpace.put("init_stage_one", b);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean getInitStageOne() {
+        boolean initStageOne = false;
+        try {
+            Object[] temp = gameSpace.queryp(new ActualField("init_stage_one")
+                    , new FormalField(Boolean.class));
+            if (temp != null) {
+                initStageOne = (boolean) temp[1];
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return initStageOne;
     }
 
     //todo check victory points
@@ -310,11 +361,11 @@ public class Game {
         Vertex[] vertices = board.getAdjacentVertices(edge);
         System.out.println(Arrays.toString(vertices));
         for (Vertex vertex : vertices) {
-            if (vertex.getId() == playerId && vertex.isCity() || vertex.isSettlement()) {
+            if (vertex.getId() == player.getId() && vertex.isCity() || vertex.isSettlement()) {
                 return true;
             }
             for (Edge nextEdge : board.getAdjacentEdges(vertex)) {
-                if (nextEdge.getId() == playerId) {
+                if (nextEdge.getId() == player.getId()) {
                     return true;
                 }
             }
@@ -353,7 +404,7 @@ public class Game {
     private boolean isSettlementConnected(Vertex vertex) {
         Edge[] edges = board.getAdjacentEdges(vertex);
         for (Edge edge : edges) {
-            if (edge.getId() == playerId) {
+            if (edge.getId() == player.getId()) {
                 return true;
             }
         }
@@ -369,16 +420,22 @@ public class Game {
         return vertex.isSettlement();
     }
 
-    /*private int getPlayerCount() throws InterruptedException {
-        return playerSpace.getAll(Templates.Player.getTemplateFields()).size();
-    }*/
+    public int getPlayerCount() {
+        try {
+            return gameSpace.queryAll(Templates.player()).size();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     public boolean yourTurn() {
-        return player.getPlayerId() == turnId;
+        System.out.println("id: " + player.getId() + " turn id: " + getTurnId());
+        return player.getId() == getTurnId();
     }
 
     private int getVictoryPoints(PlayerState player) {
-        int vp = getSettlements(player.getPlayerId()).size() + getCities(player.getPlayerId()).size();
+        int vp = getSettlements(player.getId()).size() + getCities(player.getId()).size();
         for (DevelopmentCard developmentCard : player.getDevelopmentCards()) {
             if (developmentCard.equals(DevelopmentCard.VictoryPoint)) {
                 vp++;
@@ -405,8 +462,8 @@ public class Game {
 
         for (Object[] playerTuple : players) {
             PlayerState tPlayer = (PlayerState) playerTuple[2];
-            ArrayList<Vertex> settlements = getSettlements(tPlayer.getPlayerId());
-            ArrayList<Vertex> cities = getCities(tPlayer.getPlayerId());
+            ArrayList<Vertex> settlements = getSettlements(tPlayer.getId());
+            ArrayList<Vertex> cities = getCities(tPlayer.getId());
 
             ArrayList<Resource> resources = new ArrayList<>();
             resources.addAll(getResources(settlements, roll));
@@ -418,7 +475,7 @@ public class Game {
                 System.out.println(tPlayer.getName() + " received " + resources.toString());
             }
             try {
-                gameSpace.put(tPlayer.getName(), tPlayer.getPlayerId(), tPlayer);
+                gameSpace.put(tPlayer.getName(), tPlayer.getId(), tPlayer);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -441,7 +498,7 @@ public class Game {
         ArrayList<Vertex> settlements = new ArrayList<Vertex>();
         for (Vertex[] vertexList : board.getVertices()) {
             for (Vertex vertex : vertexList) {
-                if (vertex != null && vertex.getId() == playerId && vertex.isSettlement()) {
+                if (vertex != null && vertex.getId() == player.getId() && vertex.isSettlement()) {
                     settlements.add(vertex);
                 }
             }
@@ -453,7 +510,7 @@ public class Game {
         ArrayList<Vertex> cities = new ArrayList<Vertex>();
         for (Vertex[] vertexList : board.getVertices()) {
             for (Vertex vertex : vertexList) {
-                if (vertex != null && vertex.getId() == playerId && vertex.isCity()) {
+                if (vertex != null && vertex.getId() == player.getId() && vertex.isCity()) {
                     cities.add(vertex);
                 }
             }
@@ -482,12 +539,12 @@ public class Game {
 
     private ArrayList<Resource> harborTrades(PlayerState player) {
         ArrayList<Resource> res = new ArrayList<>();
-        for (Vertex settlement : getSettlements(player.getPlayerId())) {
+        for (Vertex settlement : getSettlements(player.getId())) {
             if (settlement.getHarbor() != null) {
                 res.add(settlement.getHarbor().getResource());
             }
         }
-        for (Vertex city : getCities(player.getPlayerId())) {
+        for (Vertex city : getCities(player.getId())) {
             if (city.getHarbor() != null) {
                 res.add(city.getHarbor().getResource());
             }
@@ -496,12 +553,12 @@ public class Game {
     }
 
     private boolean hasGenericHarbor(PlayerState player) {
-        for (Vertex settlement : getSettlements(player.getPlayerId())) {
+        for (Vertex settlement : getSettlements(player.getId())) {
             if (settlement.getHarbor() == Harbor.Generic) {
                 return true;
             }
         }
-        for (Vertex city : getCities(player.getPlayerId())) {
+        for (Vertex city : getCities(player.getId())) {
             if (city.getHarbor() == Harbor.Generic) {
                 return true;
             }
@@ -534,14 +591,6 @@ public class Game {
         return startingRoadsBuiltThisTurn;
     }
 
-    public int getPlayerCount() {
-        return playerCount;
-    }
-
-    public void setPlayerCount(int playerCount) {
-        this.playerCount = playerCount;
-    }
-
     public void setPlayer(int id) {
         try {
             player = (PlayerState) gameSpace.get(Templates.player(id))[2];
@@ -552,9 +601,24 @@ public class Game {
 
     public void updatePlayer() {
         try {
-            gameSpace.put(player.getName(), player.getPlayerId(), player);
+            gameSpace.put(player.getName(), player.getId(), player);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getTurnId() {
+        int turn = getTurn();
+        return turn % getPlayerCount();
+    }
+
+    public int getTurn() {
+        int turn = -1;
+        try {
+            turn = (int) gameSpace.query(Templates.turn())[1];
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return turn;
     }
 }

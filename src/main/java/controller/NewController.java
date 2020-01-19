@@ -44,6 +44,7 @@ public class NewController extends Application {
     private NewView view;
     private GameState gameState = GameState.BuildRoad;
     private boolean initialState = true;
+    private int endedInitTurnCount = 0;
 
     @FXML
     private Button buildRoad, buildSettlement, buildCity, buildDevCard,
@@ -241,7 +242,6 @@ public class NewController extends Application {
 
         // TODO implements states
 
-        System.out.println("Game state: " + gameState.toString());
         System.out.println(game.yourTurn());
         if (game.yourTurn()) {
             int success = 0;
@@ -302,13 +302,11 @@ public class NewController extends Application {
     public void endTurn() {
         System.out.println("End of turn");
         gameState = None;
-        int turn;
-        if (initialState) {
-            turn = game.endInitTurn();
-            if (turn == game.getPlayerCount() * 2) {
-                initialState = false;
-            }
+        if (endedInitTurnCount < 2) {
+            game.endInitTurn();
+            endedInitTurnCount++;
         } else {
+            initialState = false;
             game.endTurn();
         }
     }
