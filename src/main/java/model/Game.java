@@ -482,6 +482,16 @@ public class Game {
         }
     }
 
+    public ArrayList<Resource> getResources(int playerId) {
+        try {
+            PlayerState tempPlayer = (PlayerState) gameSpace.query(Templates.player(playerId))[2];
+            return tempPlayer.getResources();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private ArrayList<Resource> getResources(ArrayList<Vertex> vertices, int roll) {
         ArrayList<Resource> res = new ArrayList<>();
         for (Vertex vertex : vertices) {
