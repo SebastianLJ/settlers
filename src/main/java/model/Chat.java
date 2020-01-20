@@ -26,7 +26,6 @@ public class Chat implements Runnable {
                     newChat.addAll(objectToString(temp));
                     indexInAllChats = allChats.size();
                 }
-                //System.out.println(newChat);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

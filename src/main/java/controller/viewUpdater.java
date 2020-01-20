@@ -23,6 +23,7 @@ public class viewUpdater implements Runnable {
             view.update(controller.getMap());
             view.updatePlayerInfo(controller.getOwnPlayerInfo(), controller.getOtherPlayerInfo());
             view.updateChat(controller.getListView());
+            view.updateDiceRoll(controller.getDiceRollLabel());
         };
 
         while (true) {

@@ -31,10 +31,8 @@ import static java.lang.Math.floor;
 import static model.GameState.*;
 
 public class NewController extends Application {
-    private double offsetX, offsetY;
-    private double HEX_SIZE;
-    private double HEX_HEIGHT;
-    private double HEX_WIDTH;
+    private final int INSUFFICIENT_RESOURCES_ERROR = 0;
+    private final int NOT_ENOUGH_RESOURCES_ERROR = 0;
 
     private Game game;
     private NewView view;
@@ -112,7 +110,9 @@ public class NewController extends Application {
         VBox gameView = (VBox) loader.getNamespace().get("gameView");
         HBox diceView = (HBox) gameView.getChildren().get(0);
 
-        gameView.getChildren().add(map);
+        AnchorPane anchorPane = (AnchorPane) gameView.getChildren().get(1);
+        anchorPane.getChildren().set(0,map);
+
         Scene scene = new Scene(root);
 
         initiateButtonListeners(loader);
@@ -145,7 +145,7 @@ public class NewController extends Application {
         double mapSize = gameView.getHeight() - diceView.getHeight();
         gameView.setMaxWidth(mapSize);
 
-        root.setDividerPositions(mapSize/root.getWidth());
+        root.setDividerPositions(mapSize / root.getWidth());
         return mapSize;
     }
 
@@ -208,19 +208,52 @@ public class NewController extends Application {
         endTurnButton.setDisable(bool);
     }
 
+    private void setupHexUI(Group map, Hex[][] hexes) {
+        Polygon polygon;
+        Hex hex;
+        for (int i = 0; i < hexes.length; i++) {
+            for (int j = 0; j < hexes.length; j++) {
+                hex = hexes[i][j];
+                if (hex != null) {
+                    polygon = createPolygonFromHex(hex);
+                    polygon.setId(i + " " + j);
+
+                    Hex finalHex = hex;
+
+                    polygon.setOnMouseClicked(mouseEvent ->
+                            handleMouseEvent(mouseEvent, finalHex));
+
+                    // Add number token
+                    Text label = new Text(hex.getNumberToken() + "");
+
+                    // Text size
+                    label.setFont(Font.font(hex.getSize() / 4.));
+
+                    // Center text
+                    double halfLabelHeight = label.getLayoutBounds().getHeight() / 2;
+                    double halfLabelWidth = label.getLayoutBounds().getWidth() / 2;
+                    label.relocate(hex.getRealX() - halfLabelWidth, hex.getRealY() - halfLabelHeight);
+
+                    // White circle around text
+                    Circle circle = new Circle(hex.getRealX(), hex.getRealY(), halfLabelHeight * 1.5);
+                    circle.setFill(Color.WHITE);
+                    map.getChildren().addAll(polygon, circle, label);
+                }
+            }
+        }
+    }
+
     /**
      * Finds the appropriate game object (ie. Path, Intersection etc).
+     *
      * @param mouseEvent from listener connected to polygon
-     * @param hex connected to polygon
+     * @param hex        connected to polygon
      */
     private void handleMouseEvent(MouseEvent mouseEvent, Hex hex) {
         int i = hex.getY();
         int j = hex.getX();
 
-        //double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), getHexCenterX(hex), getHexCenterY(hex));
-
-        double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), getHexCenterX(hex), getHexCenterY(hex));
-
+        double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), hex.getRealX(), hex.getRealY());
 
         // TODO implements states
 
@@ -241,9 +274,12 @@ public class NewController extends Application {
                     } else {
                         success = game.buildRoad(getChosenEdge(i, j, touchAngle));
                     }
+                    switch (success) {
+                        case 0:
+                    }
                     break;
                 case BuildSettlement:
-                    if (initialState &&game.getStartingSettlementsBuiltThisTurn() == 0) {
+                    if (initialState && game.getStartingSettlementsBuiltThisTurn() == 0) {
                         success = game.buildStartingSettlement(getChosenIntersection(i, j, touchAngle));
                     } else {
                         success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
@@ -270,71 +306,6 @@ public class NewController extends Application {
 
             }
         }
-
-        //getChosenIntersection(i, j, touchAngle);
-        //getChosenEdge(i, j, touchAngle);
-        /*System.out.println("This is hex [" + getId(polygon)[0] + "][" + getId(polygon)[1] + "] " +
-                "at coordinates (" + getHexCenterX(hex) + ", " + getHexCenterY(hex) + "). The screen was touched in an angle of "
-                + getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex)));*/
-    }
-
-    private void initializeOffsets(double mapSize, Hex[][] hexes) {
-        HEX_SIZE = mapSize / 10;
-        HEX_WIDTH = Math.sqrt(3)*HEX_SIZE;
-        HEX_HEIGHT = 2*HEX_SIZE;
-
-        // Coordinates for center tiles
-        int centerTileX = hexes.length/2;
-        int centerTileY = hexes.length/2;
-
-        // Offset calculated from the center tile
-        double centerCoordX = HEX_WIDTH*centerTileX + 0.5*HEX_WIDTH*centerTileY;
-        double centerCoordY = 3*HEX_HEIGHT/4*centerTileY;
-
-        // offset for xy coordinates
-        offsetX = mapSize /2.0 - centerCoordX;
-        offsetY = mapSize /2.0 - centerCoordY;
-    }
-
-    private void setupHexUI(Group root, Hex[][] hexes) {
-        Polygon polygon;
-        Hex hex;
-        for (int i = 0; i < hexes.length; i++) {
-            for (int j = 0; j < hexes.length; j++) {
-                hex = hexes[i][j];
-                if (hex != null) {
-                    hex.setSize(HEX_SIZE);
-                    hex.setOffsetX(offsetX);
-                    hex.setOffsetY(offsetY);
-
-                    //System.out.println("Creating hex at (" + hex.getRealX() + ", " + hex.getRealY() + ")");
-
-                    polygon = createPolygonFromHex(hex);
-                    polygon.setId(i + " " + j);
-
-                    Hex finalHex = hex;
-
-                    polygon.setOnMouseClicked(mouseEvent ->
-                            handleMouseEvent(mouseEvent, finalHex));
-
-                    // Add number token
-                    Text label = new Text(hex.getNumberToken() + "");
-
-                    // Text size
-                    label.setFont(Font.font(HEX_SIZE/4.));
-
-                    // Center text
-                    double halfLabelHeight = label.getLayoutBounds().getHeight() / 2;
-                    double halfLabelWidth = label.getLayoutBounds().getWidth() / 2;
-                    label.relocate(hex.getRealX() - halfLabelWidth, hex.getRealY() - halfLabelHeight);
-
-                    // White circle around text
-                    Circle circle = new Circle(hex.getRealX(),hex.getRealY(), halfLabelHeight*1.5);
-                    circle.setFill(Color.WHITE);
-                    root.getChildren().addAll(polygon, circle, label);
-                }
-            }
-        }
     }
 
     public void endTurn() {
@@ -359,8 +330,8 @@ public class NewController extends Application {
     }
 
     private Vertex getChosenIntersection(int i, int j, double angle) {
-        int vertexIndex = (int) floor(angle)/60;
-        Vertex[] vertices = game.getBoard().getAdjacentVertices(new Hex(j,i, Terrain.None, -1));
+        int vertexIndex = (int) floor(angle) / 60;
+        Vertex[] vertices = game.getBoard().getAdjacentVertices(new Hex(j, i, Terrain.None, -1));
 
         // Do some verification of chosen vertex..
 
@@ -371,8 +342,9 @@ public class NewController extends Application {
 
     /**
      * Calculates and returns the angle from the center of the clicked hexagon to the actual mouse click.
-     * @param click_x x-coordinate of click
-     * @param click_y y-coordinate of click
+     *
+     * @param click_x  x-coordinate of click
+     * @param click_y  y-coordinate of click
      * @param center_x x-coordinate of hex center
      * @param center_y y-coordinate of hex center
      * @return angle from center to click, as described by https://www.redblobgames.com/grids/hexagons/#basics
@@ -382,7 +354,7 @@ public class NewController extends Application {
         double delta_y = click_y - center_y;
         double theta_radians = atan2(delta_y, delta_x);
 
-        double theta_degrees = theta_radians*180/Math.PI;
+        double theta_degrees = theta_radians * 180 / Math.PI;
 
         if (theta_degrees < 0) {
             return theta_degrees + 360;
@@ -393,16 +365,17 @@ public class NewController extends Application {
 
     /**
      * Creates a Shape.Polygon in the x,y-basis from hex-basis
+     *
      * @param hex input hex containing x,y-hex
      * @return new polygon object with coordinates made from hex
      */
     private Polygon createPolygonFromHex(Hex hex) {
         // HexCoordinates to x,y-coordinates, with center offset
-        double x = getHexCenterX(hex);
-        double y = getHexCenterY(hex);
+        double x = hex.getRealX();
+        double y = hex.getRealY();
 
-        Polygon polygon = new Polygon(x,y + HEX_HEIGHT/2, x + HEX_WIDTH/2, y + HEX_HEIGHT/4, x + HEX_WIDTH/2, y - HEX_HEIGHT/4,
-                x, y - HEX_HEIGHT/2, x - HEX_WIDTH/2, y - HEX_HEIGHT/4, x - HEX_WIDTH/2, y + HEX_HEIGHT/4);
+        Polygon polygon = new Polygon(x, y + hex.getHeight() / 2, x + hex.getWidth() / 2, y + hex.getHeight() / 4, x + hex.getWidth() / 2, y - hex.getHeight() / 4,
+                x, y - hex.getHeight() / 2, x - hex.getWidth() / 2, y - hex.getHeight() / 4, x - hex.getWidth() / 2, y + hex.getHeight() / 4);
 
         polygon.setStroke(Color.BLACK);
 
@@ -412,16 +385,6 @@ public class NewController extends Application {
         polygon.setFill(color);
 
         return polygon;
-    }
-
-    // Shifts y-coordinate in hex to x,y-basis
-    private double getHexCenterY(Hex hex) {
-        return hex.getRealY();
-    }
-
-    // Shifts x-coordinate in hex to x,y-basis
-    private double getHexCenterX(Hex hex) {
-        return hex.getRealX();
     }
 
     // Finds the correct color depending on the terrain
@@ -485,12 +448,12 @@ public class NewController extends Application {
     private void createGame(Stage primaryStage, boolean isHost, String hostUri) throws IOException {
         playerName = textField.getText();
         double mapSize = initializeScene(primaryStage);
-        game = new Game(hostUri, isHost, playerName);
+        game = new Game(hostUri, isHost, playerName, mapSize);
         view = new NewView(game);
 
         Hex[][] hexes = game.getBoard().getHexes();
-        initializeOffsets(mapSize, hexes);
         setupHexUI(map, hexes);
+        view.initializeRobber(map);
         Thread thread = new Thread(new viewUpdater(this, view));
         thread.setDaemon(true);
         thread.start();
@@ -505,7 +468,7 @@ public class NewController extends Application {
 
         TextField ipTextField = (TextField) loader.getNamespace().get("ipText");
         TextField portTextField = (TextField) loader.getNamespace().get("portText");
-        
+
         Button joinButton = (Button) loader.getNamespace().get("join");
         joinButton.setOnMouseClicked(mouseEvent -> {
             try {
@@ -589,6 +552,10 @@ public class NewController extends Application {
 
     public void disableBuyCity(boolean val) {
         buildCity.setDisable(val);
+    }
+
+    public Label getDiceRollLabel() {
+        return diceRollLabel;
     }
 
 }

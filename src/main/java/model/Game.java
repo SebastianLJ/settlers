@@ -20,7 +20,7 @@ public class Game {
     private String name;
     private Chat chat;
 
-    public Game(String hostURI, boolean isHost, String playerName) throws IOException {
+    public Game(String hostURI, boolean isHost, String playerName, double mapSize) throws IOException {
         this.hostURI = hostURI;
         this.name = playerName;
 
@@ -49,7 +49,7 @@ public class Game {
 
             sendToChat("is hosting a game on ip:port: " + ip + ":" + port);
 
-            board = new Board();
+            board = new Board(mapSize);
             id = 0;
             PlayerState player = new PlayerState(id, playerName);
             try {
@@ -78,7 +78,7 @@ public class Game {
 
         chat = new Chat(chatSpace);
         new Thread(chat).start();
-        new Thread(new boardUpdater(this,gameSpace)).start();
+        new Thread(new boardUpdater(this, gameSpace)).start();
     }
 
     public int roll() {
@@ -156,7 +156,7 @@ public class Game {
 
             if (action.equals("player")) {
                 //todo
-            } else if (action.equals("bank") ||action.equals("harbor")) {
+            } else if (action.equals("bank") || action.equals("harbor")) {
                 System.out.println("Please select a resource to trade ");
                 String resource = scanner.next();
                 if (harborTrades(player).contains(stringToResource(resource))
@@ -192,6 +192,7 @@ public class Game {
 
     /**
      * Adds player id to edge, and checks if location is valid
+     *
      * @param edge
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
@@ -258,6 +259,7 @@ public class Game {
 
     /**
      * Adds player id to vertex and boolean hasSettlement, and checks if location is valid
+     *
      * @param vertex
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
@@ -285,6 +287,7 @@ public class Game {
 
     /**
      * Initial placement of settlement
+     *
      * @param vertex
      * @return -2 invalid location, -1 already built starting settlement this turn, 1 successfully built
      */
@@ -340,6 +343,7 @@ public class Game {
 
     /**
      * Adds player id to vertex and boolean hasSettlement, and checks if location is valid
+     *
      * @param vertex
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
@@ -370,7 +374,6 @@ public class Game {
     }
 
     /**
-     *
      * @return -1 insufficient resources, 1 successfully bought
      */
     public int buyDevelopmentCard() {
@@ -392,7 +395,6 @@ public class Game {
     }
 
     /**
-     *
      * @param developmentCard
      * @param hex
      * @return -1 invalid location, 1 successfully played development card
@@ -511,7 +513,7 @@ public class Game {
             e.printStackTrace();
         }
         if (player != null) {
-            int vp = getSettlements(player.getId()).size() + getCities(player.getId()).size() * 2;
+            int vp = getSettlements(player.getId()).size() + getCities(player.getId()).size();
             for (DevelopmentCard developmentCard : player.getDevelopmentCards()) {
                 if (developmentCard.equals(DevelopmentCard.VictoryPoint)) {
                     vp++;
@@ -812,4 +814,18 @@ public class Game {
         return id;
     }
 
+
+    public String getDiceRoll() {
+        try {
+            Object[] t = gameSpace.queryp(Templates.dices());
+            if (t != null) {
+                return Integer.toString((int) t[1] + (int) t[2]);
+            } else {
+                return "0";
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "0";
+    }
 }

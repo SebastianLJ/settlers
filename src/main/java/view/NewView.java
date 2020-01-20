@@ -1,11 +1,9 @@
 package view;
 
-import com.sun.javafx.scene.paint.GradientUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Background;
@@ -17,12 +15,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import model.Game;
-import model.PlayerState;
 import model.board.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 
 public class NewView {
 
@@ -33,30 +26,35 @@ public class NewView {
 
     private Game game;
     private Hex[][] hexes;
+    private Circle circle;
 
     public NewView(Game game) {
         this.game = game;
         hexes = game.getBoard().getHexes();
     }
 
-    public void update(Group root) {
+    public void initializeRobber(Group map) {
+        circle = new Circle();
+        map.getChildren().add(circle);
+    }
+
+    public void update(Group map) {
         Hex hex;
         for (Hex[] value : hexes) {
             for (int j = 0; j < hexes.length; j++) {
                 hex = value[j];
                 if (hex != null) {
                     // Draw vertices
-                    drawVertices(root, hex);
-                    drawPaths(root, hex);
-                    drawRobber(root);
+                    drawVertices(map, hex);
+                    drawPaths(map, hex);
+                    drawRobber();
                 }
             }
         }
     }
 
     public void updateDiceRoll(Label diceRoll) {
-        //
-
+        diceRoll.setText(game.getDiceRoll());
     }
 
     public void updatePlayerInfo(GridPane ownPlayerInfo, GridPane[] otherPlayerInfo) {
@@ -105,16 +103,11 @@ public class NewView {
         }
     }
 
-    /*public void updateChat(List<Objects[]> chat, ListView listView) {
-        for (Object[] event : chat) {
-            listView.ite
-        }
-    }*/
-
-    private void drawRobber(Group root) {
+    private void drawRobber() {
         Hex robberHex = game.getBoard().getCurrentRobberPosHex();
-        Circle circle = new Circle(robberHex.getRealX(), robberHex.getRealY(), robberHex.getSize()/4.);
-        root.getChildren().add(circle);
+        circle.setCenterX(robberHex.getRealX());
+        circle.setCenterY(robberHex.getRealY());
+        circle.setRadius(robberHex.getSize() / 4);
     }
 
     private void drawPaths(Group root, Hex hex) {

@@ -1,7 +1,6 @@
 package model.board;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class Board {
@@ -12,14 +11,23 @@ public class Board {
     private ArrayList<DevelopmentCard> developmentCards = new ArrayList<>();
 
 
-    public Board() {
+    public Board(double mapSize) {
+        double size = mapSize / 10;
+        double offsetX = calculateOffsetX(size, mapSize);
+        double offsetY = calculateOffsetY(size, mapSize);
 
         //setup hexes
+        Hex hex;
         int c = 0;
         for (int i = 0; i < hexes.length; i++) {
             for (int j = 0; j < hexes.length; j++) {
                 if (j > hexes.length/2 - 1 - i && j < hexes.length + hexes.length/2 - i) {
-                    hexes[i][j] = new Hex(j, i, Preset.getTerrain()[c], Preset.getNumberTokens()[c]);
+                    hex =  new Hex(j, i, Preset.getTerrain()[c], Preset.getNumberTokens()[c]);
+                    hex.setSize(size);
+                    hex.setOffsetX(offsetX);
+                    hex.setOffsetY(offsetY);
+                    hexes[i][j] = hex;
+
                     c++;
                 } else hexes[i][j] = null;
             }
@@ -56,14 +64,37 @@ public class Board {
 
         //place robber
         for(Hex[] hexList : hexes) {
-            for(Hex hex : hexList) {
-                if (hex != null && hex.getTerrain().equals(Terrain.Desert)) {
-                    updateRobber(hex.getX(), hex.getY());
+            for(Hex hex1 : hexList) {
+                if (hex1 != null && hex1.getTerrain().equals(Terrain.Desert)) {
+                    updateRobber(hex1.getX(), hex1.getY());
                 }
             }
         }
 
         initDevCards();
+    }
+
+    private double calculateOffsetY(double size, double mapSize) {
+        // Coordinates for center tileY
+        int centerTileY = hexes.length / 2;
+
+        // Offset calculated from the center tile
+        double centerCoordY = 6 * size / 4 * centerTileY;
+
+        // offset for y coordinate
+        return mapSize / 2.0 - centerCoordY;
+    }
+
+    private double calculateOffsetX(double size, double mapSize) {
+        // Coordinates for center tiles
+        int centerTileX = hexes.length / 2;
+        int centerTileY = hexes.length / 2;
+
+        // Offset calculated from the center tile
+        double centerCoordX = Math.sqrt(3) * size * centerTileX + 0.5 * Math.sqrt(3) * size * centerTileY;
+
+        // offset for x coordinate
+        return mapSize / 2.0 - centerCoordX;
     }
 
     public Hex[] getAdjacentHexes(Vertex v) {
