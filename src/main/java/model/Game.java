@@ -494,11 +494,6 @@ public class Game {
                 e.printStackTrace();
             }
         }
-        try {
-            gameSpace.get(new ActualField("lock"));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public ArrayList<Resource> getResources(int playerId) {
