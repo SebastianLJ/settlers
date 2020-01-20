@@ -58,7 +58,7 @@ public class NewView {
 
     public void updatePlayerInfo(GridPane ownPlayerInfo, GridPane[] otherPlayerInfo) {
         int thisPlayer = game.getPlayer().getId();
-        if (thisPlayer == game.getTurn()) {
+        if (thisPlayer == game.getTurnId()) {
             ownPlayerInfo.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
         } else {
             ownPlayerInfo.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -85,7 +85,7 @@ public class NewView {
             if (i != thisPlayer) {
                 GridPane info = otherPlayerInfo[c];
 
-                if (i == game.getTurn()) {
+                if (i == game.getTurnId()) {
                     info.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
                 } else {
                     info.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
