@@ -25,7 +25,6 @@ import model.board.*;
 import view.NewView;
 
 import java.io.IOException;
-import java.util.List;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.floor;
@@ -133,14 +132,7 @@ public class NewController extends Application {
         chatTextField = (TextArea) loader.getNamespace().get("chatTextField");
         chatButton = (Button) loader.getNamespace().get("chatButton");
         chatButton.setOnMouseClicked(mouseEvent ->
-                {
-                    try {
-                        game.sendChat(chatTextField.getText());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    chatTextField.clear();
-                }
+                game.sendMsg(chatTextField.getText())
         );
 
         primaryStage.setScene(scene);
@@ -343,7 +335,6 @@ public class NewController extends Application {
     }
 
     public void endTurn() {
-        System.out.println("End of turn");
         gameState = None;
         if (endedInitTurnCount < 2) {
             game.endInitTurn();

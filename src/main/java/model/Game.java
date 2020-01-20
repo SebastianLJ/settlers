@@ -1,6 +1,5 @@
 package model;
 
-import javafx.collections.ObservableList;
 import model.board.*;
 import org.jspace.*;
 
@@ -35,7 +34,8 @@ public class Game {
             String ip = inetAddress.getHostAddress();
             int port = 9001;
 
-            System.out.println("A game is hosted on IP:Port: " + ip + ":" + port);
+
+            System.out.println("hosting a game on ip:port: " + ip + ":" + port);
 
             String URI = "tcp://" + ip + ":" + port;
 
@@ -47,6 +47,7 @@ public class Game {
             gameSpace = new RemoteSpace(URI + "/game?keep");
             chatSpace = new RemoteSpace(URI + "/chatSpace?keep");
 
+            sendToChat("is hosting a game on ip:port: " + ip + ":" + port);
 
             board = new Board();
             id = 0;
@@ -98,6 +99,7 @@ public class Game {
         }
 
         int roll = dice_one + dice_two;
+        sendToChat("rolled " + roll);
         System.out.println(name + " rolled " + roll);
 
         if (roll == 7) {
@@ -170,6 +172,7 @@ public class Game {
             if (isRoadValid(edge)) {
                 player.useResources(Price.Road.getPrice());
                 edge.setId(player.getId());
+                sendToChat("built a road");
                 System.out.println("Successfully built road");
                 success_code = 1;
             } else {
@@ -193,6 +196,7 @@ public class Game {
         }
         if (isRoadValid(edge)) {
             edge.setId(player.getId());
+            sendToChat("built a road");
             System.out.println("Successfully built road");
             startingRoadsBuiltThisTurn++;
             success_code = 1;
@@ -216,6 +220,7 @@ public class Game {
             if (isSettlementValid(vertex)) {
                 player.useResources(Price.Settlement.getPrice());
                 vertex.buildSettlement(player.getId());
+                sendToChat("built a settlement");
                 System.out.println("Successfully built settlement");
                 success_code = 1;
             } else {
@@ -243,6 +248,7 @@ public class Game {
             success_code = -1;
         } else if (isSettlementValidLength(vertex)) {
             vertex.buildSettlement(player.getId());
+            sendToChat("built a settlement");
             System.out.println("Successfully built settlement");
             startingSettlementsBuiltThisTurn++;
             success_code = 1;
@@ -267,6 +273,7 @@ public class Game {
             if (isCityValid(vertex)) {
                 player.useResources(Price.City.getPrice());
                 vertex.buildCity(player.getId());
+                sendToChat("built a city");
                 System.out.println("Successfully built city");
                 success_code = 1;
             } else {
@@ -357,7 +364,7 @@ public class Game {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        sendToChat("ended their turn");
         return turn + 1;
     }
 
@@ -387,6 +394,7 @@ public class Game {
         }
         startingSettlementsBuiltThisTurn = 0;
         startingRoadsBuiltThisTurn = 0;
+        sendToChat("ended their turn");
         return turn;
     }
 
@@ -535,6 +543,7 @@ public class Game {
             tPlayer.getResources().addAll(resources);
 
             if (!resources.isEmpty()) {
+                sendToChat(tPlayer.getName() + " received " + resources.toString());
                 System.out.println(tPlayer.getName() + " received " + resources.toString());
             }
             try {
@@ -732,9 +741,23 @@ public class Game {
         return chat.getNewChat();
     }
 
-    public void sendChat(String chatMessage) throws InterruptedException {
+    public void sendMsg(String chatMessage) {
         if (!chatMessage.equals("")) {
-            chatSpace.put("chat", name, "says " + chatMessage);
+            try {
+                chatSpace.put("chat", name, "says " + chatMessage);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void sendToChat(String msg) {
+        if (!msg.equals("")) {
+            try {
+                chatSpace.put("chat", name, msg);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
