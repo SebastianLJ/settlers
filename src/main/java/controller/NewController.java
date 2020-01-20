@@ -25,7 +25,6 @@ import model.board.*;
 import view.NewView;
 
 import java.io.IOException;
-import java.util.List;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.floor;
@@ -133,14 +132,7 @@ public class NewController extends Application {
         chatTextField = (TextArea) loader.getNamespace().get("chatTextField");
         chatButton = (Button) loader.getNamespace().get("chatButton");
         chatButton.setOnMouseClicked(mouseEvent ->
-                {
-                    try {
-                        game.sendChat(chatTextField.getText());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    chatTextField.clear();
-                }
+                game.sendMsg(chatTextField.getText())
         );
 
         primaryStage.setScene(scene);
@@ -187,16 +179,18 @@ public class NewController extends Application {
             if (game.yourTurn()) {
                 diceRoll = game.roll();
                 diceRollLabel.setText(Integer.toString(diceRoll));
-                //setButtonsDisable(false);
-                //rollDices.setDisable(true);
+                setButtonsDisable(false);
+                endTurnButton.setDisable(false);
+                rollDices.setDisable(true);
             }
         });
 
         endTurnButton = (Button) loader.getNamespace().get("endTurn");
         endTurnButton.setOnAction(actionEvent -> {
-            //endTurnButton.setDisable(true);
-            //setButtonsDisable(true);
             endTurn();
+            setButtonsDisable(true);
+            endTurnButton.setDisable(true);
+            rollDices.setDisable(false);
         });
     }
 
@@ -272,6 +266,7 @@ public class NewController extends Application {
                         success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
                         if (success == 1) {
                             endTurn();
+                            endTurnButton.setDisable(true);
                         }
                     } else {
                         success = game.buildRoad(getChosenEdge(i, j, touchAngle));
@@ -311,7 +306,6 @@ public class NewController extends Application {
     }
 
     public void endTurn() {
-        System.out.println("End of turn");
         gameState = None;
         if (endedInitTurnCount < 2) {
             game.endInitTurn();

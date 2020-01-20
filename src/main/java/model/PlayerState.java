@@ -81,6 +81,12 @@ public class PlayerState {
         return res.toString();
     }
 
+    public void useResources(ArrayList<Resource> usedResources) {
+        for (Resource resource : usedResources) {
+            resources.remove(resource);
+        }
+    }
+
     public String getName() {
         return name;
     }

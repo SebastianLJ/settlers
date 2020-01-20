@@ -58,8 +58,4 @@ public class Chat implements Runnable {
     List<String> getNewChat() {
         return newChat;
     }
-
-
-
-
 }

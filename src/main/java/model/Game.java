@@ -14,13 +14,15 @@ public class Game {
     private RemoteSpace chatSpace;
     private Board board;
     private String hostURI;
-    private PlayerState player;
     private int startingSettlementsBuiltThisTurn = 0;
     private int startingRoadsBuiltThisTurn = 0;
+    private int id;
+    private String name;
     private Chat chat;
 
     public Game(String hostURI, boolean isHost, String playerName, double mapSize) throws IOException {
         this.hostURI = hostURI;
+        this.name = playerName;
 
         if (isHost) {
             SequentialSpace gameTemp = new SequentialSpace();
@@ -32,7 +34,8 @@ public class Game {
             String ip = inetAddress.getHostAddress();
             int port = 9001;
 
-            System.out.println("A game is hosted on IP:Port: " + ip + ":" + port);
+
+            System.out.println("hosting a game on ip:port: " + ip + ":" + port);
 
             String URI = "tcp://" + ip + ":" + port;
 
@@ -44,9 +47,11 @@ public class Game {
             gameSpace = new RemoteSpace(URI + "/game?keep");
             chatSpace = new RemoteSpace(URI + "/chatSpace?keep");
 
+            sendToChat("is hosting a game on ip:port: " + ip + ":" + port);
 
             board = new Board(mapSize);
-            this.player = new PlayerState(0, playerName);
+            id = 0;
+            PlayerState player = new PlayerState(id, playerName);
             try {
                 gameSpace.put(playerName, player.getId(), player);
                 gameSpace.put("turn_count", 0);
@@ -59,7 +64,8 @@ public class Game {
             gameSpace = new RemoteSpace(this.hostURI + "/game?keep");
             chatSpace = new RemoteSpace(this.hostURI + "/chatSpace?keep");
 
-            this.player = new PlayerState(getPlayerCount(), playerName);
+            id = getPlayerCount();
+            PlayerState player = new PlayerState(id, playerName);
             try {
                 gameSpace.put(playerName, player.getId(), player);
                 board = (Board) gameSpace.query(Templates.board())[1];
@@ -93,7 +99,8 @@ public class Game {
         }
 
         int roll = dice_one + dice_two;
-        System.out.println(player.getName() + " rolled " + roll);
+        sendToChat("rolled " + roll);
+        System.out.println(name + " rolled " + roll);
 
         if (roll == 7) {
             boolean success = false;
@@ -109,7 +116,10 @@ public class Game {
     }
 
     public void trade() {
+        PlayerState player = getPlayer(id);
+
         String action = scanner.next();
+
 
         if (action.equals("trade")) {
             action = scanner.next();
@@ -147,6 +157,7 @@ public class Game {
                 }
             }
         }
+        putPlayer(player);
     }
 
     /**
@@ -156,36 +167,46 @@ public class Game {
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
     public int buildRoad(Edge edge) {
+        PlayerState player = getPlayer(id);
+        int success_code;
         if (player.getResources().containsAll(Price.Road.getPrice())) {
             if (isRoadValid(edge)) {
-                player.getResources().removeAll(Price.Road.getPrice());
+                player.useResources(Price.Road.getPrice());
                 edge.setId(player.getId());
+                sendToChat("built a road");
                 System.out.println("Successfully built road");
-                return 1;
+                success_code = 1;
             } else {
                 System.out.println("Invalid road location");
-                return -2;
+                success_code = -2;
             }
         } else {
             System.out.println("Not enough resources");
-            return -1;
+            success_code = -1;
         }
+        putPlayer(player);
+        return success_code;
     }
 
     public int buildStartingRoad(Edge edge) {
+        PlayerState player = getPlayer(id);
+        int success_code;
         if (startingRoadsBuiltThisTurn > 0) {
             System.out.println("Can't build anymore roads this turn");
-            return -1;
+            success_code = -1;
         }
         if (isRoadValid(edge)) {
             edge.setId(player.getId());
+            sendToChat("built a road");
             System.out.println("Successfully built road");
             startingRoadsBuiltThisTurn++;
-            return 1;
+            success_code = 1;
         } else {
             System.out.println("Invalid road location");
-            return -2;
+            success_code = -2;
         }
+        putPlayer(player);
+        return success_code;
     }
 
     /**
@@ -195,20 +216,25 @@ public class Game {
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
     public int buildSettlement(Vertex vertex) {
+        PlayerState player = getPlayer(id);
+        int success_code;
         if (player.getResources().containsAll(Price.Settlement.getPrice())) {
             if (isSettlementValid(vertex)) {
-                player.getResources().removeAll(Price.Settlement.getPrice());
+                player.useResources(Price.Settlement.getPrice());
                 vertex.buildSettlement(player.getId());
+                sendToChat("built a settlement");
                 System.out.println("Successfully built settlement");
-                return 1;
+                success_code = 1;
             } else {
                 System.out.println("Invalid settlement location");
-                return -2;
+                success_code = -2;
             }
         } else {
             System.out.println("Not enough resources");
-            return -1;
+            success_code = -1;
         }
+        putPlayer(player);
+        return success_code;
     }
 
     /**
@@ -218,18 +244,23 @@ public class Game {
      * @return -2 invalid location, -1 already built starting settlement this turn, 1 successfully built
      */
     public int buildStartingSettlement(Vertex vertex) {
+        PlayerState player = getPlayer(id);
+        int success_code;
         if (startingSettlementsBuiltThisTurn > 0) {
             System.out.println("Can't build anymore settlements this turn");
-            return -1;
+            success_code = -1;
         } else if (isSettlementValidLength(vertex)) {
             vertex.buildSettlement(player.getId());
+            sendToChat("built a settlement");
             System.out.println("Successfully built settlement");
             startingSettlementsBuiltThisTurn++;
-            return 1;
+            success_code = 1;
         } else {
             System.out.println("Invalid settlement location");
-            return -2;
+            success_code = -2;
         }
+        putPlayer(player);
+        return success_code;
 
     }
 
@@ -240,36 +271,46 @@ public class Game {
      * @return -2 invalid location, -1 insufficient resources, 1 successfully built
      */
     public int buildCity(Vertex vertex) {
+        PlayerState player = getPlayer(id);
+        int success_code;
         if (player.getResources().containsAll(Price.City.getPrice())) {
             if (isCityValid(vertex)) {
-                player.getResources().removeAll(Price.City.getPrice());
+                player.useResources(Price.City.getPrice());
                 vertex.buildCity(player.getId());
+                sendToChat("built a city");
                 System.out.println("Successfully built city");
-                return 1;
+                success_code = 1;
             } else {
                 System.out.println("Invalid city location");
-                return -2;
+                success_code = -2;
             }
         } else {
             System.out.println("Not enough resources");
-            return -1;
+            success_code = -1;
         }
+        putPlayer(player);
+        return success_code;
     }
 
     /**
      * @return -1 insufficient resources, 1 successfully bought
      */
     public int buyDevelopmentCard() {
+        PlayerState player = getPlayer(id);
+        int success_code;
         if (player.getResources().containsAll(Price.DevelopmentCard.getPrice())) {
-            player.getResources().removeAll(Price.DevelopmentCard.getPrice());
+            player.useResources(Price.DevelopmentCard.getPrice());
             DevelopmentCard devCard = board.buyDevelopmentCard();
             player.getDevelopmentCards().add(devCard);
             System.out.println("You received: " + devCard);
-            return 1;
+            success_code = 1;
         } else {
             System.out.println("Not enough resources");
-            return -1;
+            success_code = -1;
         }
+        putPlayer(player);
+        return success_code;
+
     }
 
     /**
@@ -278,8 +319,10 @@ public class Game {
      * @return -1 invalid location, 1 successfully played development card
      */
     public int playDevelopmentCard(DevelopmentCard developmentCard, Hex hex) {
+        PlayerState player = getPlayer(id);
+        int success_code  = 1;
         if (developmentCard == DevelopmentCard.Knight) {
-            return board.updateRobber(hex.getX(), hex.getY());
+            success_code = board.updateRobber(hex.getX(), hex.getY());
 
         } else if (developmentCard == DevelopmentCard.RoadBuilding) {
             int roadsPlaced = 0;
@@ -310,7 +353,8 @@ public class Game {
         } else if (developmentCard == DevelopmentCard.Monopoly) {
             //todo
         }
-        return -1;
+        putPlayer(player);
+        return success_code;
     }
 
     public int endTurn() {
@@ -322,7 +366,7 @@ public class Game {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
+        sendToChat("ended their turn");
         return turn + 1;
     }
 
@@ -352,6 +396,7 @@ public class Game {
         }
         startingSettlementsBuiltThisTurn = 0;
         startingRoadsBuiltThisTurn = 0;
+        sendToChat("ended their turn");
         return turn;
     }
 
@@ -385,11 +430,11 @@ public class Game {
         }
         Vertex[] vertices = board.getAdjacentVertices(edge);
         for (Vertex vertex : vertices) {
-            if (vertex.getId() == player.getId() && vertex.isCity() || vertex.isSettlement()) {
+            if (vertex.getId() == id && vertex.isCity() || vertex.isSettlement()) {
                 return true;
             }
             for (Edge nextEdge : board.getAdjacentEdges(vertex)) {
-                if (nextEdge.getId() == player.getId()) {
+                if (nextEdge.getId() == id) {
                     return true;
                 }
             }
@@ -402,7 +447,7 @@ public class Game {
         ArrayList<Edge> res = new ArrayList<>();
         for (Edge[] edgeList : edges) {
             for (Edge edge : edgeList) {
-                if (isRoadValid(edge)) {
+                if (isRoadValid(edge)){
                     res.add(edge);
                 }
             }
@@ -428,7 +473,7 @@ public class Game {
     private boolean isSettlementConnected(Vertex vertex) {
         Edge[] edges = board.getAdjacentEdges(vertex);
         for (Edge edge : edges) {
-            if (edge.getId() == player.getId()) {
+            if (edge.getId() == id) {
                 return true;
             }
         }
@@ -436,15 +481,14 @@ public class Game {
     }
 
     private boolean isSettlementValid(Vertex vertex) {
-        //return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
-        return isSettlementValidLength(vertex);
+        return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
     }
 
     private boolean isCityValid(Vertex vertex) {
         return vertex.isSettlement();
     }
 
-    private int getPlayerCount() {
+    public int getPlayerCount() {
         try {
             // TODO Jeg tror muligvis det skal være get i stedet for query, hvad hvis to spiller får samme count og oprettes med samme id
             return (int) gameSpace.query(Templates.playerCount())[1];
@@ -455,7 +499,7 @@ public class Game {
     }
 
     public boolean yourTurn() {
-        return player.getId() == getTurnId();
+        return id == getTurnId();
     }
 
     public int getVictoryPoints(int playerId) {
@@ -502,6 +546,7 @@ public class Game {
             tPlayer.getResources().addAll(resources);
 
             if (!resources.isEmpty()) {
+                sendToChat(tPlayer.getName() + " received " + resources.toString());
                 System.out.println(tPlayer.getName() + " received " + resources.toString());
             }
             try {
@@ -631,21 +676,7 @@ public class Game {
         return startingRoadsBuiltThisTurn;
     }
 
-    public void setPlayer(int id) {
-        try {
-            player = (PlayerState) gameSpace.get(Templates.player(id))[2];
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public void updatePlayer() {
-        try {
-            gameSpace.put(player.getName(), player.getId(), player);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void updateBoard() {
         try {
@@ -671,11 +702,27 @@ public class Game {
         return turn;
     }
 
-    public PlayerState getPlayer() {
+    public PlayerState getPlayer(int id ) {
+        System.out.println("get player called");
+        PlayerState player = null;
+        try {
+            player = (PlayerState) gameSpace.get(Templates.player(id))[2];
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return player;
     }
 
-    public PlayerState getPlayer(int playerId) {
+    public void putPlayer(PlayerState player) {
+        System.out.println("put player called");
+        try {
+            gameSpace.put(player.getName(), player.getId(), player);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public PlayerState queryPlayer(int playerId) {
         try {
             Object[] t = gameSpace.queryp(Templates.player(playerId));
             if (t != null) {
@@ -697,11 +744,30 @@ public class Game {
         return chat.getNewChat();
     }
 
-    public void sendChat(String chatMessage) throws InterruptedException {
+    public void sendMsg(String chatMessage) {
         if (!chatMessage.equals("")) {
-            chatSpace.put("chat", player.getName(), "says " + chatMessage);
+            try {
+                chatSpace.put("chat", name, "says " + chatMessage);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
+
+    public void sendToChat(String msg) {
+        if (!msg.equals("")) {
+            try {
+                chatSpace.put("chat", name, msg);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public int getPlayerId() {
+        return id;
+    }
+
 
     public String getDiceRoll() {
         try {
