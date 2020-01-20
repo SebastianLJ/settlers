@@ -51,6 +51,11 @@ public class NewView {
         }
     }
 
+    public void updateDiceRoll(Label diceRoll) {
+        //
+
+    }
+
     public void updatePlayerInfo(GridPane ownPlayerInfo, GridPane[] otherPlayerInfo) {
         int thisPlayer = game.getPlayer().getId();
         if (thisPlayer == game.getTurn()) {

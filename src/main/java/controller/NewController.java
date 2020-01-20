@@ -14,6 +14,8 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -69,9 +71,12 @@ public class NewController extends Application {
         FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("LobbyView.fxml"));
         AnchorPane lobby = loader.load();
 
+        textField = (TextField) loader.getNamespace().get("nameField");
+
         Button joinGameButton = (Button) loader.getNamespace().get("JoinGameButton");
         joinGameButton.setOnMouseClicked(mouseEvent -> {
             try {
+                playerName = textField.getText();
                 showJoinGameDialog(primaryStage);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -92,11 +97,6 @@ public class NewController extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        textField = (TextField) loader.getNamespace().get("nameField");
-    }
-
-    public void initialize() {
-
     }
 
     private double initializeScene(Stage primaryStage) throws java.io.IOException {
@@ -106,7 +106,12 @@ public class NewController extends Application {
 
         map = new Group();
 
-        AnchorPane gameView = (AnchorPane) root.getItems().get(0);
+        VBox gameView = (VBox) loader.getNamespace().get("gameView");
+
+        HBox diceView = (HBox) gameView.getChildren().get(0);
+
+        //gameView.getChildren().set(1, map);
+
         gameView.getChildren().add(map);
         Scene scene = new Scene(root);
 
@@ -130,7 +135,7 @@ public class NewController extends Application {
         //primaryStage.setFullScreen(true);
         //primaryStage.setMaximized(true);
 
-        double mapSize = gameView.getHeight();
+        double mapSize = gameView.getHeight() - diceView.getHeight();
         gameView.setMaxWidth(mapSize);
 
         root.setDividerPositions(mapSize/root.getWidth());
@@ -192,7 +197,7 @@ public class NewController extends Application {
     }
 
     private void initializeOffsets(double mapSize, Hex[][] hexes) {
-        HEX_SIZE = mapSize /10;
+        HEX_SIZE = mapSize / 10;
         HEX_WIDTH = Math.sqrt(3)*HEX_SIZE;
         HEX_HEIGHT = 2*HEX_SIZE;
 
@@ -261,7 +266,7 @@ public class NewController extends Application {
 
         //double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), getHexCenterX(hex), getHexCenterY(hex));
 
-        double touchAngle = getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex));
+        double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), getHexCenterX(hex), getHexCenterY(hex));
 
 
         // TODO implements states
@@ -483,13 +488,16 @@ public class NewController extends Application {
         FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("LobbyViewWithIPPortInput.fxml"));
         Scene scene = new Scene(loader.load());
 
+        textField = (TextField) loader.getNamespace().get("enterNameTextField");
+        textField.setText(playerName);
+
         TextField ipTextField = (TextField) loader.getNamespace().get("ipText");
         TextField portTextField = (TextField) loader.getNamespace().get("portText");
-
-
+        
         Button joinButton = (Button) loader.getNamespace().get("join");
         joinButton.setOnMouseClicked(mouseEvent -> {
             try {
+                playerName = textField.getText();
                 String uri = "tcp://" + ipTextField.getText() + ":" + portTextField.getText();
                 System.out.println("uri: " + uri);
                 createGame(primaryStage, false, uri);
