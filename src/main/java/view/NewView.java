@@ -2,9 +2,13 @@ package view;
 
 import com.sun.javafx.scene.paint.GradientUtils;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -49,6 +53,11 @@ public class NewView {
 
     public void updatePlayerInfo(GridPane ownPlayerInfo, GridPane[] otherPlayerInfo) {
         int thisPlayer = game.getPlayer().getId();
+        if (thisPlayer == game.getTurn()) {
+            ownPlayerInfo.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+        } else {
+            ownPlayerInfo.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        }
 
         ((Label) ownPlayerInfo.getChildren().get(5)).setText(Integer.toString(game.getVictoryPoints(thisPlayer)));
 
@@ -70,6 +79,12 @@ public class NewView {
         for (int i = 0; i < 4; i++) {
             if (i != thisPlayer) {
                 GridPane info = otherPlayerInfo[c];
+
+                if (i == game.getTurn()) {
+                    info.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+                } else {
+                    info.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+                }
 
                 if (game.getPlayer(i) != null) {
                     ((Label) info.getChildren().get(4)).setText(game.getPlayer(i).getName());

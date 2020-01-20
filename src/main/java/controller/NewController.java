@@ -474,7 +474,9 @@ public class NewController extends Application {
         Hex[][] hexes = game.getBoard().getHexes();
         initializeOffsets(mapSize, hexes);
         setupHexUI(map, hexes);
-        new Thread(new viewUpdater(this, view)).start();
+        Thread thread = new Thread(new viewUpdater(this, view));
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public void showJoinGameDialog(Stage primaryStage) throws IOException {

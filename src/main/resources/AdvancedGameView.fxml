@@ -16,13 +16,13 @@
 <?import javafx.scene.layout.VBox?>
 
 <SplitPane dividerPositions="0.65" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.NewController">
-   <AnchorPane SplitPane.resizableWithParent="false">
+   <AnchorPane>
       <Label fx:id="diceRollLabel" layoutX="307.0" layoutY="34.0" prefHeight="23.0" prefWidth="15.0" text="0" textAlignment="CENTER" AnchorPane.bottomAnchor="741.0" AnchorPane.leftAnchor="307.0" AnchorPane.rightAnchor="520.0" AnchorPane.topAnchor="34.0" />
       <Label layoutX="290.0" layoutY="21.0" prefHeight="17.0" prefWidth="50.0" text="Dice Roll" AnchorPane.bottomAnchor="760.0" AnchorPane.leftAnchor="290.0" AnchorPane.rightAnchor="502.0" AnchorPane.topAnchor="21.0" />
    </AnchorPane>
-   <AnchorPane SplitPane.resizableWithParent="false">
+   <AnchorPane>
       <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <GridPane fx:id="ownPlayerInfo" VBox.vgrow="SOMETIMES">
+         <GridPane fx:id="ownPlayerInfo" style="-fx-background-color: none;" VBox.vgrow="SOMETIMES">
             <columnConstraints>
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="230.533203125" minWidth="10.0" prefWidth="85.06669921875" />
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="396.93341064453125" minWidth="10.0" prefWidth="375.73330078125" />
@@ -34,7 +34,7 @@
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <VBox.margin>
-               <Insets bottom="8.0" left="8.0" right="8.0" />
+               <Insets />
             </VBox.margin>
             <Label text="Player name" />
             <Label text="Victory Points" GridPane.rowIndex="1" />
@@ -76,6 +76,9 @@
                <Label fx:id="grainLabel" prefWidth="102.0" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                <Label fx:id="lumberLabel" text="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
             </GridPane>
+            <padding>
+               <Insets bottom="8.0" left="8.0" right="8.0" />
+            </padding>
          </GridPane>
          <Separator prefWidth="200.0" />
          <GridPane fx:id="otherPlayerInfo0" VBox.vgrow="ALWAYS">
