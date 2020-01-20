@@ -5,6 +5,8 @@ import model.board.Resource;
 import org.jspace.Tuple;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PlayerState {
     private ArrayList<Resource> resources = new ArrayList<Resource>();
@@ -79,6 +81,17 @@ public class PlayerState {
             res.append(resource.getType()).append(", ");
         }
         return res.toString();
+    }
+
+    public boolean hasResources(ArrayList<Resource> reqResources) {
+        ArrayList<Resource> tempResources = new ArrayList<>(resources);
+
+        for (Resource resource : reqResources) {
+            if (!tempResources.remove(resource)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void useResources(ArrayList<Resource> usedResources) {

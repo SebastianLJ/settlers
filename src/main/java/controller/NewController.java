@@ -179,7 +179,7 @@ public class NewController extends Application {
             if (game.yourTurn()) {
                 diceRoll = game.roll();
                 diceRollLabel.setText(Integer.toString(diceRoll));
-                setButtonsDisable(false);
+                //setButtonsDisable(false);
                 endTurnButton.setDisable(false);
                 rollDices.setDisable(true);
             }
@@ -188,10 +188,13 @@ public class NewController extends Application {
         endTurnButton = (Button) loader.getNamespace().get("endTurn");
         endTurnButton.setOnAction(actionEvent -> {
             endTurn();
-            setButtonsDisable(true);
+            //setButtonsDisable(true);
             endTurnButton.setDisable(true);
             rollDices.setDisable(false);
         });
+
+
+        new Thread(new ButtonDisabler(this, game)).start();
     }
 
     private void setButtonsDisable(boolean bool) {
@@ -339,8 +342,10 @@ public class NewController extends Application {
         if (endedInitTurnCount < 2) {
             game.endInitTurn();
             endedInitTurnCount++;
+            if (endedInitTurnCount >= 2) {
+                initialState = false;
+            }
         } else {
-            initialState = false;
             game.endTurn();
         }
     }
@@ -541,4 +546,49 @@ public class NewController extends Application {
     ListView<String> getListView() {
         return chatView;
     }
+
+    public Button getBuildRoad() {
+        return buildRoad;
+    }
+
+    public Button getBuildSettlement() {
+        return buildSettlement;
+    }
+
+    public Button getBuildCity() {
+        return buildCity;
+    }
+
+    public Button getBuildDevCard() {
+        return buildDevCard;
+    }
+
+    public Button getTradeWithBank() {
+        return tradeWithBank;
+    }
+
+    public Button getTradeWithPlayer() {
+        return tradeWithPlayer;
+    }
+
+    public Button getPlayDevCard() {
+        return playDevCard;
+    }
+
+    public Button getViewDevCard() {
+        return viewDevCard;
+    }
+
+    public Button getRollDices() {
+        return rollDices;
+    }
+
+    public boolean isInitialState() {
+        return initialState;
+    }
+
+    public void disableBuyCity(boolean val) {
+        buildCity.setDisable(val);
+    }
+
 }

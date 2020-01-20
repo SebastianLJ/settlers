@@ -99,20 +99,50 @@ public class Game {
         }
 
         int roll = dice_one + dice_two;
-        sendToChat("rolled " + roll);
         System.out.println(name + " rolled " + roll);
 
+        String received = "";
         if (roll == 7) {
-            boolean success = false;
-            // TODO Fix with new controller
-                /*while (!success) {
-                    int[] coords = controller.getHexCoordinates();
-                    success = board.updateRobber(coords[0],coords[1]);
-                }*/
+            // TODO
         } else {
-            distributeResources(roll);
+            received = distributeResources(roll);
         }
+        sendToChat("rolled " + roll + "\n" + received);
         return roll;
+    }
+
+    private String distributeResources(int roll) {
+        StringBuilder res = new StringBuilder();
+        List<Object[]> players = new ArrayList<>();
+        try {
+            players = gameSpace.getAll(new FormalField(String.class), new FormalField(Integer.class),
+                    new FormalField(PlayerState.class));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        for (Object[] playerTuple : players) {
+            PlayerState tPlayer = (PlayerState) playerTuple[2];
+            ArrayList<Vertex> settlements = getSettlements(tPlayer.getId());
+            ArrayList<Vertex> cities = getCities(tPlayer.getId());
+
+            ArrayList<Resource> resources = new ArrayList<>();
+            resources.addAll(getResources(settlements, roll));
+            resources.addAll(getResources(cities, roll));
+
+            tPlayer.getResources().addAll(resources);
+
+            if (!resources.isEmpty()) {
+                res.append(tPlayer.getName()).append(" received ").append(resources.toString()).append("\n");
+                System.out.println(tPlayer.getName() + " received " + resources.toString());
+            }
+            try {
+                gameSpace.put(tPlayer.getName(), tPlayer.getId(), tPlayer);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return res.toString();
     }
 
     public void trade() {
@@ -168,7 +198,7 @@ public class Game {
     public int buildRoad(Edge edge) {
         PlayerState player = getPlayer(id);
         int success_code;
-        if (player.getResources().containsAll(Price.Road.getPrice())) {
+        if (player.hasResources(Price.Road.getPrice())) {
             if (isRoadValid(edge)) {
                 player.useResources(Price.Road.getPrice());
                 edge.setId(player.getId());
@@ -208,6 +238,24 @@ public class Game {
         return success_code;
     }
 
+    private boolean isRoadValid(Edge edge) {
+        if (edge == null) {
+            return false;
+        }
+        Vertex[] vertices = board.getAdjacentVertices(edge);
+        for (Vertex vertex : vertices) {
+            if (vertex.getId() == id && vertex.isCity() || vertex.isSettlement()) {
+                return true;
+            }
+            for (Edge nextEdge : board.getAdjacentEdges(vertex)) {
+                if (nextEdge != null && nextEdge.getId() == id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Adds player id to vertex and boolean hasSettlement, and checks if location is valid
      * @param vertex
@@ -216,7 +264,7 @@ public class Game {
     public int buildSettlement(Vertex vertex) {
         PlayerState player = getPlayer(id);
         int success_code;
-        if (player.getResources().containsAll(Price.Settlement.getPrice())) {
+        if (player.hasResources(Price.Settlement.getPrice())) {
             if (isSettlementValid(vertex)) {
                 player.useResources(Price.Settlement.getPrice());
                 vertex.buildSettlement(player.getId());
@@ -261,6 +309,35 @@ public class Game {
 
     }
 
+    private boolean isSettlementValid(Vertex vertex) {
+        return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
+    }
+
+    private boolean isSettlementConnected(Vertex vertex) {
+        Edge[] edges = board.getAdjacentEdges(vertex);
+        for (Edge edge : edges) {
+            if (edge.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isSettlementValidLength(Vertex vertex) {
+        Edge[] edges = board.getAdjacentEdges(vertex);
+        for (Edge edge : edges) {
+            if (edge != null) {
+                Vertex[] possibleOccupations = board.getAdjacentVertices(edge);
+                for (Vertex possibleOccupation : possibleOccupations) {
+                    if (possibleOccupation.isSettlement() || possibleOccupation.isCity()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     /**
      * Adds player id to vertex and boolean hasSettlement, and checks if location is valid
      * @param vertex
@@ -269,7 +346,7 @@ public class Game {
     public int buildCity(Vertex vertex) {
         PlayerState player = getPlayer(id);
         int success_code;
-        if (player.getResources().containsAll(Price.City.getPrice())) {
+        if (player.hasResources(Price.City.getPrice())) {
             if (isCityValid(vertex)) {
                 player.useResources(Price.City.getPrice());
                 vertex.buildCity(player.getId());
@@ -288,6 +365,10 @@ public class Game {
         return success_code;
     }
 
+    private boolean isCityValid(Vertex vertex) {
+        return vertex.isSettlement();
+    }
+
     /**
      *
      * @return -1 insufficient resources, 1 successfully bought
@@ -295,7 +376,7 @@ public class Game {
     public int buyDevelopmentCard() {
         PlayerState player = getPlayer(id);
         int success_code;
-        if (player.getResources().containsAll(Price.DevelopmentCard.getPrice())) {
+        if (player.hasResources(Price.DevelopmentCard.getPrice())) {
             player.useResources(Price.DevelopmentCard.getPrice());
             DevelopmentCard devCard = board.buyDevelopmentCard();
             player.getDevelopmentCards().add(devCard);
@@ -355,19 +436,6 @@ public class Game {
         return success_code;
     }
 
-    public int endTurn() {
-        updateBoard();
-        int turn = -1;
-        try {
-            turn = (int) gameSpace.get(Templates.turn())[1];
-            gameSpace.put("turn_count", turn + 1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        sendToChat("ended their turn");
-        return turn + 1;
-    }
-
     public int endInitTurn() {
         int playerCount = getPlayerCount();
         int turn = 0;
@@ -398,6 +466,19 @@ public class Game {
         return turn;
     }
 
+    public int endTurn() {
+        updateBoard();
+        int turn = -1;
+        try {
+            turn = (int) gameSpace.get(Templates.turn())[1];
+            gameSpace.put("turn_count", turn + 1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sendToChat("ended their turn");
+        return turn + 1;
+    }
+
     private void setInitStageOne(boolean b) {
         try {
             gameSpace.put("init_stage_one", b);
@@ -422,83 +503,6 @@ public class Game {
 
     //todo check victory points
 
-    private boolean isRoadValid(Edge edge) {
-        if (edge == null) {
-            return false;
-        }
-        Vertex[] vertices = board.getAdjacentVertices(edge);
-        for (Vertex vertex : vertices) {
-            if (vertex.getId() == id && vertex.isCity() || vertex.isSettlement()) {
-                return true;
-            }
-            for (Edge nextEdge : board.getAdjacentEdges(vertex)) {
-                if (nextEdge.getId() == id) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private ArrayList<Edge> getValidRoads() {
-        Edge[][] edges = board.getEdges();
-        ArrayList<Edge> res = new ArrayList<>();
-        for (Edge[] edgeList : edges) {
-            for (Edge edge : edgeList) {
-                if (isRoadValid(edge)){
-                    res.add(edge);
-                }
-            }
-        }
-        return res;
-    }
-
-    private boolean isSettlementValidLength(Vertex vertex) {
-        Edge[] edges = board.getAdjacentEdges(vertex);
-        for (Edge edge : edges) {
-            if (edge != null) {
-                Vertex[] possibleOccupations = board.getAdjacentVertices(edge);
-                for (Vertex possibleOccupation : possibleOccupations) {
-                    if (possibleOccupation.isSettlement() || possibleOccupation.isCity()) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    private boolean isSettlementConnected(Vertex vertex) {
-        Edge[] edges = board.getAdjacentEdges(vertex);
-        for (Edge edge : edges) {
-            if (edge.getId() == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isSettlementValid(Vertex vertex) {
-        return isSettlementConnected(vertex) && isSettlementValidLength(vertex);
-    }
-
-    private boolean isCityValid(Vertex vertex) {
-        return vertex.isSettlement();
-    }
-
-    public int getPlayerCount() {
-        try {
-            return (int) gameSpace.query(Templates.playerCount())[1];
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    public boolean yourTurn() {
-        return id == getTurnId();
-    }
-
     public int getVictoryPoints(int playerId) {
         PlayerState player = null;
         try {
@@ -507,7 +511,7 @@ public class Game {
             e.printStackTrace();
         }
         if (player != null) {
-            int vp = getSettlements(player.getId()).size() + getCities(player.getId()).size();
+            int vp = getSettlements(player.getId()).size() + getCities(player.getId()).size() * 2;
             for (DevelopmentCard developmentCard : player.getDevelopmentCards()) {
                 if (developmentCard.equals(DevelopmentCard.VictoryPoint)) {
                     vp++;
@@ -520,38 +524,6 @@ public class Game {
         }
         return 0;
 
-    }
-
-    private void distributeResources(int roll) {
-        List<Object[]> players = new ArrayList<>();
-        try {
-            players = gameSpace.getAll(new FormalField(String.class), new FormalField(Integer.class),
-                    new FormalField(PlayerState.class));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        for (Object[] playerTuple : players) {
-            PlayerState tPlayer = (PlayerState) playerTuple[2];
-            ArrayList<Vertex> settlements = getSettlements(tPlayer.getId());
-            ArrayList<Vertex> cities = getCities(tPlayer.getId());
-
-            ArrayList<Resource> resources = new ArrayList<>();
-            resources.addAll(getResources(settlements, roll));
-            resources.addAll(getResources(cities, roll));
-
-            tPlayer.getResources().addAll(resources);
-
-            if (!resources.isEmpty()) {
-                sendToChat(tPlayer.getName() + " received " + resources.toString());
-                System.out.println(tPlayer.getName() + " received " + resources.toString());
-            }
-            try {
-                gameSpace.put(tPlayer.getName(), tPlayer.getId(), tPlayer);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public ArrayList<Resource> getResources(int playerId) {
@@ -570,6 +542,9 @@ public class Game {
             for (Hex hex : board.getAdjacentHexes(vertex)) {
                 if (hex.getNumberToken() == roll) {
                     res.add(hex.getTerrain().getProduct());
+                    if (vertex.isCity()) {
+                        res.add(hex.getTerrain().getProduct());
+                    }
                 }
             }
         }
@@ -598,6 +573,95 @@ public class Game {
             }
         }
         return cities;
+    }
+
+    public boolean canBuildRoad() {
+        PlayerState player = queryPlayer(id);
+        return (player.hasResources(Price.Road.getPrice()) && getValidRoads().size() > 0);
+    }
+
+    public boolean canBuildSettlement() {
+        PlayerState player = queryPlayer(id);
+        return (player.hasResources(Price.Settlement.getPrice())) && getValidSettlements().size() > 0;
+    }
+
+    public boolean canBuildCity() {
+        return false;
+    }
+
+    public boolean canBuildDevelopmentCard() {
+        return false;
+    }
+
+    public boolean canTradeWithBank() {
+        return false;
+    }
+
+    public boolean canTradeWithPlayer() {
+        return false;
+    }
+
+    public boolean canPlayDevCard() {
+        return false;
+    }
+
+    public boolean canViewDevCard() {
+        return false;
+    }
+
+
+    public ArrayList<Edge> getValidRoads() {
+        Edge[][] edges = board.getEdges();
+        ArrayList<Edge> res = new ArrayList<>();
+        for (Edge[] edgeList : edges) {
+            for (Edge edge : edgeList) {
+                if (isRoadValid(edge)){
+                    res.add(edge);
+                }
+            }
+        }
+        return res;
+    }
+
+    public ArrayList<Vertex> getValidSettlements() {
+        Vertex[][] vertices = board.getVertices();
+        ArrayList<Vertex> res = new ArrayList<>();
+        for (Vertex[] vertexList : vertices) {
+            for (Vertex vertex : vertexList) {
+                if (isSettlementValid(vertex)) {
+                    res.add(vertex);
+                }
+            }
+        }
+        return res;
+    }
+
+    public int getTurnId() {
+        int turn = getTurn();
+        return turn % getPlayerCount();
+    }
+
+    private int getTurn() {
+        int turn = -1;
+        try {
+            turn = (int) gameSpace.query(Templates.turn())[1];
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return turn;
+    }
+
+    public boolean yourTurn() {
+        return id == getTurnId();
+    }
+
+    public int getPlayerCount() {
+        try {
+            return (int) gameSpace.query(Templates.playerCount())[1];
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     private int getLongestRoad(int id, Edge edge) {
@@ -684,23 +748,7 @@ public class Game {
         }
     }
 
-    public int getTurnId() {
-        int turn = getTurn();
-        return turn % getPlayerCount();
-    }
-
-    private int getTurn() {
-        int turn = -1;
-        try {
-            turn = (int) gameSpace.query(Templates.turn())[1];
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return turn;
-    }
-
     public PlayerState getPlayer(int id ) {
-        System.out.println("get player called");
         PlayerState player = null;
         try {
             player = (PlayerState) gameSpace.get(Templates.player(id))[2];
@@ -711,7 +759,6 @@ public class Game {
     }
 
     public void putPlayer(PlayerState player) {
-        System.out.println("put player called");
         try {
             gameSpace.put(player.getName(), player.getId(), player);
         } catch (InterruptedException e) {
