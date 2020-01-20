@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -17,23 +18,27 @@
 
 <SplitPane dividerPositions="0.65" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.NewController">
    <AnchorPane style="-fx-background-color: white;">
-      <VBox fx:id="gameView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0"
-            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox fx:id="gameView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <HBox alignment="CENTER">
             <VBox.margin>
-               <Insets bottom="16.0" top="16.0"/>
+               <Insets bottom="16.0" top="16.0" />
             </VBox.margin>
             <Label text="Dice Roll:">
                <HBox.margin>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                </HBox.margin>
             </Label>
             <Label fx:id="diceRollLabel" text="0" textAlignment="CENTER">
                <HBox.margin>
-                  <Insets bottom="8.0" right="8.0" top="8.0"/>
+                  <Insets bottom="8.0" right="8.0" top="8.0" />
                </HBox.margin>
             </Label>
          </HBox>
+         <AnchorPane>
+            <children>
+               <Group layoutX="421.6000061035156" layoutY="65.5999984741211" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            </children>
+         </AnchorPane>
       </VBox>
    </AnchorPane>
    <AnchorPane>
@@ -162,88 +167,60 @@
          <Separator />
          <GridPane hgap="5.0" style="-fx-background-color: white;">
             <columnConstraints>
-               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="74.99996337890624"
-                                  prefWidth="82.4665771484375"/>
-               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="48.33342285156252"
-                                  prefWidth="73.33326416015625"/>
-               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
-                                  prefWidth="77.73322753906251"/>
-               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
-                                  prefWidth="102.53332519531253"/>
-               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0"
-                                  prefWidth="71.86667480468748"/>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="74.99996337890624" prefWidth="82.4665771484375" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="48.33342285156252" prefWidth="73.33326416015625" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="77.73322753906251" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="102.53332519531253" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="71.86667480468748" />
             </columnConstraints>
             <rowConstraints>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <VBox.margin>
-               <Insets/>
+               <Insets />
             </VBox.margin>
             <padding>
-               <Insets left="8.0" right="8.0"/>
+               <Insets left="8.0" right="8.0" />
             </padding>
-            <Label prefHeight="17.0" prefWidth="30.0" text="Build"/>
-            <Button fx:id="buildRoad" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                    onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited"
-                    text="Road" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1">
+            <Label prefHeight="17.0" prefWidth="30.0" text="Build" />
+            <Button fx:id="buildRoad" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Road" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1">
                <GridPane.margin>
-                  <Insets bottom="8.0"/>
+                  <Insets bottom="8.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="buildSettlement" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                    onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited"
-                    text="Settlement" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2"/>
-            <Button fx:id="buildCity" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                    onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited"
-                    text="City" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Button fx:id="buildSettlement" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Settlement" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" />
+            <Button fx:id="buildCity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="City" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
-                  <Insets bottom="8.0"/>
+                  <Insets bottom="8.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="buildDevCard" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                    onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited"
-                    text="Dev. Card" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-            <Button fx:id="tradeWithBank" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                    onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited"
-                    text="With Bank" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <Button fx:id="buildDevCard" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Dev. Card" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Button fx:id="tradeWithBank" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="With Bank" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <GridPane.margin>
-                  <Insets bottom="8.0"/>
+                  <Insets bottom="8.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="tradeWithPlayer" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                    onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited"
-                    text="With Player" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-            <Label prefHeight="17.0" prefWidth="30.0" text="Trade" GridPane.columnIndex="2"/>
-            <Button fx:id="playDevCard" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                    onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited"
-                    text="Play Dev. Card" GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <Button fx:id="tradeWithPlayer" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="With Player" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label prefHeight="17.0" prefWidth="30.0" text="Trade" GridPane.columnIndex="2" />
+            <Button fx:id="playDevCard" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Play Dev. Card" GridPane.columnIndex="3" GridPane.rowIndex="1">
                <GridPane.margin>
-                  <Insets bottom="8.0"/>
+                  <Insets bottom="8.0" />
                </GridPane.margin>
             </Button>
-            <Label prefHeight="18.0" prefWidth="87.0" text="Dev. Cards" GridPane.columnIndex="3"/>
-            <Button fx:id="viewDevCard" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                    onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited"
-                    text="View Dev. Card" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
-            <Button fx:id="rollDices" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                    onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited"
-                    text="Roll Dices" GridPane.columnIndex="4" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1">
+            <Label prefHeight="18.0" prefWidth="87.0" text="Dev. Cards" GridPane.columnIndex="3" />
+            <Button fx:id="viewDevCard" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="View Dev. Card" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Button fx:id="rollDices" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Roll Dices" GridPane.columnIndex="4" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1">
                <GridPane.margin>
-                  <Insets bottom="8.0"/>
+                  <Insets bottom="8.0" />
                </GridPane.margin>
             </Button>
-            <Button fx:id="endTurn" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                    onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="130.0"
-                    text="End Turn" GridPane.columnIndex="4" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2"/>
+            <Button fx:id="endTurn" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="130.0" text="End Turn" GridPane.columnIndex="4" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" />
          </GridPane>
          <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="343.0" prefWidth="356.0">
             <AnchorPane>
-               <ListView fx:id="chatView" focusTraversable="false" layoutX="-3.0" layoutY="10.0"
-                         maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="342.0"
-                         prefWidth="435.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+               <ListView fx:id="chatView" focusTraversable="false" layoutX="-3.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="342.0" prefWidth="435.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </AnchorPane>
          </ScrollPane>
          <HBox>
