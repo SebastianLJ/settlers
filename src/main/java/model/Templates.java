@@ -59,5 +59,11 @@ public class Templates {
         return template.getFields();
     }
 
+    public static TemplateField[] dices() {
+        Template template = new Template(new ActualField("dices"), new FormalField(Integer.class),
+                new FormalField(Integer.class));
+        return template.getFields();
+    }
+
 
 }

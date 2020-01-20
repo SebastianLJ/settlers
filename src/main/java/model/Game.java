@@ -74,9 +74,23 @@ public class Game {
     }
 
     public int roll() {
-        board.printVertexIds();
 
-        int roll = dice.nextInt(6) + dice.nextInt(6) + 2;
+        try {
+            gameSpace.getp(Templates.dices());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        int dice_one = dice.nextInt(6) + 1;
+        int dice_two = dice.nextInt(6) + 1;
+
+        try {
+            gameSpace.put("dices", dice_one, dice_two);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        int roll = dice_one + dice_two;
         System.out.println(player.getName() + " rolled " + roll);
 
         if (roll == 7) {
@@ -334,7 +348,6 @@ public class Game {
         }
         startingSettlementsBuiltThisTurn = 0;
         startingRoadsBuiltThisTurn = 0;
-        board.printVertexIds();
         return turn;
     }
 
@@ -367,7 +380,6 @@ public class Game {
             return false;
         }
         Vertex[] vertices = board.getAdjacentVertices(edge);
-        System.out.println(Arrays.toString(vertices));
         for (Vertex vertex : vertices) {
             if (vertex.getId() == player.getId() && vertex.isCity() || vertex.isSettlement()) {
                 return true;
@@ -472,7 +484,6 @@ public class Game {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("players distributing for: " + players.size());
 
         for (Object[] playerTuple : players) {
             PlayerState tPlayer = (PlayerState) playerTuple[2];

@@ -271,7 +271,7 @@ public class NewController extends Application {
 
         // TODO implements states
 
-        System.out.println(game.yourTurn());
+        //System.out.println(game.yourTurn());
         if (game.yourTurn()) {
             int success = 0;
             switch (gameState) {
@@ -341,7 +341,7 @@ public class NewController extends Application {
         Edge[] edges = game.getBoard().getAdjacentEdges(new Hex(j, i, Terrain.None, -1));
 
         Edge chosenEdge = edges[edgeIndex];
-        System.out.println("You clicked on hex at position: (" + i + ", " + j + ") in an angle of " + angle + " chosen edge index is: " + edgeIndex);
+        //System.out.println("You clicked on hex at position: (" + i + ", " + j + ") in an angle of " + angle + " chosen edge index is: " + edgeIndex);
         return chosenEdge;
     }
 
@@ -352,8 +352,8 @@ public class NewController extends Application {
         // Do some verification of chosen vertex..
         Vertex chosenVertex = vertices[vertexIndex];
 
-        System.out.println("You clicked on hex at position: (" + i + ", " + j + ") in an angle of " + angle + " chosen vertex index is: " + vertexIndex);
-        System.out.println("x: " + chosenVertex.getX() + ", y: " + chosenVertex.getY());
+        //System.out.println("You clicked on hex at position: (" + i + ", " + j + ") in an angle of " + angle + " chosen vertex index is: " + vertexIndex);
+        //System.out.println("x: " + chosenVertex.getX() + ", y: " + chosenVertex.getY());
         return chosenVertex;
     }
 
