@@ -1,17 +1,19 @@
 package controller;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.SplitPane;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -21,10 +23,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.Game;
 import model.GameState;
-import model.board.Edge;
-import model.board.Hex;
-import model.board.Terrain;
-import model.board.Vertex;
+import model.board.*;
 import view.NewView;
 
 import java.io.IOException;
@@ -34,7 +33,6 @@ import static java.lang.Math.floor;
 import static model.GameState.*;
 
 public class NewController extends Application {
-
     private double offsetX, offsetY;
     private double HEX_SIZE;
     private double HEX_HEIGHT;
@@ -54,7 +52,16 @@ public class NewController extends Application {
     private Button createGameButton;
     private TextField textField;
 
+    public Label playerNameLabel;
+    public Label victoryPointsLabel;
+    public Label diceRollLabel;
+
     private Group map;
+    private String playerName;
+
+    private int diceRoll;
+    public GridPane ownPlayerInfo;
+    private GridPane[] otherPlayerInfo = new GridPane[3];
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -105,12 +112,28 @@ public class NewController extends Application {
 
         initiateButtonListeners(loader);
 
+        playerNameLabel = (Label) loader.getNamespace().get("playerNameLabel");
+        playerNameLabel.setText(playerName);
+
+        diceRollLabel = (Label) loader.getNamespace().get("diceRollLabel");
+
+        ownPlayerInfo = (GridPane) loader.getNamespace().get("ownPlayerInfo");
+
+        for (int i = 0; i < 3; i++) {
+            otherPlayerInfo[i] = (GridPane) loader.getNamespace().get("otherPlayerInfo" + i);
+        }
+
         primaryStage.setScene(scene);
+        primaryStage.centerOnScreen();
         primaryStage.show();
-        primaryStage.setMaximized(true);
+
+        //primaryStage.setFullScreen(true);
+        //primaryStage.setMaximized(true);
 
         double mapSize = gameView.getHeight();
         gameView.setMaxWidth(mapSize);
+
+        root.setDividerPositions(mapSize/root.getWidth());
         return mapSize;
     }
 
@@ -142,7 +165,8 @@ public class NewController extends Application {
         rollDices = (Button) loader.getNamespace().get("rollDices");
         rollDices.setOnAction(actionEvent -> {
             if (game.yourTurn()) {
-                game.roll();
+                diceRoll = game.roll();
+                diceRollLabel.setText(Integer.toString(diceRoll));
                 //setButtonsDisable(false);
                 //rollDices.setDisable(true);
             }
@@ -287,10 +311,6 @@ public class NewController extends Application {
 
             }
         }
-
-        view.update(map);
-
-
 
         //getChosenIntersection(i, j, touchAngle);
         //getChosenEdge(i, j, touchAngle);
@@ -446,15 +466,15 @@ public class NewController extends Application {
     }
 
     public void createGame(Stage primaryStage, boolean isHost, String hostUri) throws IOException {
+        playerName = textField.getText();
         double mapSize = initializeScene(primaryStage);
-        String name = textField.getText();
-        game = new Game(hostUri, isHost, name);
+        game = new Game(hostUri, isHost, playerName);
         view = new NewView(game);
-        Hex[][] hexes = game.getBoard().getHexes();
 
+        Hex[][] hexes = game.getBoard().getHexes();
         initializeOffsets(mapSize, hexes);
         setupHexUI(map, hexes);
-        view.update(map);
+        new Thread(new viewUpdater(this, view)).start();
     }
 
     public void showJoinGameDialog(Stage primaryStage) throws IOException {
@@ -476,7 +496,28 @@ public class NewController extends Application {
             }
         });
 
+        Button createGameButton = (Button) loader.getNamespace().get("CreateGameButton");
+        createGameButton.setOnMouseClicked(mouseEvent -> {
+            try {
+                createGame(primaryStage, true, "");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    public Group getMap() {
+        return map;
+    }
+
+    public GridPane getOwnPlayerInfo() {
+        return ownPlayerInfo;
+    }
+
+    public GridPane[] getOtherPlayerInfo() {
+        return otherPlayerInfo;
     }
 }

@@ -15,254 +15,194 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<SplitPane dividerPositions="0.6" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-           prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1"
-           xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.NewController">
-   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-      <Label layoutX="341.0" layoutY="33.0" prefHeight="17.0" prefWidth="11.0" text="0" textAlignment="CENTER"
-             AnchorPane.bottomAnchor="748.0" AnchorPane.leftAnchor="341.0" AnchorPane.rightAnchor="364.0"
-             AnchorPane.topAnchor="33.0"/>
-      <Label layoutX="366.0" layoutY="33.0" prefHeight="17.0" prefWidth="11.0" text="0" textAlignment="CENTER"
-             AnchorPane.bottomAnchor="748.0" AnchorPane.leftAnchor="366.0" AnchorPane.rightAnchor="339.0"
-             AnchorPane.topAnchor="33.0"/>
-      <Label layoutX="334.0" layoutY="16.0" prefHeight="17.0" prefWidth="49.0" text="Dice Roll"
-             AnchorPane.bottomAnchor="765.0" AnchorPane.leftAnchor="334.0" AnchorPane.rightAnchor="333.0"
-             AnchorPane.topAnchor="16.0"/>
+<SplitPane dividerPositions="0.65" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.NewController">
+   <AnchorPane SplitPane.resizableWithParent="false">
+      <Label fx:id="diceRollLabel" layoutX="307.0" layoutY="34.0" prefHeight="23.0" prefWidth="15.0" text="0" textAlignment="CENTER" AnchorPane.bottomAnchor="741.0" AnchorPane.leftAnchor="307.0" AnchorPane.rightAnchor="520.0" AnchorPane.topAnchor="34.0" />
+      <Label layoutX="290.0" layoutY="21.0" prefHeight="17.0" prefWidth="50.0" text="Dice Roll" AnchorPane.bottomAnchor="760.0" AnchorPane.leftAnchor="290.0" AnchorPane.rightAnchor="502.0" AnchorPane.topAnchor="21.0" />
    </AnchorPane>
-   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-      <VBox prefHeight="398.0" prefWidth="236.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <AnchorPane prefHeight="145.0" prefWidth="476.0">
-            <Label layoutX="14.0" layoutY="14.0" text="Player name" AnchorPane.leftAnchor="8.0"
-                   AnchorPane.topAnchor="8.0"/>
-            <GridPane alignment="CENTER" layoutX="79.0" layoutY="103.0" prefHeight="34.0" prefWidth="381.0"
-                      AnchorPane.leftAnchor="79.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="102.0">
+   <AnchorPane SplitPane.resizableWithParent="false">
+      <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <GridPane fx:id="ownPlayerInfo" VBox.vgrow="SOMETIMES">
+            <columnConstraints>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="230.533203125" minWidth="10.0" prefWidth="85.06669921875" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="396.93341064453125" minWidth="10.0" prefWidth="375.73330078125" />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <VBox.margin>
+               <Insets bottom="8.0" left="8.0" right="8.0" />
+            </VBox.margin>
+            <Label text="Player name" />
+            <Label text="Victory Points" GridPane.rowIndex="1" />
+            <Label text="Dev Cards" GridPane.rowIndex="2" />
+            <Label text="Resources" GridPane.rowIndex="3" />
+            <Label fx:id="playerNameLabel" text="&quot;Name&quot;" GridPane.columnIndex="1" />
+            <Label fx:id="victoryPointsLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                </columnConstraints>
                <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
-               <Label text="Ore"/>
-               <Label text="Brick" GridPane.columnIndex="1"/>
-               <Label text="Wool" GridPane.columnIndex="2"/>
-               <Label text="Wheat" GridPane.columnIndex="3"/>
-               <Label text="0" GridPane.rowIndex="1"/>
-               <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-               <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-               <Label prefWidth="102.0" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-               <Label text="Wood" GridPane.columnIndex="4"/>
-               <Label text="0" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
             </GridPane>
-            <Label layoutX="11.0" layoutY="103.0" text="Resource" AnchorPane.leftAnchor="8.0"
-                   AnchorPane.topAnchor="102.0"/>
-            <Label layoutX="6.0" layoutY="64.0" text="Dev Cards" AnchorPane.leftAnchor="8.0"
-                   AnchorPane.topAnchor="56.0"/>
-            <Label layoutX="4.0" layoutY="31.0" text="Victory Points" AnchorPane.leftAnchor="8.0"
-                   AnchorPane.topAnchor="32.0"/>
-         </AnchorPane>
-         <Separator prefWidth="200.0"/>
-         <GridPane>
+            <GridPane alignment="CENTER" prefHeight="34.0" prefWidth="381.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+               <Label text="Ore" />
+               <Label text="Brick" GridPane.columnIndex="1" />
+               <Label text="Wool" GridPane.columnIndex="2" />
+               <Label text="Grain" GridPane.columnIndex="3" />
+               <Label text="Lumber" GridPane.columnIndex="4" />
+               <Label fx:id="oreLabel" text="0" GridPane.rowIndex="1" />
+               <Label fx:id="brickLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               <Label fx:id="woolLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+               <Label fx:id="grainLabel" prefWidth="102.0" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+               <Label fx:id="lumberLabel" text="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+            </GridPane>
+         </GridPane>
+         <Separator prefWidth="200.0" />
+         <GridPane fx:id="otherPlayerInfo0" VBox.vgrow="ALWAYS">
             <columnConstraints>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+               <ColumnConstraints halignment="CENTER" hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
-            <Label text="Player Name"/>
-            <Label text="Victory Points" GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
-            <Label text="&quot;Name&quot;" GridPane.rowIndex="1"/>
-            <Label text="0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
-            <Label text="Development Cards" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
-            <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-            <Label text="Ressource Cards" GridPane.columnIndex="3"/>
-            <Label text="0" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+            <Label text="Player Name" />
+            <Label text="Victory Points" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+            <Label text="Development Cards" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+            <Label text="Resource Cards" GridPane.columnIndex="3" />
+            <Label text="Not connected" GridPane.rowIndex="1" />
+            <Label text="Not connected" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label text="Not connected" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label text="Not connected" GridPane.columnIndex="3" GridPane.rowIndex="1" />
          </GridPane>
-         <Separator prefWidth="200.0"/>
-         <GridPane>
+         <Separator prefWidth="200.0" />
+         <GridPane fx:id="otherPlayerInfo1" VBox.vgrow="ALWAYS">
             <columnConstraints>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+               <ColumnConstraints halignment="CENTER" hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
-            <Label text="Player Name"/>
-            <Label text="Victory Points" GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
-            <Label text="&quot;Name&quot;" GridPane.rowIndex="1"/>
-            <Label text="0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
-            <Label text="Development Cards" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
-            <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-            <Label text="Ressource Cards" GridPane.columnIndex="3"/>
-            <Label text="0" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+            <Label text="Player Name" />
+            <Label text="Victory Points" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+            <Label text="Development Cards" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+            <Label text="Ressource Cards" GridPane.columnIndex="3" />
+            <Label text="Not connected" GridPane.rowIndex="1" />
+            <Label text="Not connected" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label text="Not connected" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label text="Not connected" GridPane.columnIndex="3" GridPane.rowIndex="1" />
          </GridPane>
-         <Separator prefWidth="200.0"/>
-         <GridPane>
+         <Separator prefWidth="200.0" />
+         <GridPane fx:id="otherPlayerInfo2" VBox.vgrow="ALWAYS">
             <columnConstraints>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+               <ColumnConstraints halignment="CENTER" hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
-            <Label text="Player Name"/>
-            <Label text="Victory Points" GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
-            <Label text="&quot;Name&quot;" GridPane.rowIndex="1"/>
-            <Label text="0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
-            <Label text="Development Cards" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
-            <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-            <Label text="Resource Cards" GridPane.columnIndex="3"/>
-            <Label text="0" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+            <Label text="Player Name" />
+            <Label text="Victory Points" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+            <Label text="Development Cards" GridPane.columnIndex="2" GridPane.halignment="CENTER" />
+            <Label text="Resource Cards" GridPane.columnIndex="3" />
+            <Label text="Not connected" GridPane.rowIndex="1" />
+            <Label text="Not connected" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
+            <Label text="Not connected" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Label text="Not connected" GridPane.columnIndex="3" GridPane.rowIndex="1" />
          </GridPane>
-         <Separator prefWidth="200.0"/>
-         <GridPane>
-            <columnConstraints>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-               <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            </columnConstraints>
-            <rowConstraints>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-            </rowConstraints>
-            <Label text="Player Name"/>
-            <Label text="Victory Points" GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
-            <Label text="&quot;Name&quot;" GridPane.rowIndex="1"/>
-            <Label text="0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1"/>
-            <Label text="Development Cards" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
-            <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-            <Label text="Ressource Cards" GridPane.columnIndex="3"/>
-            <Label text="0" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-         </GridPane>
-         <Separator prefWidth="200.0"/>
-         <HBox prefHeight="92.0" prefWidth="600.0">
-            <VBox alignment="BOTTOM_LEFT" prefHeight="75.0" prefWidth="100.0">
-               <Label prefHeight="17.0" prefWidth="30.0" text="Build">
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="8.0" right="5.0"/>
-                  </VBox.margin>
-               </Label>
-               <Button fx:id="buildRoad" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                       onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0"
-                       prefWidth="90.0" text="Road">
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="8.0" right="5.0"/>
-                  </VBox.margin>
+         <Separator />
+         <GridPane hgap="5.0">
+           <columnConstraints>
+             <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="74.99996337890624" prefWidth="82.4665771484375" />
+             <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="48.33342285156252" prefWidth="73.33326416015625" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="77.73322753906251" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="102.53332519531253" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="71.86667480468748" />
+           </columnConstraints>
+           <rowConstraints>
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+           </rowConstraints>
+            <children>
+               <Label prefHeight="17.0" prefWidth="30.0" text="Build" />
+               <Button fx:id="buildRoad" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Road" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1">
+                  <GridPane.margin>
+                     <Insets bottom="8.0" />
+                  </GridPane.margin>
                </Button>
-               <Button fx:id="buildSettlement" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                       onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0"
-                       prefWidth="90.0" text="Settlement">
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="8.0" right="5.0"/>
-                  </VBox.margin>
+               <Button fx:id="buildSettlement" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Settlement" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" />
+               <Button fx:id="buildCity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="City" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <GridPane.margin>
+                     <Insets bottom="8.0" />
+                  </GridPane.margin>
                </Button>
-            </VBox>
-            <VBox alignment="BOTTOM_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="75.0" prefWidth="100.0">
+               <Button fx:id="buildDevCard" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Dev. Card" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+               <Button fx:id="tradeWithBank" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="With Bank" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <GridPane.margin>
+                     <Insets bottom="8.0" />
+                  </GridPane.margin>
+               </Button>
+               <Button fx:id="tradeWithPlayer" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="With Player" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+               <Label prefHeight="17.0" prefWidth="30.0" text="Trade" GridPane.columnIndex="2" />
+               <Button fx:id="playDevCard" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Play Dev. Card" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                  <GridPane.margin>
+                     <Insets bottom="8.0" />
+                  </GridPane.margin>
+               </Button>
+               <Label prefHeight="18.0" prefWidth="87.0" text="Dev. Cards" GridPane.columnIndex="3" />
+               <Button fx:id="viewDevCard" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="View Dev. Card" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+               <Button fx:id="rollDices" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" text="Roll Dices" GridPane.columnIndex="4" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1">
+                  <GridPane.margin>
+                     <Insets bottom="8.0" />
+                  </GridPane.margin>
+               </Button>
+               <Button fx:id="endTurn" mnemonicParsing="false" onMouseClicked="#onButtonClick" onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0" prefWidth="130.0" text="End Turn" GridPane.columnIndex="4" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" />
+            </children>
+            <VBox.margin>
+               <Insets left="8.0" right="8.0" />
+            </VBox.margin>
+         </GridPane>
+         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="343.0" prefWidth="356.0">
+            <AnchorPane>
                <children>
-                  <Button fx:id="buildCity" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                          onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0"
-                          prefWidth="90.0" text="City">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0"/>
-                     </VBox.margin>
-                  </Button>
-                  <Button fx:id="buildDevCard" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                          onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0"
-                          prefWidth="90.0" text="Dev. Card">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0"/>
-                     </VBox.margin>
-                  </Button>
+                  <ListView layoutX="-3.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="342.0" prefWidth="435.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
-            </VBox>
-            <VBox alignment="BOTTOM_LEFT" prefHeight="75.0" prefWidth="100.0">
-               <children>
-                  <Label prefHeight="17.0" prefWidth="30.0" text="Trade">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0"/>
-                     </VBox.margin>
-                  </Label>
-                  <Button fx:id="tradeWithBank" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                          onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0"
-                          prefWidth="90.0" text="With Bank">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0"/>
-                     </VBox.margin>
-                  </Button>
-                  <Button fx:id="tradeWithPlayer" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                          onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="25.0"
-                          prefWidth="90.0" text="With Player">
-                     <VBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0"/>
-                     </VBox.margin>
-                  </Button>
-               </children>
-            </VBox>
-            <VBox alignment="BOTTOM_LEFT" prefHeight="92.0" prefWidth="114.0">
-               <Label prefHeight="18.0" prefWidth="87.0" text="Dev. Cards">
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0"/>
-                  </VBox.margin>
-               </Label>
-               <Button fx:id="playDevCard" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                       onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0"
-                       prefWidth="135.0" text="Play Dev. Card">
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0"/>
-                  </VBox.margin>
-               </Button>
-               <Button fx:id="viewDevCard" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                       onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0"
-                       prefWidth="130.0" text="View Dev. Card">
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0"/>
-                  </VBox.margin>
-               </Button>
-            </VBox>
-            <VBox alignment="BOTTOM_LEFT" prefHeight="92.0" prefWidth="95.0">
-               <Label prefHeight="18.0" prefWidth="87.0">
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0"/>
-                  </VBox.margin>
-               </Label>
-               <Button fx:id="rollDices" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                       onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0"
-                       prefWidth="135.0" text="Roll Dices">
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="8.0"/>
-                  </VBox.margin>
-               </Button>
-               <Button fx:id="endTurn" mnemonicParsing="false" onMouseClicked="#onButtonClick"
-                       onMouseEntered="#onMouseEntered" onMouseExited="#onMouseExited" prefHeight="26.0"
-                       prefWidth="130.0" text="End Turn">
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="8.0"/>
-                  </VBox.margin>
-               </Button>
-            </VBox>
-         </HBox>
-         <ScrollPane prefHeight="257.0" prefWidth="476.0">
-            <ListView prefHeight="253.0" prefWidth="462.0"/>
+            </AnchorPane>
          </ScrollPane>
          <HBox>
-            <TextArea prefHeight="24.0" prefWidth="401.0"/>
-            <Button mnemonicParsing="false" prefHeight="37.0" prefWidth="70.0" text="SEND"/>
+            <TextArea prefHeight="24.0" prefWidth="401.0" HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" prefHeight="37.0" prefWidth="70.0" text="SEND" HBox.hgrow="ALWAYS" />
          </HBox>
       </VBox>
    </AnchorPane>

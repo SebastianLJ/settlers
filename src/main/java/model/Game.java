@@ -434,7 +434,7 @@ public class Game {
         return player.getId() == getTurnId();
     }
 
-    private int getVictoryPoints(int playerId) {
+    public int getVictoryPoints(int playerId) {
         PlayerState player = null;
         try {
             player = (PlayerState) gameSpace.query(Templates.player(playerId))[2];
@@ -639,5 +639,23 @@ public class Game {
             e.printStackTrace();
         }
         return turn;
+    }
+
+    public PlayerState getPlayer() {
+        return player;
+    }
+
+    public PlayerState getPlayer(int playerId) {
+        try {
+            Object[] t = gameSpace.queryp(Templates.player(playerId));
+            if (t != null) {
+                return (PlayerState) t[2];
+            } else
+                return null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
