@@ -1,14 +1,15 @@
 package model.board;
 
+import model.Game;
 import model.Templates;
 import org.jspace.*;
 
 public class boardUpdater implements Runnable {
-    private Board board;
+    private Game game;
     private RemoteSpace gameSpace;
 
-    public boardUpdater(Board board, RemoteSpace gameSpace) {
-        this.board = board;
+    public boardUpdater(Game game, RemoteSpace gameSpace) {
+        this.game = game;
         this.gameSpace = gameSpace;
     }
 
@@ -16,7 +17,11 @@ public class boardUpdater implements Runnable {
     public void run() {
         while(true) {
             try {
-                board = (Board) gameSpace.query(Templates.board())[1];
+                if (!game.yourTurn()) {
+                    Board board = (Board) gameSpace.query(Templates.board())[1];
+                    game.setBoard(board);
+                }
+                //board.printVertexIds();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

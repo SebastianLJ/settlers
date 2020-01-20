@@ -50,6 +50,7 @@ public class Game {
                 gameSpace.put(playerName, player.getId(), player);
                 gameSpace.put("turn_count", 0);
                 gameSpace.put("board", board);
+                gameSpace.put("player_count", 1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -57,20 +58,24 @@ public class Game {
             gameSpace = new RemoteSpace(this.hostURI + "/game?keep");
             chat = new RemoteSpace(this.hostURI + "/chat?keep");
 
-            this.player = new PlayerState(getPlayers().size(), playerName);
+            this.player = new PlayerState(getPlayerCount(), playerName);
             try {
                 gameSpace.put(playerName, player.getId(), player);
                 board = (Board) gameSpace.query(Templates.board())[1];
+                int playerCount = (int) gameSpace.get(Templates.playerCount())[1];
+                gameSpace.put("player_count", playerCount + 1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
-        new Thread(new boardUpdater(board,gameSpace)).start();
+        new Thread(new boardUpdater(this,gameSpace)).start();
 
     }
 
     public int roll() {
+        board.printVertexIds();
+
         int roll = dice.nextInt(6) + dice.nextInt(6) + 2;
         System.out.println(player.getName() + " rolled " + roll);
 
@@ -206,6 +211,7 @@ public class Game {
             System.out.println("Invalid settlement location");
             return -2;
         }
+
     }
 
     /**
@@ -290,6 +296,7 @@ public class Game {
     }
 
     public int endTurn() {
+        updateBoard();
         int turn = -1;
         try {
             turn = (int) gameSpace.get(Templates.turn())[1];
@@ -297,13 +304,14 @@ public class Game {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
         return turn + 1;
     }
 
     public int endInitTurn() {
         int playerCount = getPlayerCount();
-        System.out.println("entered end init turn");
         int turn = 0;
+        updateBoard();
         try {
             turn = (int) gameSpace.get(Templates.turn())[1];
         } catch (InterruptedException e) {
@@ -321,12 +329,12 @@ public class Game {
 
         try {
             gameSpace.put("turn_count", turn);
-            System.out.println("put turn");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         startingSettlementsBuiltThisTurn = 0;
         startingRoadsBuiltThisTurn = 0;
+        board.printVertexIds();
         return turn;
     }
 
@@ -422,7 +430,7 @@ public class Game {
 
     public int getPlayerCount() {
         try {
-            return gameSpace.queryAll(Templates.player()).size();
+            return (int) gameSpace.query(Templates.playerCount())[1];
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -430,7 +438,6 @@ public class Game {
     }
 
     public boolean yourTurn() {
-        System.out.println("id: " + player.getId() + " turn id: " + getTurnId());
         return player.getId() == getTurnId();
     }
 
@@ -462,12 +469,10 @@ public class Game {
         try {
             players = gameSpace.getAll(new FormalField(String.class), new FormalField(Integer.class),
                     new FormalField(PlayerState.class));
-            System.out.println(players.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        System.out.println("SetResources players: " + players.size());
+        System.out.println("players distributing for: " + players.size());
 
         for (Object[] playerTuple : players) {
             PlayerState tPlayer = (PlayerState) playerTuple[2];
@@ -488,6 +493,11 @@ public class Game {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+        try {
+            gameSpace.get(new ActualField("lock"));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -517,7 +527,7 @@ public class Game {
         ArrayList<Vertex> settlements = new ArrayList<Vertex>();
         for (Vertex[] vertexList : board.getVertices()) {
             for (Vertex vertex : vertexList) {
-                if (vertex != null && vertex.getId() == player.getId() && vertex.isSettlement()) {
+                if (vertex != null && vertex.getId() == id && vertex.isSettlement()) {
                     settlements.add(vertex);
                 }
             }
@@ -529,7 +539,7 @@ public class Game {
         ArrayList<Vertex> cities = new ArrayList<Vertex>();
         for (Vertex[] vertexList : board.getVertices()) {
             for (Vertex vertex : vertexList) {
-                if (vertex != null && vertex.getId() == player.getId() && vertex.isCity()) {
+                if (vertex != null && vertex.getId() == id && vertex.isCity()) {
                     cities.add(vertex);
                 }
             }
@@ -626,6 +636,15 @@ public class Game {
         }
     }
 
+    public void updateBoard() {
+        try {
+            Board tempBoard = (Board) gameSpace.get(Templates.board())[1];
+            gameSpace.put("board", board);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public int getTurnId() {
         int turn = getTurn();
         return turn % getPlayerCount();
@@ -657,5 +676,9 @@ public class Game {
         }
 
         return null;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 }

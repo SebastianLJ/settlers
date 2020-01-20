@@ -294,4 +294,16 @@ public class Board {
             developmentCards.add(DevelopmentCard.YearOfPlenty);
         }
     }
+
+    public void printVertexIds() {
+        for (Vertex[] vertexList : vertices) {
+            for (Vertex vertex : vertexList) {
+                if (vertex != null) {
+                    System.out.print(vertex.getId() + ", ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
 }

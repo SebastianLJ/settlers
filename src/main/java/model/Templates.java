@@ -53,5 +53,11 @@ public class Templates {
         return template.getFields();
     }
 
+    public static TemplateField[] playerCount() {
+        Template template = new Template(new ActualField("player_count"),
+                new FormalField(Integer.class));
+        return template.getFields();
+    }
+
 
 }
