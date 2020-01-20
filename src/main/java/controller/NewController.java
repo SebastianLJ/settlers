@@ -187,16 +187,18 @@ public class NewController extends Application {
             if (game.yourTurn()) {
                 diceRoll = game.roll();
                 diceRollLabel.setText(Integer.toString(diceRoll));
-                //setButtonsDisable(false);
-                //rollDices.setDisable(true);
+                setButtonsDisable(false);
+                endTurnButton.setDisable(false);
+                rollDices.setDisable(true);
             }
         });
 
         endTurnButton = (Button) loader.getNamespace().get("endTurn");
         endTurnButton.setOnAction(actionEvent -> {
-            //endTurnButton.setDisable(true);
-            //setButtonsDisable(true);
             endTurn();
+            setButtonsDisable(true);
+            endTurnButton.setDisable(true);
+            rollDices.setDisable(false);
         });
     }
 
@@ -209,6 +211,76 @@ public class NewController extends Application {
         tradeWithPlayer.setDisable(bool);
         playDevCard.setDisable(bool);
         endTurnButton.setDisable(bool);
+    }
+
+    /**
+     * Finds the appropriate game object (ie. Path, Intersection etc).
+     * @param mouseEvent from listener connected to polygon
+     * @param hex connected to polygon
+     */
+    private void handleMouseEvent(MouseEvent mouseEvent, Hex hex) {
+        int i = hex.getY();
+        int j = hex.getX();
+
+        //double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), getHexCenterX(hex), getHexCenterY(hex));
+
+        double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), getHexCenterX(hex), getHexCenterY(hex));
+
+
+        // TODO implements states
+
+        //System.out.println(game.yourTurn());
+        if (game.yourTurn()) {
+            int success = 0;
+            switch (gameState) {
+                case TradeBank:
+                    //todo
+                    break;
+                case BuildRoad:
+                    if (initialState && game.getStartingRoadsBuiltThisTurn() == 0) {
+                        success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
+                        if (success == 1) {
+                            endTurn();
+                            endTurnButton.setDisable(true);
+                        }
+                    } else {
+                        success = game.buildRoad(getChosenEdge(i, j, touchAngle));
+                    }
+                    break;
+                case BuildSettlement:
+                    if (initialState &&game.getStartingSettlementsBuiltThisTurn() == 0) {
+                        success = game.buildStartingSettlement(getChosenIntersection(i, j, touchAngle));
+                    } else {
+                        success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
+                    }
+                    break;
+                case BuildCity:
+                    success = game.buildCity(getChosenIntersection(i, j, touchAngle));
+                    break;
+                case BuyDevelopmentCard:
+                    success = game.buyDevelopmentCard();
+                    break;
+                case PlayDevelopmentCard:
+                    //todo
+                    break;
+                case None:
+                    System.out.println("No action selected");
+            }
+            //todo notify user according to return value
+            if (success == 1) {
+
+            } else if (success == -1) {
+
+            } else if (success == -2) {
+
+            }
+        }
+
+        //getChosenIntersection(i, j, touchAngle);
+        //getChosenEdge(i, j, touchAngle);
+        /*System.out.println("This is hex [" + getId(polygon)[0] + "][" + getId(polygon)[1] + "] " +
+                "at coordinates (" + getHexCenterX(hex) + ", " + getHexCenterY(hex) + "). The screen was touched in an angle of "
+                + getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex)));*/
     }
 
     private void initializeOffsets(double mapSize, Hex[][] hexes) {
@@ -268,75 +340,6 @@ public class NewController extends Application {
                 }
             }
         }
-    }
-
-    /**
-     * Finds the appropriate game object (ie. Path, Intersection etc).
-     * @param mouseEvent from listener connected to polygon
-     * @param hex connected to polygon
-     */
-    private void handleMouseEvent(MouseEvent mouseEvent, Hex hex) {
-        int i = hex.getY();
-        int j = hex.getX();
-
-        //double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), getHexCenterX(hex), getHexCenterY(hex));
-
-        double touchAngle = getAngleFromScreenClick(mouseEvent.getX(), mouseEvent.getY(), getHexCenterX(hex), getHexCenterY(hex));
-
-
-        // TODO implements states
-
-        //System.out.println(game.yourTurn());
-        if (game.yourTurn()) {
-            int success = 0;
-            switch (gameState) {
-                case TradeBank:
-                    //todo
-                    break;
-                case BuildRoad:
-                    if (initialState && game.getStartingRoadsBuiltThisTurn() == 0) {
-                        success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
-                        if (success == 1) {
-                            endTurn();
-                        }
-                    } else {
-                        success = game.buildRoad(getChosenEdge(i, j, touchAngle));
-                    }
-                    break;
-                case BuildSettlement:
-                    if (initialState &&game.getStartingSettlementsBuiltThisTurn() == 0) {
-                        success = game.buildStartingSettlement(getChosenIntersection(i, j, touchAngle));
-                    } else {
-                        success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
-                    }
-                    break;
-                case BuildCity:
-                    success = game.buildCity(getChosenIntersection(i, j, touchAngle));
-                    break;
-                case BuyDevelopmentCard:
-                    success = game.buyDevelopmentCard();
-                    break;
-                case PlayDevelopmentCard:
-                    //todo
-                    break;
-                case None:
-                    System.out.println("No action selected");
-            }
-            //todo notify user according to return value
-            if (success == 1) {
-
-            } else if (success == -1) {
-
-            } else if (success == -2) {
-
-            }
-        }
-
-        //getChosenIntersection(i, j, touchAngle);
-        //getChosenEdge(i, j, touchAngle);
-        /*System.out.println("This is hex [" + getId(polygon)[0] + "][" + getId(polygon)[1] + "] " +
-                "at coordinates (" + getHexCenterX(hex) + ", " + getHexCenterY(hex) + "). The screen was touched in an angle of "
-                + getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex)));*/
     }
 
     public void endTurn() {

@@ -60,7 +60,7 @@ public class NewView {
     }
 
     public void updatePlayerInfo(GridPane ownPlayerInfo, GridPane[] otherPlayerInfo) {
-        int thisPlayer = game.getPlayer().getId();
+        int thisPlayer = game.getPlayerId();
         if (thisPlayer == game.getTurnId()) {
             ownPlayerInfo.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
         } else {
@@ -74,11 +74,11 @@ public class NewView {
 
         GridPane resources =  (GridPane) ownPlayerInfo.getChildren().get(7);
 
-        String[] amountOfPlayerResources = {Integer.toString(game.getPlayer(thisPlayer).getResourceAmount(Resource.Ore)),
-                Integer.toString(game.getPlayer(thisPlayer).getResourceAmount(Resource.Brick)),
-                Integer.toString(game.getPlayer(thisPlayer).getResourceAmount(Resource.Wool)),
-                Integer.toString(game.getPlayer(thisPlayer).getResourceAmount(Resource.Grain)),
-                Integer.toString(game.getPlayer(thisPlayer).getResourceAmount(Resource.Lumber))};
+        String[] amountOfPlayerResources = {Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Ore)),
+                Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Brick)),
+                Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Wool)),
+                Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Grain)),
+                Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Lumber))};
 
         for (int i = 0; i < 5; i++) {
             ((Label) resources.getChildren().get(5 + i)).setText(amountOfPlayerResources[i]);
@@ -94,10 +94,10 @@ public class NewView {
                     info.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
                 }
 
-                if (game.getPlayer(i) != null) {
-                    ((Label) info.getChildren().get(4)).setText(game.getPlayer(i).getName());
+                if (i < game.getPlayerCount()) {
+                    ((Label) info.getChildren().get(4)).setText(game.queryPlayer(i).getName());
                     ((Label) info.getChildren().get(5)).setText(Integer.toString(game.getVictoryPoints(i)));
-                    ((Label) info.getChildren().get(6)).setText((Integer.toString(game.getPlayer(i).getDevelopmentCards().size())));
+                    ((Label) info.getChildren().get(6)).setText((Integer.toString(game.queryPlayer(i).getDevelopmentCards().size())));
                     ((Label) info.getChildren().get(7)).setText(Integer.toString(game.getResources(i).size()));
                 }
                 c++;
