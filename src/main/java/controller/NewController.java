@@ -1,15 +1,11 @@
 package controller;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.SplitPane;
+import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -29,6 +25,7 @@ import model.board.*;
 import view.NewView;
 
 import java.io.IOException;
+import java.util.List;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.floor;
@@ -64,6 +61,13 @@ public class NewController extends Application {
     private int diceRoll;
     public GridPane ownPlayerInfo;
     private GridPane[] otherPlayerInfo = new GridPane[3];
+    @FXML
+    private ListView<String> chatView;
+
+    @FXML
+    private TextArea chatTextField;
+    @FXML
+    private Button chatButton;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -107,10 +111,7 @@ public class NewController extends Application {
         map = new Group();
 
         VBox gameView = (VBox) loader.getNamespace().get("gameView");
-
         HBox diceView = (HBox) gameView.getChildren().get(0);
-
-        //gameView.getChildren().set(1, map);
 
         gameView.getChildren().add(map);
         Scene scene = new Scene(root);
@@ -127,6 +128,20 @@ public class NewController extends Application {
         for (int i = 0; i < 3; i++) {
             otherPlayerInfo[i] = (GridPane) loader.getNamespace().get("otherPlayerInfo" + i);
         }
+
+        chatView = (ListView<String>) loader.getNamespace().get("chatView");
+        chatTextField = (TextArea) loader.getNamespace().get("chatTextField");
+        chatButton = (Button) loader.getNamespace().get("chatButton");
+        chatButton.setOnMouseClicked(mouseEvent ->
+                {
+                    try {
+                        game.sendChat(chatTextField.getText());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    chatTextField.clear();
+                }
+        );
 
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
@@ -336,25 +351,23 @@ public class NewController extends Application {
         }
     }
 
-    public Edge getChosenEdge(int i, int j, double angle) {
+    private Edge getChosenEdge(int i, int j, double angle) {
         int edgeIndex = (int) (floor(angle) + 30) % 360 / 60;
         Edge[] edges = game.getBoard().getAdjacentEdges(new Hex(j, i, Terrain.None, -1));
 
-        Edge chosenEdge = edges[edgeIndex];
         //System.out.println("You clicked on hex at position: (" + i + ", " + j + ") in an angle of " + angle + " chosen edge index is: " + edgeIndex);
-        return chosenEdge;
+        return edges[edgeIndex];
     }
 
-    public Vertex getChosenIntersection(int i, int j, double angle) {
+    private Vertex getChosenIntersection(int i, int j, double angle) {
         int vertexIndex = (int) floor(angle)/60;
         Vertex[] vertices = game.getBoard().getAdjacentVertices(new Hex(j,i, Terrain.None, -1));
 
         // Do some verification of chosen vertex..
-        Vertex chosenVertex = vertices[vertexIndex];
 
         //System.out.println("You clicked on hex at position: (" + i + ", " + j + ") in an angle of " + angle + " chosen vertex index is: " + vertexIndex);
         //System.out.println("x: " + chosenVertex.getX() + ", y: " + chosenVertex.getY());
-        return chosenVertex;
+        return vertices[vertexIndex];
     }
 
     /**
@@ -470,7 +483,7 @@ public class NewController extends Application {
         button.setEffect(null);
     }
 
-    public void createGame(Stage primaryStage, boolean isHost, String hostUri) throws IOException {
+    private void createGame(Stage primaryStage, boolean isHost, String hostUri) throws IOException {
         playerName = textField.getText();
         double mapSize = initializeScene(primaryStage);
         game = new Game(hostUri, isHost, playerName);
@@ -484,7 +497,7 @@ public class NewController extends Application {
         thread.start();
     }
 
-    public void showJoinGameDialog(Stage primaryStage) throws IOException {
+    private void showJoinGameDialog(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("LobbyViewWithIPPortInput.fxml"));
         Scene scene = new Scene(loader.load());
 
@@ -519,15 +532,19 @@ public class NewController extends Application {
         primaryStage.show();
     }
 
-    public Group getMap() {
+    Group getMap() {
         return map;
     }
 
-    public GridPane getOwnPlayerInfo() {
+    GridPane getOwnPlayerInfo() {
         return ownPlayerInfo;
     }
 
-    public GridPane[] getOtherPlayerInfo() {
+    GridPane[] getOtherPlayerInfo() {
         return otherPlayerInfo;
+    }
+
+    ListView<String> getListView() {
+        return chatView;
     }
 }

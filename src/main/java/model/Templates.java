@@ -19,8 +19,13 @@ public class Templates {
     private Template player = new Template(new FormalField(String.class), new FormalField(Integer.class),
             new FormalField(PlayerState.class));
 
+    static TemplateField[] chat() {
+        Template template = new Template(new ActualField("chat"), new FormalField(String.class), new FormalField(String.class));
+        return template.getFields();
+    }
 
-    public static TemplateField[] player(int id) {
+
+    static TemplateField[] player(int id) {
         Template template = new Template(new FormalField(String.class), new ActualField(id),
                 new FormalField(PlayerState.class));
         return template.getFields();
@@ -32,13 +37,13 @@ public class Templates {
         return template.getFields();
     }
 
-    public static TemplateField[] player() {
+    static TemplateField[] player() {
         Template template = new Template(new FormalField(String.class), new FormalField(Integer.class),
                 new FormalField(PlayerState.class));
         return template.getFields();
     }
 
-    public static TemplateField[] turn() {
+    static TemplateField[] turn() {
         Template template = new Template(new ActualField("turn_count"), new FormalField(Integer.class));
         return template.getFields();
     }
@@ -53,17 +58,15 @@ public class Templates {
         return template.getFields();
     }
 
-    public static TemplateField[] playerCount() {
+    static TemplateField[] playerCount() {
         Template template = new Template(new ActualField("player_count"),
                 new FormalField(Integer.class));
         return template.getFields();
     }
 
-    public static TemplateField[] dices() {
+    static TemplateField[] dices() {
         Template template = new Template(new ActualField("dices"), new FormalField(Integer.class),
                 new FormalField(Integer.class));
         return template.getFields();
     }
-
-
 }

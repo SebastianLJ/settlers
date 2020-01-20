@@ -1,5 +1,6 @@
 package model;
 
+import javafx.collections.ObservableList;
 import model.board.*;
 import org.jspace.*;
 
@@ -11,12 +12,13 @@ public class Game {
     private Scanner scanner = new Scanner(System.in);
     private Random dice = new Random();
     private RemoteSpace gameSpace;
-    private RemoteSpace chat;
+    private RemoteSpace chatSpace;
     private Board board;
     private String hostURI;
     private PlayerState player;
     private int startingSettlementsBuiltThisTurn = 0;
     private int startingRoadsBuiltThisTurn = 0;
+    private Chat chat;
 
     public Game(String hostURI, boolean isHost, String playerName) throws IOException {
         this.hostURI = hostURI;
@@ -38,10 +40,10 @@ public class Game {
             // Opening gate at given URI
             repository.addGate(URI + "?keep");
             repository.add("game", gameTemp);
-            repository.add("chat", chatTemp);
+            repository.add("chatSpace", chatTemp);
 
             gameSpace = new RemoteSpace(URI + "/game?keep");
-            chat = new RemoteSpace(URI + "/chat?keep");
+            chatSpace = new RemoteSpace(URI + "/chatSpace?keep");
 
 
             board = new Board();
@@ -56,7 +58,7 @@ public class Game {
             }
         } else {
             gameSpace = new RemoteSpace(this.hostURI + "/game?keep");
-            chat = new RemoteSpace(this.hostURI + "/chat?keep");
+            chatSpace = new RemoteSpace(this.hostURI + "/chatSpace?keep");
 
             this.player = new PlayerState(getPlayerCount(), playerName);
             try {
@@ -69,8 +71,9 @@ public class Game {
             }
         }
 
+        chat = new Chat(chatSpace);
+        new Thread(chat).start();
         new Thread(new boardUpdater(this,gameSpace)).start();
-
     }
 
     public int roll() {
@@ -351,7 +354,7 @@ public class Game {
         return turn;
     }
 
-    public void setInitStageOne(boolean b) {
+    private void setInitStageOne(boolean b) {
         try {
             gameSpace.put("init_stage_one", b);
         } catch (InterruptedException e) {
@@ -359,7 +362,7 @@ public class Game {
         }
     }
 
-    public boolean getInitStageOne() {
+    private boolean getInitStageOne() {
         boolean initStageOne = false;
         try {
             Object[] temp = gameSpace.queryp(new ActualField("init_stage_one")
@@ -395,7 +398,7 @@ public class Game {
 
     private ArrayList<Edge> getValidRoads() {
         Edge[][] edges = board.getEdges();
-        ArrayList<Edge> res = new ArrayList<Edge>();
+        ArrayList<Edge> res = new ArrayList<>();
         for (Edge[] edgeList : edges) {
             for (Edge edge : edgeList) {
                 if (isRoadValid(edge)) {
@@ -440,7 +443,7 @@ public class Game {
         return vertex.isSettlement();
     }
 
-    public int getPlayerCount() {
+    private int getPlayerCount() {
         try {
             return (int) gameSpace.query(Templates.playerCount())[1];
         } catch (InterruptedException e) {
@@ -530,7 +533,7 @@ public class Game {
     }
 
     private ArrayList<Vertex> getSettlements(int id) {
-        ArrayList<Vertex> settlements = new ArrayList<Vertex>();
+        ArrayList<Vertex> settlements = new ArrayList<>();
         for (Vertex[] vertexList : board.getVertices()) {
             for (Vertex vertex : vertexList) {
                 if (vertex != null && vertex.getId() == id && vertex.isSettlement()) {
@@ -542,7 +545,7 @@ public class Game {
     }
 
     private ArrayList<Vertex> getCities(int id) {
-        ArrayList<Vertex> cities = new ArrayList<Vertex>();
+        ArrayList<Vertex> cities = new ArrayList<>();
         for (Vertex[] vertexList : board.getVertices()) {
             for (Vertex vertex : vertexList) {
                 if (vertex != null && vertex.getId() == id && vertex.isCity()) {
@@ -601,7 +604,7 @@ public class Game {
         return false;
     }
 
-    public Resource stringToResource(String resource) {
+    private Resource stringToResource(String resource) {
         switch (resource) {
             case "brick":
                 return Resource.Brick;
@@ -642,7 +645,7 @@ public class Game {
         }
     }
 
-    public void updateBoard() {
+    private void updateBoard() {
         try {
             Board tempBoard = (Board) gameSpace.get(Templates.board())[1];
             gameSpace.put("board", board);
@@ -656,7 +659,7 @@ public class Game {
         return turn % getPlayerCount();
     }
 
-    public int getTurn() {
+    private int getTurn() {
         int turn = -1;
         try {
             turn = (int) gameSpace.query(Templates.turn())[1];
@@ -686,5 +689,15 @@ public class Game {
 
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+    public List<String> getChat() {
+        return chat.getNewChat();
+    }
+
+    public void sendChat(String chatMessage) throws InterruptedException {
+        if (!chatMessage.equals("")) {
+            chatSpace.put("chat", player.getName(), "says " + chatMessage);
+        }
     }
 }

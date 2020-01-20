@@ -1,11 +1,13 @@
 package view;
 
 import com.sun.javafx.scene.paint.GradientUtils;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -19,6 +21,7 @@ import model.PlayerState;
 import model.board.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class NewView {
@@ -38,9 +41,9 @@ public class NewView {
 
     public void update(Group root) {
         Hex hex;
-        for (int i = 0; i < hexes.length; i++) {
+        for (Hex[] value : hexes) {
             for (int j = 0; j < hexes.length; j++) {
-                hex = hexes[i][j];
+                hex = value[j];
                 if (hex != null) {
                     // Draw vertices
                     drawVertices(root, hex);
@@ -101,6 +104,12 @@ public class NewView {
             }
         }
     }
+
+    /*public void updateChat(List<Objects[]> chat, ListView listView) {
+        for (Object[] event : chat) {
+            listView.ite
+        }
+    }*/
 
     private void drawRobber(Group root) {
         Hex robberHex = game.getBoard().getCurrentRobberPosHex();
@@ -164,5 +173,11 @@ public class NewView {
                 break;
         }
         return paint;
+    }
+
+    public void updateChat(ListView<String> listView) {
+        ObservableList<String> chatEvents = FXCollections.observableArrayList();
+        listView.setItems(chatEvents);
+        chatEvents.addAll(game.getChat());
     }
 }
