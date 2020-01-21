@@ -26,7 +26,9 @@ public class boardUpdater implements Runnable {
                     if (!tempBoard.equals(game.getBoard())) {
                         gameSpace.get(Templates.board());
                         gameSpace.put("board", game.getBoard());
-                        gameSpace.put("board_updated");
+                        for (int i = 0; i < game.getPlayerCount() - 1; i++) {
+                            gameSpace.put("board_updated");
+                        }
                         //System.out.println("board update sent");
                     }
                 }
