@@ -8,6 +8,13 @@ import java.net.InetAddress;
 import java.util.*;
 
 public class Game {
+
+    private final int SUCCESSFUL_ACTION = 1;
+    private final int INSUFFICIENT_RESOURCES = -1;
+    private final int INVALID_LOCATION = -2;
+
+
+
     private Scanner scanner = new Scanner(System.in);
     private Random dice = new Random();
     private RemoteSpace gameSpace;
@@ -115,6 +122,28 @@ public class Game {
         return roll;
     }
 
+    public int tradeWithBank(String playerGives, String playerGets) {
+        PlayerState player = getPlayer(id);
+        int success;
+        Resource playerGivesR = stringToResource(playerGives);
+        Resource playerGetsR = stringToResource(playerGets);
+        ArrayList<Resource> t = new ArrayList<>();
+        t.add(playerGivesR);
+        t.add(playerGivesR);
+        t.add(playerGivesR);
+        t.add(playerGivesR);
+
+        if (player != null && player.getResourceAmount(playerGivesR) >= 4) {
+            player.useResources(t);
+            player.getResources().add(playerGetsR);
+            success = SUCCESSFUL_ACTION;
+        } else {
+            success = INSUFFICIENT_RESOURCES;
+        }
+        putPlayer(player);
+        return success;
+    }
+
     public void trade() {
         PlayerState player = getPlayer(id);
 
@@ -175,14 +204,14 @@ public class Game {
                 edge.setId(player.getId());
                 sendToChat("built a road");
                 System.out.println("Successfully built road");
-                success_code = 1;
+                success_code = SUCCESSFUL_ACTION;
             } else {
                 System.out.println("Invalid road location");
-                success_code = -2;
+                success_code = INVALID_LOCATION;
             }
         } else {
             System.out.println("Not enough resources");
-            success_code = -1;
+            success_code = INSUFFICIENT_RESOURCES;
         }
         putPlayer(player);
         return success_code;
@@ -193,17 +222,17 @@ public class Game {
         int success_code;
         if (startingRoadsBuiltThisTurn > 0) {
             System.out.println("Can't build anymore roads this turn");
-            success_code = -1;
+            success_code = INSUFFICIENT_RESOURCES;
         }
         if (isRoadValid(edge)) {
             edge.setId(player.getId());
             sendToChat("built a road");
             System.out.println("Successfully built road");
             startingRoadsBuiltThisTurn++;
-            success_code = 1;
+            success_code = SUCCESSFUL_ACTION;
         } else {
             System.out.println("Invalid road location");
-            success_code = -2;
+            success_code = INVALID_LOCATION;
         }
         putPlayer(player);
         return success_code;
@@ -224,14 +253,14 @@ public class Game {
                 vertex.buildSettlement(player.getId());
                 sendToChat("built a settlement");
                 System.out.println("Successfully built settlement");
-                success_code = 1;
+                success_code = SUCCESSFUL_ACTION;
             } else {
                 System.out.println("Invalid settlement location");
-                success_code = -2;
+                success_code = INVALID_LOCATION;
             }
         } else {
             System.out.println("Not enough resources");
-            success_code = -1;
+            success_code = INSUFFICIENT_RESOURCES;
         }
         putPlayer(player);
         return success_code;
@@ -254,10 +283,10 @@ public class Game {
             sendToChat("built a settlement");
             System.out.println("Successfully built settlement");
             startingSettlementsBuiltThisTurn++;
-            success_code = 1;
+            success_code = SUCCESSFUL_ACTION;
         } else {
             System.out.println("Invalid settlement location");
-            success_code = -2;
+            success_code = INVALID_LOCATION;
         }
         putPlayer(player);
         return success_code;
@@ -279,14 +308,14 @@ public class Game {
                 vertex.buildCity(player.getId());
                 sendToChat("built a city");
                 System.out.println("Successfully built city");
-                success_code = 1;
+                success_code = SUCCESSFUL_ACTION;
             } else {
                 System.out.println("Invalid city location");
-                success_code = -2;
+                success_code = INVALID_LOCATION;
             }
         } else {
             System.out.println("Not enough resources");
-            success_code = -1;
+            success_code = INSUFFICIENT_RESOURCES;
         }
         putPlayer(player);
         return success_code;
@@ -303,10 +332,10 @@ public class Game {
             DevelopmentCard devCard = board.buyDevelopmentCard();
             player.getDevelopmentCards().add(devCard);
             System.out.println("You received: " + devCard);
-            success_code = 1;
+            success_code = SUCCESSFUL_ACTION;
         } else {
             System.out.println("Not enough resources");
-            success_code = -1;
+            success_code = INSUFFICIENT_RESOURCES;
         }
         putPlayer(player);
         return success_code;
@@ -320,7 +349,7 @@ public class Game {
      */
     public int playDevelopmentCard(DevelopmentCard developmentCard, Hex hex) {
         PlayerState player = getPlayer(id);
-        int success_code  = 1;
+        int success_code  = SUCCESSFUL_ACTION;
         if (developmentCard == DevelopmentCard.Knight) {
             success_code = board.updateRobber(hex.getX(), hex.getY());
 

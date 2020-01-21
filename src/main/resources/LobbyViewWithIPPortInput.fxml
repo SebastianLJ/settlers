@@ -70,7 +70,7 @@
                         </TextField>
                      </children>
                   </GridPane>
-                  <Button fx:id="join" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="26.0" prefWidth="133.0" text="Join!" GridPane.rowIndex="1" />
+                  <Button fx:id="join" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="26.0" prefWidth="133.0" text="Join!" GridPane.rowIndex="1" />
                </children>
             </GridPane>
             </children>

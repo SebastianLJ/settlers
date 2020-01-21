@@ -1,9 +1,6 @@
 package controller;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
 import view.NewView;
 
 public class viewUpdater implements Runnable {

@@ -1,6 +1,8 @@
 package controller;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -8,10 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -33,6 +32,19 @@ import static model.GameState.*;
 public class NewController extends Application {
     private final int INSUFFICIENT_RESOURCES_ERROR = 0;
     private final int NOT_ENOUGH_RESOURCES_ERROR = 0;
+    public ToggleGroup toggleGroupGive;
+    public ToggleGroup toggleGroupGet;
+
+    public RadioButton giveOreRadioButton;
+    public RadioButton giveBrickRadioButton;
+    public RadioButton giveWoolRadioButton;
+    public RadioButton giveGrainRadioButton;
+    public RadioButton giveLumberRadioButton;
+    public RadioButton getOreRadioButton;
+    public RadioButton getBrickRadioButton;
+    public RadioButton getWoolRadioButton;
+    public RadioButton getGrainRadioButton;
+    public RadioButton getLumberRadioButton;
 
     private Game game;
     private NewView view;
@@ -65,6 +77,9 @@ public class NewController extends Application {
     private TextArea chatTextField;
     @FXML
     private Button chatButton;
+
+    @FXML
+    private ScrollPane scrollPane;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -103,7 +118,7 @@ public class NewController extends Application {
     private double initializeScene(Stage primaryStage) throws java.io.IOException {
         primaryStage.setTitle("Settlers of Catan");
         FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("AdvancedGameView.fxml"));
-        SplitPane root = loader.load();
+        StackPane root = loader.load();
 
         map = new Group();
 
@@ -115,7 +130,7 @@ public class NewController extends Application {
 
         Scene scene = new Scene(root);
 
-        initiateButtonListeners(loader);
+        initiateButtonListeners(loader, root);
 
         playerNameLabel = (Label) loader.getNamespace().get("playerNameLabel");
         playerNameLabel.setText(playerName);
@@ -135,6 +150,8 @@ public class NewController extends Application {
                 game.sendMsg(chatTextField.getText())
         );
 
+        scrollPane = (ScrollPane) loader.getNamespace().get("scrollPane");
+
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
         primaryStage.show();
@@ -145,11 +162,52 @@ public class NewController extends Application {
         double mapSize = gameView.getHeight() - diceView.getHeight();
         gameView.setMaxWidth(mapSize);
 
-        root.setDividerPositions(mapSize / root.getWidth());
+        ((SplitPane) root.getChildren().get(0)).setDividerPositions(mapSize / root.getWidth());
+
+        //createStartGameButton(root, mapSize);
+
         return mapSize;
     }
 
-    private void initiateButtonListeners(FXMLLoader loader) {
+    private void createStartGameButton(StackPane root, double mapSize) {
+        Button startGameButton = new Button();
+        startGameButton.setPrefSize(mapSize/2, mapSize/4);
+        startGameButton.setText("START GAME");
+        startGameButton.setStyle("-fx-background-color: \n" +
+                "        linear-gradient(#ffd65b, #e68400),\n" +
+                "        linear-gradient(#ffef84, #f2ba44),\n" +
+                "        linear-gradient(#ffea6a, #efaa22),\n" +
+                "        linear-gradient(#ffe657 0%, #f8c202 50%, #eea10b 100%),\n" +
+                "        linear-gradient(from 0% 0% to 15% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0));\n" +
+                "    -fx-background-radius: 30;\n" +
+                "    -fx-background-insets: 0,1,2,3,0;\n" +
+                "    -fx-text-fill: #654b00;\n" +
+                "    -fx-font-weight: bold;\n" +
+                "    -fx-font-size: 22px;\n" +
+                "    -fx-padding: 10 20 10 20;");
+        startGameButton.setTranslateX(mapSize/2-startGameButton.getPrefWidth()/2);
+        startGameButton.setTranslateY(mapSize/2-startGameButton.getPrefHeight()/2);
+
+        Pane pane = new Pane();
+        pane.setStyle("-fx-background-color: black; -fx-opacity: 0.2");
+
+        DropShadow shadow = new DropShadow();
+        //Adding the shadow when the mouse cursor is on
+        startGameButton.addEventHandler(MouseEvent.MOUSE_ENTERED,
+                e -> startGameButton.setEffect(shadow));
+        //Removing the shadow when the mouse cursor is off
+        startGameButton.addEventHandler(MouseEvent.MOUSE_EXITED,
+                e -> startGameButton.setEffect(null));
+        startGameButton.addEventHandler(MouseEvent.MOUSE_CLICKED,
+                e -> {
+                    if (game.getPlayerCount() > 2) {
+                        root.getChildren().removeAll(startGameButton, pane);
+                    }
+                });
+        root.getChildren().addAll(pane, startGameButton);
+    }
+
+    private void initiateButtonListeners(FXMLLoader loader, StackPane root) {
         buildRoad = (Button) loader.getNamespace().get("buildRoad");
         buildRoad.setOnAction(actionEvent -> gameState = GameState.BuildRoad);
 
@@ -163,7 +221,14 @@ public class NewController extends Application {
         buildDevCard.setOnAction(actionEvent -> gameState = GameState.BuyDevelopmentCard);
 
         tradeWithBank = (Button) loader.getNamespace().get("tradeWithBank");
-        tradeWithBank.setOnAction(actionEvent -> gameState = GameState.TradeBank);
+        tradeWithBank.setOnAction(actionEvent -> {
+            gameState = GameState.TradeBank;
+            try {
+                openTradeWithBankDialog(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         tradeWithPlayer = (Button) loader.getNamespace().get("tradeWithPlayer");
         tradeWithPlayer.setOnAction(actionEvent -> gameState = GameState.TradePlayer);
@@ -192,6 +257,76 @@ public class NewController extends Application {
             endTurnButton.setDisable(true);
             rollDices.setDisable(false);
         });
+    }
+
+    private void openTradeWithBankDialog(StackPane root) throws IOException {
+        FXMLLoader loader = new FXMLLoader(NewController.class.getClassLoader().getResource("TradeWithBankDialog.fxml"));
+        BorderPane tradeDialog = loader.load();
+
+        toggleGroupGive = new ToggleGroup();
+        toggleGroupGet = new ToggleGroup();
+
+        giveOreRadioButton = (RadioButton) loader.getNamespace().get("giveOreRadioButton");
+        giveBrickRadioButton = (RadioButton) loader.getNamespace().get("giveBrickRadioButton");
+        giveWoolRadioButton = (RadioButton) loader.getNamespace().get("giveWoolRadioButton");
+        giveGrainRadioButton = (RadioButton) loader.getNamespace().get("giveGrainRadioButton");
+        giveLumberRadioButton = (RadioButton) loader.getNamespace().get("giveLumberRadioButton");
+        giveOreRadioButton.setToggleGroup(toggleGroupGive);
+        giveBrickRadioButton.setToggleGroup(toggleGroupGive);
+        giveWoolRadioButton.setToggleGroup(toggleGroupGive);
+        giveGrainRadioButton.setToggleGroup(toggleGroupGive);
+        giveLumberRadioButton.setToggleGroup(toggleGroupGive);
+
+        getOreRadioButton = (RadioButton) loader.getNamespace().get("getOreRadioButton");
+        getBrickRadioButton = (RadioButton) loader.getNamespace().get("getBrickRadioButton");
+        getWoolRadioButton = (RadioButton) loader.getNamespace().get("getWoolRadioButton");
+        getGrainRadioButton = (RadioButton) loader.getNamespace().get("getGrainRadioButton");
+        getLumberRadioButton = (RadioButton) loader.getNamespace().get("getLumberRadioButton");
+        getOreRadioButton.setToggleGroup(toggleGroupGet);
+        getBrickRadioButton.setToggleGroup(toggleGroupGet);
+        getWoolRadioButton.setToggleGroup(toggleGroupGet);
+        getGrainRadioButton.setToggleGroup(toggleGroupGet);
+        getLumberRadioButton.setToggleGroup(toggleGroupGet);
+
+        final String[] userGivesResource = new String[1];
+        final String[] userGetsResource = new String[1];
+
+        toggleGroupGive.selectedToggleProperty().addListener((ob, o, n) -> {
+
+            RadioButton rb = (RadioButton)toggleGroupGive.getSelectedToggle();
+
+            if (rb != null) {
+                userGivesResource[0] = rb.getText().split(" ")[1];
+            }
+        });
+
+        toggleGroupGet.selectedToggleProperty().addListener((ob, o, n) -> {
+
+            RadioButton rb = (RadioButton)toggleGroupGet.getSelectedToggle();
+
+            if (rb != null) {
+                userGetsResource[0] = rb.getText().split(" ")[1];
+
+            }
+        });
+
+        giveOreRadioButton.fire();
+        getOreRadioButton.fire();
+
+        Pane pane = new Pane();
+        pane.setStyle("-fx-background-color: black; -fx-opacity: 0.2");
+
+        root.getChildren().addAll(pane, tradeDialog);
+
+        Button tradeButton = (Button) loader.getNamespace().get("tradeButton");
+        Button cancelButton = (Button) loader.getNamespace().get("cancelButton");
+
+        tradeButton.setOnMouseClicked(e -> tradeResourcesWithBank(userGivesResource[0], userGetsResource[0]));
+        cancelButton.setOnMouseClicked(e -> root.getChildren().removeAll(tradeDialog, pane));
+    }
+
+    private void tradeResourcesWithBank(String userGivesResources, String userGetsResource) {
+        game.tradeWithBank(userGivesResources, userGetsResource);
     }
 
     private void setButtonsDisable(boolean bool) {
@@ -507,5 +642,9 @@ public class NewController extends Application {
 
     public Label getDiceRollLabel() {
         return diceRollLabel;
+    }
+
+    public ScrollPane getScrollPane() {
+        return scrollPane;
     }
 }
