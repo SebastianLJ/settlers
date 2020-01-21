@@ -18,7 +18,8 @@ public class boardUpdater implements Runnable {
         while(true) {
             try {
                 boolean yourTurn = game.yourTurn();
-                if (!yourTurn && gameSpace.getp(new ActualField("board_updated")) != null) {
+                if (!yourTurn && gameSpace.getp(new ActualField("board_updated"),
+                        new ActualField(game.getPlayerId())) != null) {
                     Board board = (Board) gameSpace.query(Templates.board())[1];
                     game.setBoard(board);
                 } else if (yourTurn){
@@ -27,9 +28,11 @@ public class boardUpdater implements Runnable {
                     if (!tempBoard.equals(game.getBoard())) {
                         gameSpace.get(Templates.board());
                         gameSpace.put("board", game.getBoard());
-                        for (int i = 0; i < game.getPlayerCount() - 1; i++) {
-                            gameSpace.put("board_updated");
-                            System.out.println("put board updated");
+                        for (int i = 0; i < game.getPlayerCount(); i++) {
+                            if (i != game.getPlayerId()) {
+                                gameSpace.put("board_updated", i);
+                                System.out.println("put board updated");
+                            }
                         }
                         //System.out.println("board update sent");
                     }
