@@ -1,8 +1,5 @@
 package model;
 
-import controller.NewController;
-import javafx.application.Application;
-import javafx.stage.Stage;
 import org.jspace.*;
 
 import java.io.IOException;

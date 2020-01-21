@@ -4,10 +4,10 @@ import model.Game;
 
 public class ButtonDisabler implements Runnable {
 
-    private NewController controller;
+    private Controller controller;
     private Game game;
 
-    public ButtonDisabler(NewController controller, Game game) {
+    public ButtonDisabler(Controller controller, Game game) {
         this.controller = controller;
         this.game = game;
     }
