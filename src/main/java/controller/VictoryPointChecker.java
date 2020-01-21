@@ -1,6 +1,5 @@
 package controller;
 
-import controller.NewController;
 import model.Game;
 import org.jspace.ActualField;
 import org.jspace.FormalField;
@@ -8,10 +7,10 @@ import org.jspace.RemoteSpace;
 
 public class VictoryPointChecker implements Runnable {
     private Game game;
-    private NewController controller;
+    private Controller controller;
     private RemoteSpace space;
 
-    public VictoryPointChecker(NewController controller, Game game) {
+    public VictoryPointChecker(Controller controller, Game game) {
         this.game = game;
         if (game == null) {
             System.out.println("check");

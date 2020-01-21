@@ -843,7 +843,6 @@ public class Game {
         return id;
     }
 
-
     public String getDiceRoll() {
         try {
             Object[] t = gameSpace.queryp(Templates.dices());

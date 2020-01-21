@@ -1,225 +1,178 @@
 package view;
 
-import controller.Controller;
-import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Polygon;
-import javafx.stage.Stage;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import model.Game;
 import model.board.*;
 
-import java.io.IOException;
+public class View {
 
-import static java.lang.Math.*;
+    private static final int PLAYER_ONE = 0;
+    private static final int PLAYER_TWO = 1;
+    private static final int PLAYER_THREE = 2;
+    private static final int PLAYER_FOUR = 3;
 
-public class View extends Application {
+    private Game game;
+    private Hex[][] hexes;
+    private Circle circle;
 
-    private final int screenSize = 1000;
-
-    private final int HEX_SIZE = screenSize/10;
-    private final double HEX_WIDTH = Math.sqrt(3)*HEX_SIZE;
-    private final double HEX_HEIGHT = 2*HEX_SIZE;
-
-    // Coordinates for center tiles
-    private final int centerTileX = 2, centerTileY = 2;
-
-    // Offset calculated from the center tile
-    private final double centerCoordX = HEX_WIDTH*centerTileX + 0.5*HEX_WIDTH*centerTileY, centerCoordY = 3*HEX_HEIGHT/4*centerTileY;
-
-    private final double offsetX = screenSize/2.0 - centerCoordX, offsetY = screenSize/2.0 - centerCoordY;
-
-    private Controller controller;
-
-    private Edge clickedEdge;
-    private Vertex clickedVertex;
-
-    public static void main(String[] args) {
-        launch(args);
+    public View(Game game) {
+        this.game = game;
+        hexes = game.getBoard().getHexes();
     }
 
-    @Override
-    public void start(Stage primaryStage) throws IOException {
-        primaryStage.setTitle("Settlers of Catan");
-        controller = new Controller(this);
-
-        Group root = new Group();
-        Scene scene = new Scene(root,screenSize,screenSize, Color.DEEPSKYBLUE);
-
-        // TODO Make game depending on users choices in lobby UI
-        controller.createGame("");
-
-        Hex[][] hexes = controller.getGame().getBoard().getHexes();
-        setupHexUI(root, hexes);
-
-
-
-
-
-
-
-
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    public void initializeRobber(Group map) {
+        circle = new Circle();
+        map.getChildren().add(circle);
     }
 
-    private void setupHexUI(Group root, Hex[][] hexes) {
-        Polygon polygon;
+    public void update(Group map) {
         Hex hex;
-        for (int i = 0; i < hexes.length; i++) {
+        for (Hex[] value : hexes) {
             for (int j = 0; j < hexes.length; j++) {
-                hex = hexes[i][j];
+                hex = value[j];
                 if (hex != null) {
-                    polygon = createPolygonFromHex(hex);
-                    polygon.setId(i + " " + j);
-
-                    Hex finalHex = hex;
-
-                    polygon.setOnMouseClicked(mouseEvent ->
-                            handleMouseEvent(mouseEvent, finalHex));
-
-                    root.getChildren().add(polygon);
+                    // Draw vertices
+                    drawVertices(map, hex);
+                    drawPaths(map, hex);
+                    drawRobber();
                 }
             }
         }
     }
 
-    /**
-     * Finds the appropriate game object (ie. Path, Intersection etc).
-     * @param mouseEvent from listener connected to polygon
-     * @param hex connected to polygon
-     */
-    private void handleMouseEvent(MouseEvent mouseEvent, Hex hex) {
-        int i = hex.getY();
-        int j = hex.getX();
-
-        double touchAngle = getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex));
-
-        clickedVertex = getChosenIntersection(i, j, touchAngle);
-        clickedEdge = getChosenEdge(i, j, touchAngle);
-
-        /*System.out.println("This is hex [" + getId(polygon)[0] + "][" + getId(polygon)[1] + "] " +
-                "at coordinates (" + getHexCenterX(hex) + ", " + getHexCenterY(hex) + "). The screen was touched in an angle of "
-                + getAngleFromScreenClick(mouseEvent.getSceneX(), mouseEvent.getSceneY(), getHexCenterX(hex), getHexCenterY(hex)));*/
+    public void updateDiceRoll(Label diceRoll) {
+        diceRoll.setText(game.getDiceRoll());
     }
 
-    /**
-     * Get the path chosen by the user via a screen click
-     * @param i i index in hexes[i][j]
-     * @param j j index in hexes[i][j]
-     * @param angle angle calculated by @getAngleFromScreenClick
-     * @return // TODO TBD.
-     */
-    public Edge getChosenEdge(int i, int j, double angle) {
-        int edgeIndex = (int) (floor(angle) + 30) % 360 / 60;
-        Edge[] edges = controller.getGame().getBoard().getAdjacentEdges(new Hex(j, i, Terrain.None, -1));
-
-        Edge chosenEdge = edges[edgeIndex];
-        return chosenEdge;
-    }
-
-    /**
-     * Get the intersection chosen by the user via a screen click
-     * @param i i index in hexes[i][j]
-     * @param j j index in hexes[i][j]
-     * @param angle angle calculated by @getAngleFromScreenClick
-     * @return // TODO TBD.
-     */
-    public Vertex getChosenIntersection(int i, int j, double angle) {
-        int vertexIndex = (int) floor(angle)/60;
-        Vertex[] vertices = controller.getGame().getBoard().getAdjacentVertices(new Hex(j,i, Terrain.None, -1));
-
-        // Do some verification of chosen vertex..
-        Vertex chosenVertex = vertices[vertexIndex];
-        return chosenVertex;
-    }
-
-
-    /**
-     * Calculates and returns the angle from the center of the clicked hexagon to the actual mouse click.
-     * @param click_x x-coordinate of click
-     * @param click_y y-coordinate of click
-     * @param center_x x-coordinate of hex center
-     * @param center_y y-coordinate of hex center
-     * @return angle from center to click, as described by https://www.redblobgames.com/grids/hexagons/#basics
-     */
-    private double getAngleFromScreenClick(double click_x, double click_y, double center_x, double center_y) {
-        double delta_x = click_x - center_x;
-        double delta_y = click_y - center_y;
-        double theta_radians = atan2(delta_y, delta_x);
-
-        double theta_degrees = theta_radians*180/Math.PI;
-
-        if (theta_degrees < 0) {
-            return theta_degrees + 360;
+    public void updatePlayerInfo(GridPane ownPlayerInfo, GridPane[] otherPlayerInfo) {
+        int thisPlayer = game.getPlayerId();
+        if (thisPlayer == game.getTurnId()) {
+            ownPlayerInfo.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
         } else {
-            return theta_degrees;
+            ownPlayerInfo.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        }
+
+        ((Label) ownPlayerInfo.getChildren().get(5)).setText(Integer.toString(game.getVictoryPoints(thisPlayer)));
+
+        // TODO Get dev cards
+        //((Label) getNodeFromGridPane(ownPlayerInfo, 1,2)).setText();
+
+        GridPane resources =  (GridPane) ownPlayerInfo.getChildren().get(7);
+
+        String[] amountOfPlayerResources = {Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Ore)),
+                Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Brick)),
+                Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Wool)),
+                Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Grain)),
+                Integer.toString(game.queryPlayer(thisPlayer).getResourceAmount(Resource.Lumber))};
+
+        for (int i = 0; i < 5; i++) {
+            ((Label) resources.getChildren().get(5 + i)).setText(amountOfPlayerResources[i]);
+        }
+        int c = 0;
+        for (int i = 0; i < 4; i++) {
+            if (i != thisPlayer) {
+                GridPane info = otherPlayerInfo[c];
+
+                if (i == game.getTurnId()) {
+                    info.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+                } else {
+                    info.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+                }
+
+                if (i < game.getPlayerCount()) {
+                    ((Label) info.getChildren().get(4)).setText(game.queryPlayer(i).getName());
+                    ((Label) info.getChildren().get(5)).setText(Integer.toString(game.getVictoryPoints(i)));
+                    ((Label) info.getChildren().get(6)).setText((Integer.toString(game.queryPlayer(i).getDevelopmentCards().size())));
+                    ((Label) info.getChildren().get(7)).setText(Integer.toString(game.getResources(i).size()));
+                }
+                c++;
+            }
         }
     }
 
-
-    /**
-     * Creates a Shape.Polygon in the x,y-basis from hex-basis
-     * @param hex input hex containing x,y-hex
-     * @return new polygon object with coordinates made from hex
-     */
-    private Polygon createPolygonFromHex(Hex hex) {
-        // HexCoordinates to x,y-coordinates, with center offset
-        double x = getHexCenterX(hex);
-        double y = getHexCenterY(hex);
-
-        Polygon polygon = new Polygon(x,y + HEX_HEIGHT/2, x + HEX_WIDTH/2, y + HEX_HEIGHT/4, x + HEX_WIDTH/2, y - HEX_HEIGHT/4,
-                                x, y - HEX_HEIGHT/2, x - HEX_WIDTH/2, y - HEX_HEIGHT/4, x - HEX_WIDTH/2, y + HEX_HEIGHT/4);
-
-        polygon.setStroke(Color.BLACK);
-
-        // Get the color for the given hex depending on which terrain/resource type it contains
-        Paint color = getColorFromTerrain(hex.getTerrain());
-
-        polygon.setFill(color);
-
-        return polygon;
+    private void drawRobber() {
+        Hex robberHex = game.getBoard().getCurrentRobberPosHex();
+        circle.setCenterX(robberHex.getRealX());
+        circle.setCenterY(robberHex.getRealY());
+        circle.setRadius(robberHex.getSize() / 4);
     }
 
-    // Shifts y-coordinate in hex to x,y-basis
-    private double getHexCenterY(Hex hex) {
-        return 3*HEX_HEIGHT/4*hex.getY() + offsetY;
-    }
+    private void drawPaths(Group root, Hex hex) {
+        Point[] points = hex.getAdjacentVerticesLocation();
+        Edge[] edges = game.getBoard().getAdjacentEdges(hex);
 
-    // Shifts x-coordinate in hex to x,y-basis
-    private double getHexCenterX(Hex hex) {
-        return HEX_WIDTH*hex.getX() + 0.5*HEX_WIDTH*hex.getY() + offsetX;
-    }
+        for (int k = 0; k < edges.length; k++) {
+            if (edges[k].getId() == -1) {
+                continue;
+            }
+            Line line = new Line(points[k].getX(), points[k].getY(), points[(k+5)%6].getX(), points[(k+5)%6].getY());
+            line.setStrokeWidth(hex.getSize() / 10.);
+            root.getChildren().add(line);
 
-    // Finds the correct color depending on the terrain
-    private Paint getColorFromTerrain(Terrain terrain) {
-        Paint color;
-
-        switch (terrain) {
-            case Fields:
-                color = Color.WHEAT;
-                break;
-            case Forest:
-                color = Color.FORESTGREEN;
-                break;
-            case Pasture:
-                color = Color.LAWNGREEN;
-                break;
-            case Hills:
-                color = Color.FIREBRICK;
-                break;
-            case Mountains:
-                color = Color.LIGHTGREY;
-                break;
-            case Desert:
-                color = Color.SANDYBROWN;
-                break;
-            default:
-                color = Color.BLACK;
+            Paint paint = getColorFromPlayerID(edges[k].getId());
+            line.setStroke(paint);
         }
-        return color;
+    }
+
+    private void drawVertices(Group root, Hex hex) {
+        Point[] points = hex.getAdjacentVerticesLocation();
+        Vertex[] vertices = game.getBoard().getAdjacentVertices(hex);
+
+        for (int k = 0; k < vertices.length; k++) {
+            if (vertices[k].getId() == -1) {
+                continue;
+            }
+
+            Circle circle = new Circle(points[k].getX(), points[k].getY(), hex.getSize() / 8.);
+
+
+            Paint playerColor = getColorFromPlayerID(vertices[k].getId());
+            circle.setFill(playerColor);
+
+            if (vertices[k].isCity()) {
+                circle.setRadius(hex.getSize()/4.);
+            }
+            root.getChildren().add(circle);
+        }
+    }
+
+    private Paint getColorFromPlayerID(int playerID) {
+        Paint paint = Color.TRANSPARENT;
+        switch (playerID) {
+            case PLAYER_ONE:
+                paint = Color.RED;
+                break;
+            case PLAYER_TWO:
+                paint = Color.BLUE;
+                break;
+            case PLAYER_THREE:
+                paint = Color.GREEN;
+                break;
+            case PLAYER_FOUR:
+                paint = Color.YELLOW;
+                break;
+        }
+        return paint;
+    }
+
+    public void updateChat(ListView<String> listView) {
+        ObservableList<String> chatEvents = FXCollections.observableArrayList();
+        listView.setItems(chatEvents);
+        chatEvents.addAll(game.getChat());
     }
 }

@@ -1,14 +1,14 @@
 package controller;
 
 import javafx.application.Platform;
-import view.NewView;
+import view.View;
 
 public class viewUpdater implements Runnable {
 
-    private NewController controller;
-    private NewView view;
+    private Controller controller;
+    private View view;
 
-    viewUpdater(NewController controller, NewView view) {
+    viewUpdater(Controller controller, View view) {
         this.controller = controller;
         this.view = view;
     }
