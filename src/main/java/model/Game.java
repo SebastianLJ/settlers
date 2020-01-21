@@ -828,4 +828,8 @@ public class Game {
         }
         return "0";
     }
+
+    public RemoteSpace getGameSpace() {
+        return gameSpace;
+    }
 }

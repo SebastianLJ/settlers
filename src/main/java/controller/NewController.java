@@ -557,4 +557,7 @@ public class NewController extends Application {
         return diceRollLabel;
     }
 
+    public void gameWon(int playerId) {
+
+    }
 }
