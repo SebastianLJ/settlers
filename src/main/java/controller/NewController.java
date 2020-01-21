@@ -116,9 +116,6 @@ public class NewController extends Application {
         Scene scene = new Scene(lobby);
         primaryStage.setScene(scene);
         primaryStage.show();
-
-
-
     }
 
     private double initializeScene(Stage primaryStage) throws java.io.IOException {
@@ -359,6 +356,8 @@ public class NewController extends Application {
         tradeWithPlayer.setDisable(bool);
         playDevCard.setDisable(bool);
         endTurnButton.setDisable(bool);
+    }
+
     private void setLocks(boolean val) {
         buildRoadLock = val;
         buildSettlementLock = val;
