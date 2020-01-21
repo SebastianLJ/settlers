@@ -56,8 +56,8 @@ public class Controller extends Application {
             rollDices, endTurnButton;
 
     private boolean buildRoadLock, buildSettlementLock, buildCityLock, buildDevCardLock,
-                    tradeWithBankLock, tradeWithPlayerLock, playDevCardLock, viewDevCardLock,
-                    rollDicesLock, endTurnButtonLock;
+            tradeWithBankLock, tradeWithPlayerLock, playDevCardLock, viewDevCardLock,
+            rollDicesLock, endTurnButtonLock;
 
     private Button createGameButton;
     private TextField textField;
@@ -89,13 +89,18 @@ public class Controller extends Application {
         FXMLLoader loader = new FXMLLoader(Controller.class.getClassLoader().getResource("LobbyView.fxml"));
         AnchorPane lobby = loader.load();
 
+        playerName = "";
         textField = (TextField) loader.getNamespace().get("nameField");
 
         Button joinGameButton = (Button) loader.getNamespace().get("JoinGameButton");
         joinGameButton.setOnMouseClicked(mouseEvent -> {
             try {
                 playerName = textField.getText();
-                showJoinGameDialog(primaryStage);
+                if (playerName.isEmpty()) {
+                    textField.requestFocus();
+                } else {
+                    showJoinGameDialog(primaryStage);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -104,12 +109,16 @@ public class Controller extends Application {
         createGameButton = (Button) loader.getNamespace().get("CreateGameButton");
         createGameButton.setOnMouseClicked(mouseEvent -> {
             try {
-                createGame(primaryStage, true, "");
-            } catch (IOException e) {
+                playerName = textField.getText();
+                if (playerName.isEmpty()) {
+                    textField.requestFocus();
+                } else {
+                    createGame(primaryStage, true, "");
+                }
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         });
-
 
         Scene scene = new Scene(lobby);
         primaryStage.setScene(scene);
@@ -127,7 +136,7 @@ public class Controller extends Application {
         HBox diceView = (HBox) gameView.getChildren().get(0);
 
         AnchorPane anchorPane = (AnchorPane) gameView.getChildren().get(1);
-        anchorPane.getChildren().set(0,map);
+        anchorPane.getChildren().set(0, map);
 
         Scene scene = new Scene(root);
 
@@ -172,7 +181,7 @@ public class Controller extends Application {
 
     private void createStartGameButton(StackPane root, double mapSize) {
         Button startGameButton = new Button();
-        startGameButton.setPrefSize(mapSize/2, mapSize/4);
+        startGameButton.setPrefSize(mapSize / 2, mapSize / 4);
         startGameButton.setText("START GAME");
         startGameButton.setStyle("-fx-background-color: \n" +
                 "        linear-gradient(#ffd65b, #e68400),\n" +
@@ -186,8 +195,8 @@ public class Controller extends Application {
                 "    -fx-font-weight: bold;\n" +
                 "    -fx-font-size: 22px;\n" +
                 "    -fx-padding: 10 20 10 20;");
-        startGameButton.setTranslateX(mapSize/2-startGameButton.getPrefWidth()/2);
-        startGameButton.setTranslateY(mapSize/2-startGameButton.getPrefHeight()/2);
+        startGameButton.setTranslateX(mapSize / 2 - startGameButton.getPrefWidth() / 2);
+        startGameButton.setTranslateY(mapSize / 2 - startGameButton.getPrefHeight() / 2);
 
         Pane pane = new Pane();
         pane.setStyle("-fx-background-color: black; -fx-opacity: 0.2");
@@ -309,7 +318,7 @@ public class Controller extends Application {
 
         toggleGroupGive.selectedToggleProperty().addListener((ob, o, n) -> {
 
-            RadioButton rb = (RadioButton)toggleGroupGive.getSelectedToggle();
+            RadioButton rb = (RadioButton) toggleGroupGive.getSelectedToggle();
 
             if (rb != null) {
                 userGivesResource[0] = rb.getText().split(" ")[1];
@@ -318,7 +327,7 @@ public class Controller extends Application {
 
         toggleGroupGet.selectedToggleProperty().addListener((ob, o, n) -> {
 
-            RadioButton rb = (RadioButton)toggleGroupGet.getSelectedToggle();
+            RadioButton rb = (RadioButton) toggleGroupGet.getSelectedToggle();
 
             if (rb != null) {
                 userGetsResource[0] = rb.getText().split(" ")[1];
@@ -602,8 +611,7 @@ public class Controller extends Application {
         button.setEffect(null);
     }
 
-    private void createGame(Stage primaryStage, boolean isHost, String hostUri) throws IOException {
-        playerName = textField.getText();
+    private void createGame(Stage primaryStage, boolean isHost, String hostUri) throws IOException, InterruptedException {
         double mapSize = initializeScene(primaryStage);
         game = new Game(hostUri, isHost, playerName, mapSize);
         view = new View(game);
@@ -611,13 +619,11 @@ public class Controller extends Application {
         Hex[][] hexes = game.getBoard().getHexes();
         setupHexUI(map, hexes);
         view.initializeRobber(map);
-        Thread thread = new Thread(new viewUpdater(this, view));
-        thread.setDaemon(true);
-        thread.start();
 
+        new Thread(new viewUpdater(this, view)).start();
         //new Thread(new ButtonDisabler(this, game)).start();
         //new Thread(new VictoryPointChecker(this, game)).start();
-    }
+        }
 
     private void showJoinGameDialog(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader(Controller.class.getClassLoader().getResource("LobbyViewWithIPPortInput.fxml"));
@@ -629,14 +635,20 @@ public class Controller extends Application {
         TextField ipTextField = (TextField) loader.getNamespace().get("ipText");
         TextField portTextField = (TextField) loader.getNamespace().get("portText");
 
+        ipTextField.requestFocus();
+
         Button joinButton = (Button) loader.getNamespace().get("join");
         joinButton.setOnMouseClicked(mouseEvent -> {
             try {
                 playerName = textField.getText();
-                String uri = "tcp://" + ipTextField.getText() + ":" + portTextField.getText();
-                System.out.println("uri: " + uri);
-                createGame(primaryStage, false, uri);
-            } catch (IOException e) {
+                if (playerName.isEmpty()) {
+                    textField.requestFocus();
+                } else {
+                    String uri = "tcp://" + ipTextField.getText() + ":" + portTextField.getText();
+                    System.out.println("uri: " + uri);
+                    createGame(primaryStage, false, uri);
+                }
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         });
@@ -645,7 +657,7 @@ public class Controller extends Application {
         createGameButton.setOnMouseClicked(mouseEvent -> {
             try {
                 createGame(primaryStage, true, "");
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         });

@@ -119,7 +119,7 @@ public class Game {
     }
 
     public int tradeWithBank(String playerGives, String playerGets) {
-        PlayerState player = getPlayer(id);
+        PlayerState player = queryPlayer(id);
         int success;
         Resource playerGivesR = stringToResource(playerGives);
         Resource playerGetsR = stringToResource(playerGets);
