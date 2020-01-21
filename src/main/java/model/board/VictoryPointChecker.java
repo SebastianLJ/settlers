@@ -11,7 +11,7 @@ public class VictoryPointChecker implements Runnable {
     NewController controller;
     RemoteSpace space;
 
-    public VictoryPointChecker(Game game, NewController controller) {
+    public VictoryPointChecker(NewController controller, Game game) {
         this.game = game;
         this.space = game.getGameSpace();
         this.controller = controller;

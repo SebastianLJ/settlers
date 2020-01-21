@@ -99,6 +99,7 @@ public class NewController extends Application {
         primaryStage.show();
 
         new Thread(new ButtonDisabler(this, game)).start();
+        new Thread(new VictoryPointChecker(this, game)).start();
 
     }
 
