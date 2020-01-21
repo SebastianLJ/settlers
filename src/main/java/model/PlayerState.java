@@ -84,10 +84,14 @@ public class PlayerState {
     }
 
     public boolean hasResources(ArrayList<Resource> reqResources) {
+        if (resources.isEmpty()) {
+            return false;
+        }
         ArrayList<Resource> tempResources = new ArrayList<>(resources);
-
         for (Resource resource : reqResources) {
-            if (!tempResources.remove(resource)) {
+            if (!tempResources.isEmpty() && tempResources.contains(resource)) {
+                tempResources.remove(resource);
+            } else {
                 return false;
             }
         }

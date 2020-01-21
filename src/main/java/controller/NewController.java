@@ -474,8 +474,8 @@ public class NewController extends Application {
         thread.setDaemon(true);
         thread.start();
 
-        new Thread(new ButtonDisabler(this, game)).start();
-        new Thread(new VictoryPointChecker(this, game)).start();
+        //new Thread(new ButtonDisabler(this, game)).start();
+        //new Thread(new VictoryPointChecker(this, game)).start();
     }
 
     private void showJoinGameDialog(Stage primaryStage) throws IOException {

@@ -245,7 +245,7 @@ public class Game {
         }
         Vertex[] vertices = board.getAdjacentVertices(edge);
         for (Vertex vertex : vertices) {
-            if (vertex.getId() == id && vertex.isCity() || vertex.isSettlement()) {
+            if (vertex != null && (vertex.getId() == id && vertex.isCity() || vertex.isSettlement())) {
                 return true;
             }
             for (Edge nextEdge : board.getAdjacentEdges(vertex)) {
@@ -579,12 +579,16 @@ public class Game {
 
     public boolean canBuildRoad() {
         PlayerState player = queryPlayer(id);
+        System.out.println(Price.Road.getPrice().toString());
+        System.out.println((player.hasResources(Price.Road.getPrice())
+                && getValidRoads().size() > 0));
         return (player.hasResources(Price.Road.getPrice()) && getValidRoads().size() > 0);
     }
 
     public boolean canBuildSettlement() {
         PlayerState player = queryPlayer(id);
-        return (player.hasResources(Price.Settlement.getPrice())) && getValidSettlements().size() > 0;
+        return (player.hasResources(Price.Settlement.getPrice())) &&
+                getValidSettlements().size() > 0;
     }
 
     public boolean canBuildCity() {
