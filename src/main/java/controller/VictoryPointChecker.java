@@ -1,4 +1,4 @@
-package model.board;
+package controller;
 
 import controller.NewController;
 import model.Game;
