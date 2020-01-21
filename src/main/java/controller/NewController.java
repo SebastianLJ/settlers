@@ -113,6 +113,9 @@ public class NewController extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        new Thread(new ButtonDisabler(this, game)).start();
+        new Thread(new VictoryPointChecker(this, game)).start();
+
     }
 
     private double initializeScene(Stage primaryStage) throws java.io.IOException {
@@ -244,7 +247,7 @@ public class NewController extends Application {
             if (game.yourTurn()) {
                 diceRoll = game.roll();
                 diceRollLabel.setText(Integer.toString(diceRoll));
-                setButtonsDisable(false);
+                //setButtonsDisable(false);
                 endTurnButton.setDisable(false);
                 rollDices.setDisable(true);
             }
@@ -253,10 +256,11 @@ public class NewController extends Application {
         endTurnButton = (Button) loader.getNamespace().get("endTurn");
         endTurnButton.setOnAction(actionEvent -> {
             endTurn();
-            setButtonsDisable(true);
+            //setButtonsDisable(true);
             endTurnButton.setDisable(true);
             rollDices.setDisable(false);
         });
+        endTurnButton.setDisable(true);
     }
 
     private void openTradeWithBankDialog(StackPane root) throws IOException {
@@ -400,8 +404,7 @@ public class NewController extends Application {
                     if (initialState && game.getStartingRoadsBuiltThisTurn() == 0) {
                         success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
                         if (success == 1) {
-                            endTurn();
-                            endTurnButton.setDisable(true);
+                            endTurnButton.setDisable(false);
                         }
                     } else {
                         success = game.buildRoad(getChosenEdge(i, j, touchAngle));
@@ -445,8 +448,10 @@ public class NewController extends Application {
         if (endedInitTurnCount < 2) {
             game.endInitTurn();
             endedInitTurnCount++;
+            if (endedInitTurnCount >= 2) {
+                initialState = false;
+            }
         } else {
-            initialState = false;
             game.endTurn();
         }
     }
@@ -640,11 +645,59 @@ public class NewController extends Application {
         return chatView;
     }
 
+    public Button getBuildRoad() {
+        return buildRoad;
+    }
+
+    public Button getBuildSettlement() {
+        return buildSettlement;
+    }
+
+    public Button getBuildCity() {
+        return buildCity;
+    }
+
+    public Button getBuildDevCard() {
+        return buildDevCard;
+    }
+
+    public Button getTradeWithBank() {
+        return tradeWithBank;
+    }
+
+    public Button getTradeWithPlayer() {
+        return tradeWithPlayer;
+    }
+
+    public Button getPlayDevCard() {
+        return playDevCard;
+    }
+
+    public Button getViewDevCard() {
+        return viewDevCard;
+    }
+
+    public Button getRollDices() {
+        return rollDices;
+    }
+
+    public boolean isInitialState() {
+        return initialState;
+    }
+
+    public void disableBuyCity(boolean val) {
+        buildCity.setDisable(val);
+    }
+
     public Label getDiceRollLabel() {
         return diceRollLabel;
     }
 
     public ScrollPane getScrollPane() {
         return scrollPane;
+    }
+
+    public void gameWon(int playerId) {
+
     }
 }
