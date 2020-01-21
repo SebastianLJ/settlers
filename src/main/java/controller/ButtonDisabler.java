@@ -14,12 +14,14 @@ public class ButtonDisabler implements Runnable {
 
     @Override
     public void run() {
-        if (!controller.isInitialState()) {
-            controller.getBuildRoad().setDisable(!(game.canBuildRoad()));
-            controller.getBuildSettlement().setDisable(!(game.canBuildCity()));
-            controller.disableBuyCity(!game.canBuildCity());
-            controller.getBuildDevCard().setDisable(!game.canBuildDevelopmentCard());
-            controller.getTradeWithBank().setDisable(!game.canTradeWithBank());
+        while(true) {
+            if (controller.getBuildRoad() != null && game.canBuildRoad()) {
+                System.out.println("can build road");
+                controller.getBuildRoad().setDisable(false);
+            } else if (controller.getBuildRoad() != null) {
+                System.out.println("can't build road");
+                controller.getBuildRoad().setDisable(true);
+            }
         }
     }
 }

@@ -17,11 +17,19 @@ public class boardUpdater implements Runnable {
     public void run() {
         while(true) {
             try {
-                if (!game.yourTurn()) {
+                if (gameSpace.getp(new ActualField("board_updated")) != null && !game.yourTurn()) {
                     Board board = (Board) gameSpace.query(Templates.board())[1];
                     game.setBoard(board);
+                } else {
+                    Board tempBoard = (Board) gameSpace.query(Templates.board())[1];
+
+                    if (!tempBoard.equals(game.getBoard())) {
+                        gameSpace.get(Templates.board());
+                        gameSpace.put("board", game.getBoard());
+                        gameSpace.put("board_updated");
+                        //System.out.println("board update sent");
+                    }
                 }
-                //board.printVertexIds();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

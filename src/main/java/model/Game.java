@@ -441,7 +441,7 @@ public class Game {
     public int endInitTurn() {
         int playerCount = getPlayerCount();
         int turn = 0;
-        updateBoard();
+        // updateBoard();
         try {
             turn = (int) gameSpace.get(Templates.turn())[1];
         } catch (InterruptedException e) {
@@ -469,7 +469,7 @@ public class Game {
     }
 
     public int endTurn() {
-        updateBoard();
+        //updateBoard();
         int turn = -1;
         try {
             turn = (int) gameSpace.get(Templates.turn())[1];
@@ -743,7 +743,7 @@ public class Game {
 
     private void updateBoard() {
         try {
-            Board tempBoard = (Board) gameSpace.get(Templates.board())[1];
+            gameSpace.get(Templates.board());
             gameSpace.put("board", board);
         } catch (InterruptedException e) {
             e.printStackTrace();

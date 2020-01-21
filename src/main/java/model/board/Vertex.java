@@ -71,7 +71,11 @@ public class Vertex {
         return y;
     }
 
-    public boolean equals(Vertex vertex) {
-        return this.x == vertex.getX() && this.y == vertex.getY();
+    @Override
+    public boolean equals(Object obj) {
+        Vertex tVertex = (Vertex) obj;
+        return tVertex.isCity() == this.isCity() && tVertex.isSettlement() == this.isSettlement() &&
+                tVertex.getId() == this.getId() && tVertex.getX() == this.getX() &&
+                tVertex.getY() == this.getY();
     }
 }

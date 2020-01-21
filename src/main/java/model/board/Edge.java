@@ -24,4 +24,11 @@ public class Edge {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Edge tEdge = (Edge) obj;
+        return  tEdge.getId() == this.getId() && tEdge.getX() == this.getX() &&
+                tEdge.getY() == this.getY();
+    }
 }

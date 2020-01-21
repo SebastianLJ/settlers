@@ -98,6 +98,8 @@ public class NewController extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        new Thread(new ButtonDisabler(this, game)).start();
+
     }
 
     private double initializeScene(Stage primaryStage) throws java.io.IOException {
@@ -192,9 +194,7 @@ public class NewController extends Application {
             endTurnButton.setDisable(true);
             rollDices.setDisable(false);
         });
-
-
-        new Thread(new ButtonDisabler(this, game)).start();
+        endTurnButton.setDisable(true);
     }
 
     private void setButtonsDisable(boolean bool) {
@@ -268,8 +268,7 @@ public class NewController extends Application {
                     if (initialState && game.getStartingRoadsBuiltThisTurn() == 0) {
                         success = game.buildStartingRoad(getChosenEdge(i, j, touchAngle));
                         if (success == 1) {
-                            endTurn();
-                            endTurnButton.setDisable(true);
+                            endTurnButton.setDisable(false);
                         }
                     } else {
                         success = game.buildRoad(getChosenEdge(i, j, touchAngle));

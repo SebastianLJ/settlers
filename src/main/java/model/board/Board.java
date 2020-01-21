@@ -1,6 +1,7 @@
 package model.board;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Board {
@@ -337,4 +338,10 @@ public class Board {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        Board tBoard = (Board) obj;
+        return Arrays.deepEquals(tBoard.getVertices(), this.getVertices()) &&
+                Arrays.deepEquals(tBoard.getEdges(), this.getEdges());
+    }
 }
