@@ -57,6 +57,10 @@ public class NewController extends Application {
             tradeWithBank, tradeWithPlayer, playDevCard, viewDevCard,
             rollDices, endTurnButton;
 
+    private boolean buildRoadLock, buildSettlementLock, buildCityLock, buildDevCardLock,
+                    tradeWithBankLock, tradeWithPlayerLock, playDevCardLock, viewDevCardLock,
+                    rollDicesLock, endTurnButtonLock;
+
     private Button createGameButton;
     private TextField textField;
 
@@ -113,8 +117,7 @@ public class NewController extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        new Thread(new ButtonDisabler(this, game)).start();
-        new Thread(new VictoryPointChecker(this, game)).start();
+
 
     }
 
@@ -244,23 +247,37 @@ public class NewController extends Application {
 
         rollDices = (Button) loader.getNamespace().get("rollDices");
         rollDices.setOnAction(actionEvent -> {
+
             if (game.yourTurn()) {
+
+                rollDices.setDisable(true);
+                endTurnButton.setDisable(false);
+                setLocks(false);
+
                 diceRoll = game.roll();
                 diceRollLabel.setText(Integer.toString(diceRoll));
-                //setButtonsDisable(false);
-                endTurnButton.setDisable(false);
-                rollDices.setDisable(true);
             }
         });
 
         endTurnButton = (Button) loader.getNamespace().get("endTurn");
         endTurnButton.setOnAction(actionEvent -> {
+
             endTurn();
-            //setButtonsDisable(true);
+            if (!initialState) {
+                setLocks(true);
+                rollDices.setDisable(false);
+            } else {
+                buildCityLock = true;
+                buildDevCardLock = true;
+                tradeWithBankLock = true;
+                tradeWithPlayerLock = true;
+                playDevCardLock = true;
+            }
             endTurnButton.setDisable(true);
-            rollDices.setDisable(false);
+
         });
         endTurnButton.setDisable(true);
+        rollDices.setDisable(true);
     }
 
     private void openTradeWithBankDialog(StackPane root) throws IOException {
@@ -342,6 +359,14 @@ public class NewController extends Application {
         tradeWithPlayer.setDisable(bool);
         playDevCard.setDisable(bool);
         endTurnButton.setDisable(bool);
+    private void setLocks(boolean val) {
+        buildRoadLock = val;
+        buildSettlementLock = val;
+        buildCityLock = val;
+        buildDevCardLock = val;
+        tradeWithBankLock = val;
+        tradeWithPlayerLock = val;
+        playDevCardLock = val;
     }
 
     private void setupHexUI(Group map, Hex[][] hexes) {
@@ -592,6 +617,9 @@ public class NewController extends Application {
         Thread thread = new Thread(new viewUpdater(this, view));
         thread.setDaemon(true);
         thread.start();
+
+        new Thread(new ButtonDisabler(this, game)).start();
+        new Thread(new VictoryPointChecker(this, game)).start();
     }
 
     private void showJoinGameDialog(Stage primaryStage) throws IOException {
@@ -645,48 +673,44 @@ public class NewController extends Application {
         return chatView;
     }
 
-    public Button getBuildRoad() {
-        return buildRoad;
+    public void setBuildRoad(boolean val) {
+        buildRoad.setDisable(buildRoadLock || val);
     }
 
-    public Button getBuildSettlement() {
-        return buildSettlement;
+    public void setBuildSettlement(boolean val) {
+        buildSettlement.setDisable(buildSettlementLock || val);
     }
 
-    public Button getBuildCity() {
-        return buildCity;
+    public void setBuildCity(boolean val) {
+        buildCity.setDisable(buildCityLock || val);
     }
 
-    public Button getBuildDevCard() {
-        return buildDevCard;
+    public void setBuildDevCard(boolean val) {
+        buildDevCard.setDisable(buildDevCardLock || val);
     }
 
-    public Button getTradeWithBank() {
-        return tradeWithBank;
+    public void setTradeWithBank(boolean val) {
+        tradeWithBank.setDisable(tradeWithBankLock || val);
     }
 
-    public Button getTradeWithPlayer() {
-        return tradeWithPlayer;
+    public void setTradeWithPlayer(boolean val) {
+        tradeWithPlayer.setDisable(tradeWithPlayerLock || val);
     }
 
-    public Button getPlayDevCard() {
-        return playDevCard;
+    public void setPlayDevCard(boolean val) {
+        playDevCard.setDisable(playDevCardLock || val);
     }
 
-    public Button getViewDevCard() {
-        return viewDevCard;
+    public void setViewDevCard(boolean val) {
+        viewDevCard.setDisable(viewDevCardLock || val);
     }
 
-    public Button getRollDices() {
-        return rollDices;
+    public void setRollDices(boolean val) {
+        rollDices.setDisable(rollDicesLock || val);
     }
 
     public boolean isInitialState() {
         return initialState;
-    }
-
-    public void disableBuyCity(boolean val) {
-        buildCity.setDisable(val);
     }
 
     public Label getDiceRollLabel() {
