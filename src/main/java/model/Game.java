@@ -499,15 +499,21 @@ public class Game {
 
     public int endTurn() {
         //updateBoard();
-        int turn = -1;
-        try {
-            turn = (int) gameSpace.get(Templates.turn())[1];
-            gameSpace.put("turn_count", turn + 1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (getVictoryPoints(id) >= 10) {
+            sendToChat("won the game!");
+            return -1;
+        } else {
+
+            int turn = -1;
+            try {
+                turn = (int) gameSpace.get(Templates.turn())[1];
+                gameSpace.put("turn_count", turn + 1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            sendToChat("ended their turn");
+            return turn + 1;
         }
-        sendToChat("ended their turn");
-        return turn + 1;
     }
 
     private void setInitStageOne(boolean b) {

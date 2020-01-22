@@ -284,11 +284,12 @@ public class Controller extends Application {
             if (game.yourTurn()) {
 
                 rollDices.setDisable(true);
-                endTurnButton.setDisable(false);
-                setLocks(false);
 
                 diceRoll = game.roll();
                 diceRollLabel.setText(Integer.toString(diceRoll));
+
+                endTurnButton.setDisable(false);
+                setButtonsDisable(false);
             }
         });
 
@@ -297,14 +298,14 @@ public class Controller extends Application {
 
             endTurn();
             if (!initialState) {
-                setLocks(true);
+                setButtonsDisable(true);
                 rollDices.setDisable(false);
             } else {
-                buildCityLock = true;
-                buildDevCardLock = true;
-                tradeWithBankLock = true;
-                tradeWithPlayerLock = true;
-                playDevCardLock = true;
+                buildCity.setDisable(true);
+                buildDevCard.setDisable(true);
+                tradeWithBank.setDisable(true);
+                tradeWithPlayer.setDisable(true);
+                playDevCard.setDisable(true);
             }
             endTurnButton.setDisable(true);
 
