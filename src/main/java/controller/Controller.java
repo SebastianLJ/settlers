@@ -312,6 +312,8 @@ public class Controller extends Application {
         });
         endTurnButton.setDisable(true);
         rollDices.setDisable(true);
+        buildCity.setDisable(true);
+        tradeWithBank.setDisable(true);
 
         //todo add functions
         buildDevCard.setDisable(true);
