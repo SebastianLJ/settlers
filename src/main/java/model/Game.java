@@ -748,7 +748,8 @@ public class Game {
     }
 
     private Resource stringToResource(String resource) {
-        switch (resource) {
+        String resourceLowerCase = resource.toLowerCase();
+        switch (resourceLowerCase) {
             case "brick":
                 return Resource.Brick;
             case "lumber":
@@ -863,5 +864,13 @@ public class Game {
 
     public RemoteSpace getGameSpace() {
         return gameSpace;
+    }
+
+    public ArrayList<Resource> getInsufficientResources(ArrayList<Resource> price) {
+        PlayerState player = queryPlayer(id);
+        if (player != null) {
+            return player.getInsufficientResources(price);
+        }
+        return new ArrayList<>();
     }
 }

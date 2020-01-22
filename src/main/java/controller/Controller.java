@@ -1,11 +1,17 @@
 package controller;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -16,12 +22,15 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.Game;
 import model.GameState;
 import model.board.*;
+import org.jspace.RemoteSpace;
 import view.View;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.floor;
@@ -43,6 +52,9 @@ public class Controller extends Application {
     public RadioButton getWoolRadioButton;
     public RadioButton getGrainRadioButton;
     public RadioButton getLumberRadioButton;
+
+    @FXML
+    private Label wrongIpOrPortLabel;
 
     private Game game;
     private View view;
@@ -82,6 +94,18 @@ public class Controller extends Application {
 
     @FXML
     private ScrollPane scrollPane;
+
+    HBox diceView;
+    @FXML
+    private Label oreLabel;
+    @FXML
+    private Label brickLabel;
+    @FXML
+    private Label woolLabel;
+    @FXML
+    private Label grainLabel;
+    @FXML
+    private Label lumberLabel;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -133,7 +157,7 @@ public class Controller extends Application {
         map = new Group();
 
         VBox gameView = (VBox) loader.getNamespace().get("gameView");
-        HBox diceView = (HBox) gameView.getChildren().get(0);
+        diceView = (HBox) gameView.getChildren().get(0);
 
         AnchorPane anchorPane = (AnchorPane) gameView.getChildren().get(1);
         anchorPane.getChildren().set(0, map);
@@ -156,18 +180,22 @@ public class Controller extends Application {
         chatView = (ListView<String>) loader.getNamespace().get("chatView");
         chatTextField = (TextArea) loader.getNamespace().get("chatTextField");
         chatButton = (Button) loader.getNamespace().get("chatButton");
-        chatButton.setOnMouseClicked(mouseEvent ->
-                game.sendMsg(chatTextField.getText())
-        );
+        chatButton.setOnMouseClicked(mouseEvent -> {
+            game.sendMsg(chatTextField.getText());
+            chatTextField.clear();
+        });
 
         scrollPane = (ScrollPane) loader.getNamespace().get("scrollPane");
+
+        oreLabel = (Label) loader.getNamespace().get("oreLabel");
+        brickLabel = (Label) loader.getNamespace().get("brickLabel");
+        woolLabel = (Label) loader.getNamespace().get("woolLabel");
+        grainLabel = (Label) loader.getNamespace().get("grainLabel");
+        lumberLabel = (Label) loader.getNamespace().get("lumberLabel");
 
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
         primaryStage.show();
-
-        //primaryStage.setFullScreen(true);
-        //primaryStage.setMaximized(true);
 
         double mapSize = gameView.getHeight() - diceView.getHeight();
         gameView.setMaxWidth(mapSize);
@@ -195,8 +223,9 @@ public class Controller extends Application {
                 "    -fx-font-weight: bold;\n" +
                 "    -fx-font-size: 22px;\n" +
                 "    -fx-padding: 10 20 10 20;");
-        startGameButton.setTranslateX(mapSize / 2 - startGameButton.getPrefWidth() / 2);
-        startGameButton.setTranslateY(mapSize / 2 - startGameButton.getPrefHeight() / 2);
+
+        startGameButton.setTranslateX(- (root.getWidth() / 2 - mapSize / 2));
+        startGameButton.setTranslateY(diceView.getHeight());
 
         Pane pane = new Pane();
         pane.setStyle("-fx-background-color: black; -fx-opacity: 0.2");
@@ -321,7 +350,7 @@ public class Controller extends Application {
             RadioButton rb = (RadioButton) toggleGroupGive.getSelectedToggle();
 
             if (rb != null) {
-                userGivesResource[0] = rb.getText().split(" ")[1];
+                userGivesResource[0] = rb.getText().split(" ")[2];
             }
         });
 
@@ -330,7 +359,7 @@ public class Controller extends Application {
             RadioButton rb = (RadioButton) toggleGroupGet.getSelectedToggle();
 
             if (rb != null) {
-                userGetsResource[0] = rb.getText().split(" ")[1];
+                userGetsResource[0] = rb.getText().split(" ")[2];
 
             }
         });
@@ -351,7 +380,59 @@ public class Controller extends Application {
     }
 
     private void tradeResourcesWithBank(String userGivesResources, String userGetsResource) {
-        game.tradeWithBank(userGivesResources, userGetsResource);
+        int errorCode = game.tradeWithBank(userGivesResources, userGetsResource);
+
+        Label labelToFlash;
+        if (errorCode == -1) {
+            labelToFlash = getLabelToFlash(userGivesResources);
+
+            insufficientResourcesAnimation(labelToFlash);
+        } else {
+            labelToFlash = getLabelToFlash(userGetsResource);
+
+            labelToFlash.setTextFill(Color.GREEN);
+            FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1.5), labelToFlash);
+            fadeTransition.setFromValue(0.2);
+            fadeTransition.setToValue(1.0);
+            fadeTransition.setCycleCount(1);
+            fadeTransition.play();
+            Label finalLabelToFlash = labelToFlash;
+            fadeTransition.setOnFinished(e -> finalLabelToFlash.setTextFill(Color.BLACK));
+        }
+    }
+
+    private void insufficientResourcesAnimation(Label labelToFlash) {
+        labelToFlash.setTextFill(Color.RED);
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.1), labelToFlash);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.0);
+        fadeTransition.setCycleCount(6);
+        fadeTransition.setAutoReverse(true);
+        fadeTransition.play();
+        fadeTransition.setOnFinished(e -> labelToFlash.setTextFill(Color.BLACK));
+    }
+
+    private Label getLabelToFlash(String userGivesResources) {
+        Label labelToFlash = new Label();
+        String userGivesResourcesLowerCase = userGivesResources.toLowerCase();
+        switch (userGivesResourcesLowerCase) {
+            case "ore":
+                labelToFlash = oreLabel;
+                break;
+            case "brick":
+                labelToFlash = brickLabel;
+                break;
+            case "wool":
+                labelToFlash = woolLabel;
+                break;
+            case "grain":
+                labelToFlash = grainLabel;
+                break;
+            case "lumber":
+                labelToFlash = lumberLabel;
+                break;
+        }
+        return labelToFlash;
     }
 
     private void setButtonsDisable(boolean bool) {
@@ -427,6 +508,7 @@ public class Controller extends Application {
         //System.out.println(game.yourTurn());
         if (game.yourTurn()) {
             int success = 0;
+            ArrayList<Resource> spendResources = new ArrayList<>();
             switch (gameState) {
                 case TradeBank:
                     //todo
@@ -439,6 +521,7 @@ public class Controller extends Application {
                         }
                     } else {
                         success = game.buildRoad(getChosenEdge(i, j, touchAngle));
+                        spendResources = Price.Road.getPrice();
                     }
                     switch (success) {
                         case 0:
@@ -449,13 +532,16 @@ public class Controller extends Application {
                         success = game.buildStartingSettlement(getChosenIntersection(i, j, touchAngle));
                     } else {
                         success = game.buildSettlement(getChosenIntersection(i, j, touchAngle));
+                        spendResources = Price.Settlement.getPrice();
                     }
                     break;
                 case BuildCity:
                     success = game.buildCity(getChosenIntersection(i, j, touchAngle));
+                    spendResources = Price.City.getPrice();
                     break;
                 case BuyDevelopmentCard:
                     success = game.buyDevelopmentCard();
+                    spendResources = Price.DevelopmentCard.getPrice();
                     break;
                 case PlayDevelopmentCard:
                     //todo
@@ -467,10 +553,22 @@ public class Controller extends Application {
             if (success == 1) {
 
             } else if (success == -1) {
-
+                insufficientResourcesError(game.getInsufficientResources(spendResources));
             } else if (success == -2) {
 
             }
+        }
+    }
+
+    private void insufficientResourcesError(ArrayList<Resource> missingResources) {
+        int i = 0;
+        Label[] labels = new Label[missingResources.size()];
+        for (Resource resource : missingResources) {
+            labels[i] = getLabelToFlash(resource.getType());
+            i++;
+        }
+        for (int j = 0; j < labels.length; j++) {
+            insufficientResourcesAnimation(labels[j]);
         }
     }
 
@@ -637,6 +735,8 @@ public class Controller extends Application {
 
         ipTextField.requestFocus();
 
+        wrongIpOrPortLabel = (Label) loader.getNamespace().get("wrongIpOrPortLabel");
+
         Button joinButton = (Button) loader.getNamespace().get("join");
         joinButton.setOnMouseClicked(mouseEvent -> {
             try {
@@ -646,7 +746,12 @@ public class Controller extends Application {
                 } else {
                     String uri = "tcp://" + ipTextField.getText() + ":" + portTextField.getText();
                     System.out.println("uri: " + uri);
-                    createGame(primaryStage, false, uri);
+                    try {
+                        tryConnection(uri);
+                        createGame(primaryStage, false, uri);
+                    } catch (java.net.ConnectException e) {
+                        wrongIpOrPortLabel.setText("Wrong ip or port");
+                    }
                 }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
@@ -664,6 +769,10 @@ public class Controller extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private void tryConnection(String uri) throws IOException {
+        new RemoteSpace(uri + "/game?keep");
     }
 
     Group getMap() {

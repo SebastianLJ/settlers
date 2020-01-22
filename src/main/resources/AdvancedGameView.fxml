@@ -17,14 +17,13 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <StackPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
    <SplitPane dividerPositions="0.65" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1300.0">
-      <AnchorPane style="-fx-background-color: white;">
+      <AnchorPane style="-fx-background-color: lightblue;">
          <VBox fx:id="gameView" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <HBox alignment="CENTER">
                <VBox.margin>
-                  <Insets bottom="16.0" top="16.0" />
+                  <Insets top="16.0" />
                </VBox.margin>
                <Label text="Dice Roll:">
                   <HBox.margin>
@@ -92,11 +91,11 @@
                   <Label text="Wool" GridPane.columnIndex="2" />
                   <Label text="Grain" GridPane.columnIndex="3" />
                   <Label text="Lumber" GridPane.columnIndex="4" />
-                  <Label text="0" GridPane.rowIndex="1" />
-                  <Label text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <Label prefWidth="102.0" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <Label text="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <Label fx:id="oreLabel" text="0" GridPane.rowIndex="1" />
+                  <Label fx:id="brickLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label fx:id="woolLabel" text="0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Label fx:id="grainLabel" prefWidth="102.0" text="0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                  <Label fx:id="lumberLabel" text="0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                </GridPane>
                <padding>
                   <Insets bottom="8.0" left="8.0" right="8.0" />
@@ -225,7 +224,7 @@
                </AnchorPane>
             </ScrollPane>
             <HBox>
-               <TextArea fx:id="chatTextField" prefHeight="24.0" prefWidth="401.0" HBox.hgrow="ALWAYS" />
+               <TextArea fx:id="chatTextField" prefHeight="24.0" prefWidth="401.0" promptText="Type to chat" wrapText="true" HBox.hgrow="ALWAYS" />
                <Button fx:id="chatButton" mnemonicParsing="false" prefHeight="37.0" prefWidth="70.0" text="SEND" HBox.hgrow="ALWAYS" />
             </HBox>
          </VBox>
