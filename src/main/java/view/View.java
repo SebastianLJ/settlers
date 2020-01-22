@@ -161,7 +161,7 @@ public class View {
                 paint = Color.BLUE;
                 break;
             case PLAYER_THREE:
-                paint = Color.GREEN;
+                paint = Color.DEEPPINK;
                 break;
             case PLAYER_FOUR:
                 paint = Color.YELLOW;
