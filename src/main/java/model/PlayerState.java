@@ -104,6 +104,16 @@ public class PlayerState {
         }
     }
 
+    public ArrayList<Resource> getInsufficientResources(ArrayList<Resource> price) {
+        ArrayList<Resource> insufficientResources = new ArrayList<>();
+        for (Resource resource : price) {
+            if (!resources.contains(resource)) {
+                insufficientResources.add(resource);
+            }
+        }
+        return insufficientResources;
+    }
+
     public String getName() {
         return name;
     }

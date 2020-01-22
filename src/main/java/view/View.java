@@ -8,6 +8,8 @@ import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.Lighting;
+import javafx.scene.effect.Shadow;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -18,6 +20,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import model.Game;
 import model.board.*;
+
+import java.util.Collections;
 
 public class View {
 
@@ -61,11 +65,7 @@ public class View {
 
     public void updatePlayerInfo(GridPane ownPlayerInfo, GridPane[] otherPlayerInfo) {
         int thisPlayer = game.getPlayerId();
-        if (thisPlayer == game.getTurnId()) {
-            ownPlayerInfo.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
-        } else {
-            ownPlayerInfo.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-        }
+        colorIndicateForTurn(thisPlayer, ownPlayerInfo);
 
         ((Label) ownPlayerInfo.getChildren().get(5)).setText(Integer.toString(game.getVictoryPoints(thisPlayer)));
 
@@ -88,11 +88,7 @@ public class View {
             if (i != thisPlayer) {
                 GridPane info = otherPlayerInfo[c];
 
-                if (i == game.getTurnId()) {
-                    info.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
-                } else {
-                    info.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-                }
+                colorIndicateForTurn(i, info);
 
                 if (i < game.getPlayerCount()) {
                     ((Label) info.getChildren().get(4)).setText(game.queryPlayer(i).getName());
@@ -105,11 +101,22 @@ public class View {
         }
     }
 
+    private void colorIndicateForTurn(int i, GridPane info) {
+        if (i == game.getTurnId()) {
+            info.setBackground(new Background(new BackgroundFill(Color.ORANGE, CornerRadii.EMPTY, Insets.EMPTY)));
+            info.setStyle("-fx-border-color: black");
+        } else {
+            info.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+            info.setStyle("-fx-border-color: none");
+        }
+    }
+
     private void drawRobber() {
         Hex robberHex = game.getBoard().getCurrentRobberPosHex();
         circle.setCenterX(robberHex.getRealX());
         circle.setCenterY(robberHex.getRealY());
         circle.setRadius(robberHex.getSize() / 4);
+        circle.setStroke(Color.WHITE);
     }
 
     private void drawPaths(Group root, Hex hex) {
@@ -143,6 +150,7 @@ public class View {
 
             Paint playerColor = getColorFromPlayerID(vertices[k].getId());
             circle.setFill(playerColor);
+            circle.setStroke(Color.BLACK);
 
             if (vertices[k].isCity()) {
                 circle.setRadius(hex.getSize()/4.);
