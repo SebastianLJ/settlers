@@ -311,6 +311,12 @@ public class Controller extends Application {
         });
         endTurnButton.setDisable(true);
         rollDices.setDisable(true);
+
+        //todo add functions
+        buildDevCard.setDisable(true);
+        tradeWithPlayer.setDisable(true);
+        playDevCard.setDisable(true);
+        viewDevCard.setDisable(true);
     }
 
     private void openTradeWithBankDialog(StackPane root) throws IOException {
@@ -717,7 +723,6 @@ public class Controller extends Application {
         Hex[][] hexes = game.getBoard().getHexes();
         setupHexUI(map, hexes);
         view.initializeRobber(map);
-
         new Thread(new viewUpdater(this, view)).start();
         //new Thread(new ButtonDisabler(this, game)).start();
         //new Thread(new VictoryPointChecker(this, game)).start();

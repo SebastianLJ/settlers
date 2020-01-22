@@ -119,7 +119,7 @@ public class Game {
     }
 
     public int tradeWithBank(String playerGives, String playerGets) {
-        PlayerState player = queryPlayer(id);
+        PlayerState player = getPlayer(id);
         int success;
         Resource playerGivesR = stringToResource(playerGives);
         Resource playerGetsR = stringToResource(playerGets);
@@ -542,7 +542,7 @@ public class Game {
             e.printStackTrace();
         }
         if (player != null) {
-            int vp = getSettlements(player.getId()).size() + getCities(player.getId()).size();
+            int vp = getSettlements(player.getId()).size() + getCities(player.getId()).size() * 2;
             for (DevelopmentCard developmentCard : player.getDevelopmentCards()) {
                 if (developmentCard.equals(DevelopmentCard.VictoryPoint)) {
                     vp++;
