@@ -31,7 +31,7 @@ public class boardUpdater implements Runnable {
                         for (int i = 0; i < game.getPlayerCount(); i++) {
                             if (i != game.getPlayerId()) {
                                 gameSpace.put("board_updated", i);
-                                System.out.println("put board updated");
+                                System.out.println("put board updated .");
                             }
                         }
                         //System.out.println("board update sent");
