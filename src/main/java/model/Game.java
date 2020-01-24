@@ -271,7 +271,7 @@ public class Game {
         }
         Vertex[] vertices = board.getAdjacentVertices(edge);
         for (Vertex vertex : vertices) {
-            if (vertex != null && (vertex.getId() == id && vertex.isCity() || vertex.isSettlement())) {
+            if (vertex != null && (vertex.getId() == id && (vertex.isCity() || vertex.isSettlement()))) {
                 return true;
             }
             for (Edge nextEdge : board.getAdjacentEdges(vertex)) {
