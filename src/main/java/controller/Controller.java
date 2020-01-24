@@ -599,8 +599,10 @@ public class Controller extends Application {
                 spendResourcesAnimation(spendResources);
             } else if (success == INSUFFICIENT_RESOURCES) {
                 insufficientResourcesError(game.getInsufficientResources(spendResources));
+                game.getChat().add("Insufficient resources");
             } else if (success == INVALID_LOCATION) {
                 invalidLocationError();
+                game.getChat().add("Invalid location");
             }
         }
     }
