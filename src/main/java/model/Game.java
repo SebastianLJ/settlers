@@ -356,7 +356,7 @@ public class Game {
             if (edge != null) {
                 Vertex[] possibleOccupations = board.getAdjacentVertices(edge);
                 for (Vertex possibleOccupation : possibleOccupations) {
-                    if (possibleOccupation.isSettlement() || possibleOccupation.isCity()) {
+                    if (possibleOccupation != null && possibleOccupation.isSettlement() || possibleOccupation.isCity()) {
                         return false;
                     }
                 }
