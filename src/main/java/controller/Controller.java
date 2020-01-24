@@ -204,9 +204,11 @@ public class Controller extends Application {
     }
 
     private void sendMessage() {
-        game.sendMsg(chatTextField.getText());
+        if (chatTextField.getText().length() > 1) {
+            game.sendMsg(chatTextField.getText());
+            chatView.scrollTo(chatView.getItems().size()-1);
+        }
         chatTextField.clear();
-        chatView.scrollTo(chatView.getItems().size()-1);
     }
 
     private void createStartGameButton(StackPane root, double mapSize) {
