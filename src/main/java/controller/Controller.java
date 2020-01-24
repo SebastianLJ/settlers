@@ -243,7 +243,7 @@ public class Controller extends Application {
                 e -> startGameButton.setEffect(null));
         startGameButton.addEventHandler(MouseEvent.MOUSE_CLICKED,
                 e -> {
-                    if (game.getPlayerCount() > 2) {
+                    if (game.getPlayerCount() > 1) {
                         root.getChildren().removeAll(startGameButton, pane);
                     }
                 });
