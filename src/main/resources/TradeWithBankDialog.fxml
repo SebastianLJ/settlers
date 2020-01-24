@@ -17,130 +17,144 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: white; -fx-border-color: black;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <GridPane alignment="TOP_CENTER" hgap="8.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="248.0" prefWidth="451.0">
+      <GridPane alignment="TOP_CENTER" hgap="8.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="248.0"
+                prefWidth="451.0">
          <columnConstraints>
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="493.7333679199219" minWidth="10.0" prefWidth="135.0666717529297" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="410.5999450683594" minWidth="0.0" prefWidth="127.19995727539063" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="497.5999877929687" minWidth="10.0" prefWidth="156.0000427246094" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="493.7333679199219" minWidth="10.0"
+                               prefWidth="135.0666717529297"/>
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="410.5999450683594" minWidth="0.0"
+                               prefWidth="127.19995727539063"/>
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="497.5999877929687" minWidth="10.0"
+                               prefWidth="156.0000427246094"/>
          </columnConstraints>
          <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
          </rowConstraints>
-         <children>
-            <RadioButton fx:id="giveOreRadioButton" mnemonicParsing="false" text="4 x Ore" GridPane.rowIndex="1">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <RadioButton fx:id="giveBrickRadioButton" mnemonicParsing="false" text="4 x Brick" GridPane.rowIndex="2">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <RadioButton fx:id="giveWoolRadioButton" mnemonicParsing="false" text="4 x Wool" GridPane.rowIndex="3">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <RadioButton fx:id="giveGrainRadioButton" mnemonicParsing="false" text="4 x Grain" GridPane.rowIndex="4">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <RadioButton fx:id="giveLumberRadioButton" mnemonicParsing="false" text="4 x Lumber" GridPane.rowIndex="5">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <RadioButton fx:id="getOreRadioButton" mnemonicParsing="false" text="1 x Ore" GridPane.columnIndex="2" GridPane.rowIndex="1">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <RadioButton fx:id="getBrickRadioButton" mnemonicParsing="false" text="1 x Brick" GridPane.columnIndex="2" GridPane.rowIndex="2">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <RadioButton fx:id="getWoolRadioButton" mnemonicParsing="false" text="1 x Wool" GridPane.columnIndex="2" GridPane.rowIndex="3">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <RadioButton fx:id="getGrainRadioButton" mnemonicParsing="false" text="1 x Grain" GridPane.columnIndex="2" GridPane.rowIndex="4">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <RadioButton fx:id="getLumberRadioButton" mnemonicParsing="false" text="1 x Lumber" GridPane.columnIndex="2" GridPane.rowIndex="5">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </RadioButton>
-            <Label text="You give">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <Label text="You get" GridPane.columnIndex="2">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-            <ImageView fitHeight="54.0" fitWidth="69.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
-               <image>
-                  <Image url="@right_arrow.png" />
-               </image>
-            </ImageView>
-         </children>
+         <RadioButton fx:id="giveOreRadioButton" mnemonicParsing="false" text="4 x Ore" GridPane.rowIndex="1">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <RadioButton fx:id="giveBrickRadioButton" mnemonicParsing="false" text="4 x Brick" GridPane.rowIndex="2">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <RadioButton fx:id="giveWoolRadioButton" mnemonicParsing="false" text="4 x Wool" GridPane.rowIndex="3">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <RadioButton fx:id="giveGrainRadioButton" mnemonicParsing="false" text="4 x Grain" GridPane.rowIndex="4">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <RadioButton fx:id="giveLumberRadioButton" mnemonicParsing="false" text="4 x Lumber" GridPane.rowIndex="5">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <RadioButton fx:id="getOreRadioButton" mnemonicParsing="false" text="1 x Ore" GridPane.columnIndex="2"
+                      GridPane.rowIndex="1">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <RadioButton fx:id="getBrickRadioButton" mnemonicParsing="false" text="1 x Brick" GridPane.columnIndex="2"
+                      GridPane.rowIndex="2">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <RadioButton fx:id="getWoolRadioButton" mnemonicParsing="false" text="1 x Wool" GridPane.columnIndex="2"
+                      GridPane.rowIndex="3">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <RadioButton fx:id="getGrainRadioButton" mnemonicParsing="false" text="1 x Grain" GridPane.columnIndex="2"
+                      GridPane.rowIndex="4">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <RadioButton fx:id="getLumberRadioButton" mnemonicParsing="false" text="1 x Lumber" GridPane.columnIndex="2"
+                      GridPane.rowIndex="5">
+            <font>
+               <Font size="18.0"/>
+            </font>
+         </RadioButton>
+         <Label text="You give">
+            <Font size="24.0"/>
+         </Label>
+         <Label text="You get" GridPane.columnIndex="2">
+            <font>
+               <Font size="24.0"/>
+            </font>
+         </Label>
+         <ImageView fitHeight="54.0" fitWidth="69.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1"
+                    GridPane.rowIndex="2">
+            <image>
+               <Image url="@right_arrow.png"/>
+            </image>
+         </ImageView>
       </GridPane>
    </center>
    <top>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
-         <children>
-            <Label alignment="CENTER" text="Choose resources to trade with the bank">
-               <font>
-                  <Font size="28.0" />
-               </font>
-               <padding>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-               </padding>
-            </Label>
-            <Separator prefWidth="200.0" />
-         </children>
+         <Label alignment="CENTER" text="Choose resources to trade with the bank">
+            <font>
+               <Font size="28.0"/>
+            </font>
+            <padding>
+               <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+            </padding>
+         </Label>
+         <Separator prefWidth="200.0"/>
       </VBox>
    </top>
-   <bottom>
-      <HBox alignment="CENTER" prefHeight="80.0" prefWidth="1300.0" spacing="8.0">
-         <children>
-            <Button fx:id="tradeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="100.0" prefWidth="200.0" text="Trade">
+   <VBox>
+      <VBox alignment="CENTER">
+         <HBox alignment="CENTER" prefHeight="80.0" prefWidth="1300.0" spacing="8.0">
+            <Button fx:id="tradeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                    mnemonicParsing="false" prefHeight="100.0" prefWidth="200.0" text="Trade">
                <padding>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
                </padding>
-               <HBox.margin>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-               </HBox.margin>
                <font>
-                  <Font size="18.0" />
+                  <Font size="18.0"/>
                </font>
+               <HBox.margin>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+               </HBox.margin>
             </Button>
-            <Button fx:id="cancelButton" cancelButton="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="100.0" prefWidth="200.0" text="Cancel">
+            <Button fx:id="cancelButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                    mnemonicParsing="false" prefHeight="100.0" prefWidth="200.0" text="Cancel">
                <padding>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
                </padding>
-               <HBox.margin>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-               </HBox.margin>
                <font>
-                  <Font size="18.0" />
+                  <Font size="18.0"/>
                </font>
+               <HBox.margin>
+                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0"/>
+               </HBox.margin>
             </Button>
-         </children>
-      </HBox>
-   </bottom>
+         </HBox>
+         <Label fx:id="insufficientResourcesLabel" style="-fx-text-fill: red;">
+            <VBox.margin>
+               <Insets bottom="8.0"/>
+            </VBox.margin>
+            <padding>
+               <Insets bottom="8.0"/>
+            </padding>
+         </Label>
+      </VBox>
+   </VBox>
 </BorderPane>

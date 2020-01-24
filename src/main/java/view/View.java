@@ -1,15 +1,11 @@
 package view;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.effect.Lighting;
-import javafx.scene.effect.Shadow;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -21,8 +17,6 @@ import javafx.scene.shape.Line;
 import model.Game;
 import model.board.*;
 
-import java.util.Collections;
-
 public class View {
 
     private static final int PLAYER_ONE = 0;
@@ -33,6 +27,8 @@ public class View {
     private Game game;
     private Hex[][] hexes;
     private Circle circle;
+
+    private int thisPlayer;
 
     public View(Game game) {
         this.game = game;
@@ -64,6 +60,30 @@ public class View {
     }
 
     public void updatePlayerInfo(GridPane ownPlayerInfo, GridPane[] otherPlayerInfo) {
+        thisPlayer = updateOwnPlayerInfo(ownPlayerInfo);
+        updateOtherPlayerInfo(otherPlayerInfo);
+    }
+
+    private void updateOtherPlayerInfo(GridPane[] otherPlayerInfo) {
+        int c = 0;
+        for (int i = 0; i < 4; i++) {
+            if (i != thisPlayer) {
+                GridPane info = otherPlayerInfo[c];
+
+                colorIndicateForTurn(i, info);
+
+                if (i < game.getPlayerCount()) {
+                    ((Label) info.getChildren().get(4)).setText(game.queryPlayer(i).getName());
+                    ((Label) info.getChildren().get(5)).setText(Integer.toString(game.getVictoryPoints(i)));
+                    ((Label) info.getChildren().get(6)).setText((Integer.toString(game.queryPlayer(i).getDevelopmentCards().size())));
+                    ((Label) info.getChildren().get(7)).setText(Integer.toString(game.getResources(i).size()));
+                }
+                c++;
+            }
+        }
+    }
+
+    public int updateOwnPlayerInfo(GridPane ownPlayerInfo) {
         int thisPlayer = game.getPlayerId();
         colorIndicateForTurn(thisPlayer, ownPlayerInfo);
 
@@ -83,22 +103,7 @@ public class View {
         for (int i = 0; i < 5; i++) {
             ((Label) resources.getChildren().get(5 + i)).setText(amountOfPlayerResources[i]);
         }
-        int c = 0;
-        for (int i = 0; i < 4; i++) {
-            if (i != thisPlayer) {
-                GridPane info = otherPlayerInfo[c];
-
-                colorIndicateForTurn(i, info);
-
-                if (i < game.getPlayerCount()) {
-                    ((Label) info.getChildren().get(4)).setText(game.queryPlayer(i).getName());
-                    ((Label) info.getChildren().get(5)).setText(Integer.toString(game.getVictoryPoints(i)));
-                    ((Label) info.getChildren().get(6)).setText((Integer.toString(game.queryPlayer(i).getDevelopmentCards().size())));
-                    ((Label) info.getChildren().get(7)).setText(Integer.toString(game.getResources(i).size()));
-                }
-                c++;
-            }
-        }
+        return thisPlayer;
     }
 
     private void colorIndicateForTurn(int i, GridPane info) {

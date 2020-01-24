@@ -225,7 +225,7 @@
             </ScrollPane>
             <HBox>
                <TextArea fx:id="chatTextField" prefHeight="24.0" prefWidth="401.0" promptText="Type to chat" wrapText="true" HBox.hgrow="ALWAYS" />
-               <Button fx:id="chatButton" mnemonicParsing="false" prefHeight="37.0" prefWidth="70.0" text="SEND" HBox.hgrow="ALWAYS" />
+               <Button fx:id="chatButton" defaultButton="true" mnemonicParsing="false" prefHeight="37.0" prefWidth="70.0" text="SEND" HBox.hgrow="ALWAYS" />
             </HBox>
          </VBox>
       </AnchorPane>

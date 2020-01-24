@@ -7,12 +7,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -34,24 +30,14 @@ import java.util.ArrayList;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.floor;
-import static model.GameState.*;
+import static model.GameState.None;
 
 public class Controller extends Application {
-    private final int INSUFFICIENT_RESOURCES_ERROR = 0;
-    private final int NOT_ENOUGH_RESOURCES_ERROR = 0;
-    public ToggleGroup toggleGroupGive;
-    public ToggleGroup toggleGroupGet;
-
-    public RadioButton giveOreRadioButton;
-    public RadioButton giveBrickRadioButton;
-    public RadioButton giveWoolRadioButton;
-    public RadioButton giveGrainRadioButton;
-    public RadioButton giveLumberRadioButton;
-    public RadioButton getOreRadioButton;
-    public RadioButton getBrickRadioButton;
-    public RadioButton getWoolRadioButton;
-    public RadioButton getGrainRadioButton;
-    public RadioButton getLumberRadioButton;
+    private static final int SUCCESSFUL_ACTION = 1;
+    private static final int INSUFFICIENT_RESOURCES = -1;
+    private static final int INVALID_LOCATION = -2;
+    private ToggleGroup toggleGroupGive;
+    private ToggleGroup toggleGroupGet;
 
     @FXML
     private Label wrongIpOrPortLabel;
@@ -95,7 +81,7 @@ public class Controller extends Application {
     @FXML
     private ScrollPane scrollPane;
 
-    HBox diceView;
+    private HBox diceView;
     @FXML
     private Label oreLabel;
     @FXML
@@ -106,6 +92,11 @@ public class Controller extends Application {
     private Label grainLabel;
     @FXML
     private Label lumberLabel;
+    private AnchorPane anchorPane;
+    @FXML
+    private VBox gameView;
+
+    //AudioClip diceRollAudioClip = new AudioClip(new File("DiceRoll.mp3").toURI().toString());
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -139,7 +130,7 @@ public class Controller extends Application {
                 } else {
                     createGame(primaryStage, true, "");
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });
@@ -156,11 +147,13 @@ public class Controller extends Application {
 
         map = new Group();
 
-        VBox gameView = (VBox) loader.getNamespace().get("gameView");
+        anchorPane = (AnchorPane) ((SplitPane) root.getChildren().get(0)).getItems().get(0);
+
+        gameView = (VBox) loader.getNamespace().get("gameView");
         diceView = (HBox) gameView.getChildren().get(0);
 
-        AnchorPane anchorPane = (AnchorPane) gameView.getChildren().get(1);
-        anchorPane.getChildren().set(0, map);
+        AnchorPane mapContainer = (AnchorPane) gameView.getChildren().get(1);
+        mapContainer.getChildren().set(0, map);
 
         Scene scene = new Scene(root);
 
@@ -180,9 +173,12 @@ public class Controller extends Application {
         chatView = (ListView<String>) loader.getNamespace().get("chatView");
         chatTextField = (TextArea) loader.getNamespace().get("chatTextField");
         chatButton = (Button) loader.getNamespace().get("chatButton");
-        chatButton.setOnMouseClicked(mouseEvent -> {
-            game.sendMsg(chatTextField.getText());
-            chatTextField.clear();
+        chatButton.setOnMouseClicked(mouseEvent -> sendMessage());
+
+        chatTextField.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER)  {
+                sendMessage();
+            }
         });
 
         scrollPane = (ScrollPane) loader.getNamespace().get("scrollPane");
@@ -205,6 +201,12 @@ public class Controller extends Application {
         //createStartGameButton(root, mapSize);
 
         return mapSize;
+    }
+
+    private void sendMessage() {
+        game.sendMsg(chatTextField.getText());
+        chatTextField.clear();
+        chatView.scrollTo(chatView.getItems().size()-1);
     }
 
     private void createStartGameButton(StackPane root, double mapSize) {
@@ -280,9 +282,8 @@ public class Controller extends Application {
 
         rollDices = (Button) loader.getNamespace().get("rollDices");
         rollDices.setOnAction(actionEvent -> {
-
             if (game.yourTurn()) {
-
+                //diceRollAudioClip.play();
                 rollDices.setDisable(true);
 
                 diceRoll = game.roll();
@@ -329,22 +330,22 @@ public class Controller extends Application {
         toggleGroupGive = new ToggleGroup();
         toggleGroupGet = new ToggleGroup();
 
-        giveOreRadioButton = (RadioButton) loader.getNamespace().get("giveOreRadioButton");
-        giveBrickRadioButton = (RadioButton) loader.getNamespace().get("giveBrickRadioButton");
-        giveWoolRadioButton = (RadioButton) loader.getNamespace().get("giveWoolRadioButton");
-        giveGrainRadioButton = (RadioButton) loader.getNamespace().get("giveGrainRadioButton");
-        giveLumberRadioButton = (RadioButton) loader.getNamespace().get("giveLumberRadioButton");
+        RadioButton giveOreRadioButton = (RadioButton) loader.getNamespace().get("giveOreRadioButton");
+        RadioButton giveBrickRadioButton = (RadioButton) loader.getNamespace().get("giveBrickRadioButton");
+        RadioButton giveWoolRadioButton = (RadioButton) loader.getNamespace().get("giveWoolRadioButton");
+        RadioButton giveGrainRadioButton = (RadioButton) loader.getNamespace().get("giveGrainRadioButton");
+        RadioButton giveLumberRadioButton = (RadioButton) loader.getNamespace().get("giveLumberRadioButton");
         giveOreRadioButton.setToggleGroup(toggleGroupGive);
         giveBrickRadioButton.setToggleGroup(toggleGroupGive);
         giveWoolRadioButton.setToggleGroup(toggleGroupGive);
         giveGrainRadioButton.setToggleGroup(toggleGroupGive);
         giveLumberRadioButton.setToggleGroup(toggleGroupGive);
 
-        getOreRadioButton = (RadioButton) loader.getNamespace().get("getOreRadioButton");
-        getBrickRadioButton = (RadioButton) loader.getNamespace().get("getBrickRadioButton");
-        getWoolRadioButton = (RadioButton) loader.getNamespace().get("getWoolRadioButton");
-        getGrainRadioButton = (RadioButton) loader.getNamespace().get("getGrainRadioButton");
-        getLumberRadioButton = (RadioButton) loader.getNamespace().get("getLumberRadioButton");
+        RadioButton getOreRadioButton = (RadioButton) loader.getNamespace().get("getOreRadioButton");
+        RadioButton getBrickRadioButton = (RadioButton) loader.getNamespace().get("getBrickRadioButton");
+        RadioButton getWoolRadioButton = (RadioButton) loader.getNamespace().get("getWoolRadioButton");
+        RadioButton getGrainRadioButton = (RadioButton) loader.getNamespace().get("getGrainRadioButton");
+        RadioButton getLumberRadioButton = (RadioButton) loader.getNamespace().get("getLumberRadioButton");
         getOreRadioButton.setToggleGroup(toggleGroupGet);
         getBrickRadioButton.setToggleGroup(toggleGroupGet);
         getWoolRadioButton.setToggleGroup(toggleGroupGet);
@@ -383,21 +384,33 @@ public class Controller extends Application {
 
         Button tradeButton = (Button) loader.getNamespace().get("tradeButton");
         Button cancelButton = (Button) loader.getNamespace().get("cancelButton");
+        Label insufficientResourcesLabel = (Label) loader.getNamespace().get("insufficientResourcesLabel");
 
-        tradeButton.setOnMouseClicked(e -> tradeResourcesWithBank(userGivesResource[0], userGetsResource[0]));
-        cancelButton.setOnMouseClicked(e -> root.getChildren().removeAll(tradeDialog, pane));
+        tradeButton.setOnMouseClicked(e -> {
+            int errorCode = tradeResourcesWithBank(userGivesResource[0], userGetsResource[0]);
+            if (errorCode == INSUFFICIENT_RESOURCES) {
+                insufficientResourcesLabel.setText("Insufficient resources");
+            } else {
+                root.getChildren().removeAll(pane, tradeDialog);
+            }
+        });
+
+        cancelButton.setOnMouseClicked(e -> root.getChildren().removeAll(pane, tradeDialog));
     }
 
-    private void tradeResourcesWithBank(String userGivesResources, String userGetsResource) {
+    private int tradeResourcesWithBank(String userGivesResources, String userGetsResource) {
         int errorCode = game.tradeWithBank(userGivesResources, userGetsResource);
 
         Label labelToFlash;
-        if (errorCode == -1) {
+        if (errorCode == INSUFFICIENT_RESOURCES) {
             labelToFlash = getLabelToFlash(userGivesResources);
 
             insufficientResourcesAnimation(labelToFlash);
         } else {
+            view.updateOwnPlayerInfo(ownPlayerInfo);
             labelToFlash = getLabelToFlash(userGetsResource);
+
+            spendResourcesAnimation(getLabelToFlash(userGivesResources));
 
             labelToFlash.setTextFill(Color.GREEN);
             FadeTransition fadeTransition = new FadeTransition(Duration.seconds(1.5), labelToFlash);
@@ -408,17 +421,42 @@ public class Controller extends Application {
             Label finalLabelToFlash = labelToFlash;
             fadeTransition.setOnFinished(e -> finalLabelToFlash.setTextFill(Color.BLACK));
         }
+        return errorCode;
     }
 
     private void insufficientResourcesAnimation(Label labelToFlash) {
+        ownPlayerInfo.setStyle("-fx-border-color: red");
+        FadeTransition fadeTransition1 = new FadeTransition(Duration.seconds(0.5), labelToFlash);
+        fadeTransition1.setFromValue(1.0);
+        fadeTransition1.setToValue(0.0);
+        fadeTransition1.setCycleCount(1);
+        fadeTransition1.setAutoReverse(true);
+        fadeTransition1.play();
+        fadeTransition1.setOnFinished(e -> ownPlayerInfo.setStyle("-fx-border-color: black"));
+
         labelToFlash.setTextFill(Color.RED);
-        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.1), labelToFlash);
+        FadeTransition fadeTransition2 = new FadeTransition(Duration.seconds(0.1), labelToFlash);
+        fadeTransition2.setFromValue(1.0);
+        fadeTransition2.setToValue(0.0);
+        fadeTransition2.setCycleCount(6);
+        fadeTransition2.setAutoReverse(true);
+        fadeTransition2.play();
+        fadeTransition2.setOnFinished(e -> labelToFlash.setTextFill(Color.BLACK));
+    }
+
+    private void spendResourcesAnimation(Label labelToFlash) {
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.5), labelToFlash);
         fadeTransition.setFromValue(1.0);
         fadeTransition.setToValue(0.0);
-        fadeTransition.setCycleCount(6);
+        fadeTransition.setCycleCount(2);
         fadeTransition.setAutoReverse(true);
         fadeTransition.play();
-        fadeTransition.setOnFinished(e -> labelToFlash.setTextFill(Color.BLACK));
+    }
+
+    private void spendResourcesAnimation(ArrayList<Resource> resourcesToFlash) {
+        for (Resource resource : resourcesToFlash) {
+            spendResourcesAnimation(getLabelToFlash(resource.getType()));
+        }
     }
 
     private Label getLabelToFlash(String userGivesResources) {
@@ -532,9 +570,6 @@ public class Controller extends Application {
                         success = game.buildRoad(getChosenEdge(i, j, touchAngle));
                         spendResources = Price.Road.getPrice();
                     }
-                    switch (success) {
-                        case 0:
-                    }
                     break;
                 case BuildSettlement:
                     if (initialState && game.getStartingSettlementsBuiltThisTurn() == 0) {
@@ -559,14 +594,26 @@ public class Controller extends Application {
                     System.out.println("No action selected");
             }
             //todo notify user according to return value
-            if (success == 1) {
-
-            } else if (success == -1) {
+            if (success == SUCCESSFUL_ACTION) {
+                view.updateOwnPlayerInfo(ownPlayerInfo);
+                spendResourcesAnimation(spendResources);
+            } else if (success == INSUFFICIENT_RESOURCES) {
                 insufficientResourcesError(game.getInsufficientResources(spendResources));
-            } else if (success == -2) {
-
+            } else if (success == INVALID_LOCATION) {
+                invalidLocationError();
             }
         }
+    }
+
+    private void invalidLocationError() {
+        gameView.setStyle("-fx-background-color: red");
+        FadeTransition fadeTransition = new FadeTransition(Duration.seconds(0.1), gameView);
+        fadeTransition.setFromValue(1.0);
+        fadeTransition.setToValue(0.4);
+        fadeTransition.setCycleCount(4);
+        fadeTransition.setAutoReverse(true);
+        fadeTransition.play();
+        fadeTransition.setOnFinished(e -> gameView.setStyle("-fx-background-color: lightblue"));
     }
 
     private void insufficientResourcesError(ArrayList<Resource> missingResources) {
@@ -576,8 +623,8 @@ public class Controller extends Application {
             labels[i] = getLabelToFlash(resource.getType());
             i++;
         }
-        for (int j = 0; j < labels.length; j++) {
-            insufficientResourcesAnimation(labels[j]);
+        for (Label label : labels) {
+            insufficientResourcesAnimation(label);
         }
     }
 
@@ -718,7 +765,7 @@ public class Controller extends Application {
         button.setEffect(null);
     }
 
-    private void createGame(Stage primaryStage, boolean isHost, String hostUri) throws IOException, InterruptedException {
+    private void createGame(Stage primaryStage, boolean isHost, String hostUri) throws IOException {
         double mapSize = initializeScene(primaryStage);
         game = new Game(hostUri, isHost, playerName, mapSize);
         view = new View(game);
@@ -761,7 +808,7 @@ public class Controller extends Application {
                         wrongIpOrPortLabel.setText("Wrong ip or port");
                     }
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });
@@ -770,7 +817,7 @@ public class Controller extends Application {
         createGameButton.setOnMouseClicked(mouseEvent -> {
             try {
                 createGame(primaryStage, true, "");
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });
@@ -799,35 +846,35 @@ public class Controller extends Application {
         return chatView;
     }
 
-    public void setBuildRoad(boolean val) {
+    void setBuildRoad(boolean val) {
         buildRoad.setDisable(buildRoadLock || val);
     }
 
-    public void setBuildSettlement(boolean val) {
+    void setBuildSettlement(boolean val) {
         buildSettlement.setDisable(buildSettlementLock || val);
     }
 
-    public void setBuildCity(boolean val) {
+    void setBuildCity(boolean val) {
         buildCity.setDisable(buildCityLock || val);
     }
 
-    public void setBuildDevCard(boolean val) {
+    void setBuildDevCard(boolean val) {
         buildDevCard.setDisable(buildDevCardLock || val);
     }
 
-    public void setTradeWithBank(boolean val) {
+    void setTradeWithBank(boolean val) {
         tradeWithBank.setDisable(tradeWithBankLock || val);
     }
 
-    public void setTradeWithPlayer(boolean val) {
+    void setTradeWithPlayer(boolean val) {
         tradeWithPlayer.setDisable(tradeWithPlayerLock || val);
     }
 
-    public void setPlayDevCard(boolean val) {
+    void setPlayDevCard(boolean val) {
         playDevCard.setDisable(playDevCardLock || val);
     }
 
-    public void setViewDevCard(boolean val) {
+    void setViewDevCard(boolean val) {
         viewDevCard.setDisable(viewDevCardLock || val);
     }
 
@@ -835,11 +882,11 @@ public class Controller extends Application {
         rollDices.setDisable(rollDicesLock || val);
     }
 
-    public boolean isInitialState() {
+    boolean isInitialState() {
         return initialState;
     }
 
-    public Label getDiceRollLabel() {
+    Label getDiceRollLabel() {
         return diceRollLabel;
     }
 
@@ -847,7 +894,7 @@ public class Controller extends Application {
         return scrollPane;
     }
 
-    public void gameWon(int playerId) {
+    void gameWon(int playerId) {
 
     }
 }
